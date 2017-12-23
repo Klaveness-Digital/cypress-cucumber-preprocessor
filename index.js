@@ -27,7 +27,9 @@ const preprocessor = () => {
       const definitions = []
       stepDefinitionsPaths.forEach(path => {
           definitions.push(
-            `{ ${fs.readFileSync(path).toString()} }`
+            `{ ${fs.readFileSync(path).toString()
+              .replace('cypress-cucumber-preprocessor', './resolveStepDefinition')} 
+             }`
           )
         }
       )
@@ -49,14 +51,20 @@ const preprocessor = () => {
   }
 }
 
-module.exports = preprocessor
+module.exports = {
+  default: preprocessor,
+  given: require('./resolveStepDefinition').given,
+  when: require('./resolveStepDefinition').when,
+  then: require('./resolveStepDefinition').then,
+
+}
 
 //This is the template for the file that we will send back to cypress instead of the text of a feature file
 const createCucumber = (spec, definitions) => {
   const cucumberFile =  `
+  const {resolveAndRunStepDefinition, given, when, then} = require('./resolveStepDefinition');
   ${eval(definitions).join('\n')}
   const {Parser, Compiler} = require('gherkin');
-  const {resolveAndRunStepDefinition} = require('./resolveStepDefinition');
   const spec = \`${spec}\`
   const gherkinAst = new Parser().parse(spec);
   gherkinAst.feature.children.forEach(createTestFromScenario);
