@@ -1,74 +1,26 @@
-'use strict'
-
 const fs = require('fs');
+const EventEmitter = require('events').EventEmitter;
+const through = require('through');
 
-const browserify = require('@cypress/browserify-preprocessor')
+const browserify = require('@cypress/browserify-preprocessor');
 
-const log = require('debug')('cypress:cucumber')
+const log = require('debug')('cypress:cucumber');
+const glob = require('glob');
 
-const glob = require('glob')
+const watchers = {};
 
-// export a function that returns another function, making it easy for users
-// to configure like so:
-//
-// on('file:preprocessor', cucumberPreprocessor(options))
-
-
-const preprocessor = () => {
-  // we return function that accepts the arguments provided by
-  // the event 'file:preprocessor'
-  return (file) => {
-    log('get', file.filePath)
-    if (file.filePath.match('.feature$')) {
-
-      const pattern = `${process.cwd()}/cypress/support/step_definitions/**.js`
-      const stepDefinitionsPaths = [].concat(glob.sync(pattern));
-
-      const definitions = []
-      stepDefinitionsPaths.forEach(path => {
-          definitions.push(
-            `{ ${fs.readFileSync(path).toString()
-              .replace('cypress-cucumber-preprocessor', './resolveStepDefinition')} 
-             }`
-          )
-        }
-      )
-
-      const spec = fs.readFileSync(file.filePath).toString()
-      const valueFile = createCucumber(spec, JSON.stringify(definitions))
-
-      const parts = file.filePath.split("/")
-      const originalFileName = parts[parts.length -1];
-      const temporaryFileName = `${__dirname}/temporary-${originalFileName}.js`
-
-      fs.writeFileSync(temporaryFileName, valueFile)
-
-      file.filePath = temporaryFileName
-
-    }
-    return browserify()(file)
-
-  }
-}
-
-module.exports = {
-  default: preprocessor,
-  given: require('./resolveStepDefinition').given,
-  when: require('./resolveStepDefinition').when,
-  then: require('./resolveStepDefinition').then,
-
-}
-
-//This is the template for the file that we will send back to cypress instead of the text of a feature file
-const createCucumber = (spec, definitions) => {
-  const cucumberFile =  `
-  const {resolveAndRunStepDefinition, given, when, then} = require('./resolveStepDefinition');
+// This is the template for the file that we will send back to cypress instead of the text of a
+// feature file
+const createCucumber = (spec, definitions) => (
+  `
+  const {resolveAndRunStepDefinition, given, when, then} = require('cypress-cucumber-preprocessor/resolveStepDefinition');
   ${eval(definitions).join('\n')}
   const {Parser, Compiler} = require('gherkin');
   const spec = \`${spec}\`
   const gherkinAst = new Parser().parse(spec);
-  gherkinAst.feature.children.forEach(createTestFromScenario);
-  
+  describe(gherkinAst.feature.name, () => {
+    gherkinAst.feature.children.forEach(createTestFromScenario);
+  });
   function createTestFromScenario (scenario) {
     describe(scenario.name, () => {
         scenario.steps.map(
@@ -79,5 +31,85 @@ const createCucumber = (spec, definitions) => {
       }
     )
   }`
-  return cucumberFile
-}
+);
+
+const pattern = `${process.cwd()}/cypress/support/step_definitions/**.js`;
+const stepDefinitionsPaths = [].concat(glob.sync(pattern));
+
+const compile = (spec) => {
+  log('compiling', spec);
+
+  const definitions = [];
+  stepDefinitionsPaths.forEach((path) => {
+    definitions.push(
+      `{ ${fs.readFileSync(path).toString().replace('cypress-cucumber-preprocessor', 'cypress-cucumber-preprocessor/resolveStepDefinition')}
+      }`
+    );
+  });
+
+  return createCucumber(spec, JSON.stringify(definitions));
+};
+
+
+const touch = (filename) => {
+  fs.utimesSync(filename, new Date(), new Date());
+};
+
+
+const transform = (file) => {
+  let data = '';
+
+  function write(buf) { data += buf; }
+  function end() {
+    if (file.match('.feature$')) {
+      log('compiling feature ', file);
+      this.queue(compile(data));
+    } else {
+      this.queue(data);
+    }
+    this.queue(null);
+  }
+
+  return through(write, end);
+};
+
+
+const preprocessor = (options = browserify.defaultOptions) => {
+  return file => {
+
+    if (options.browserifyOptions.transform.indexOf(transform) === -1) {
+      options.browserifyOptions.transform.unshift(
+        transform
+      );
+    }
+
+    if (file.shouldWatch) {
+
+      stepDefinitionsPaths.forEach((stepPath) => {
+        if (watchers[stepPath] === undefined) {
+          const stepFile = new EventEmitter();
+          stepFile.filePath = stepPath;
+
+          const bundleDir = file.outputPath.split('/').slice(0, -2);
+          const outputName = stepPath.split('/').slice(-3);
+          stepFile.outputPath = bundleDir.concat(outputName).join('/');
+          stepFile.shouldWatch = file.shouldWatch;
+
+          stepFile.on('rerun', () => {
+            touch(file.filePath);
+          });
+          watchers[stepPath] = browserify(options)(stepFile);
+        } else {
+          log(`Watcher already set for ${stepPath}`);
+        }
+      })
+
+    }
+    return browserify(options)(file);
+  };
+};
+
+module.exports = {
+  default: preprocessor,
+  transform: transform,
+};

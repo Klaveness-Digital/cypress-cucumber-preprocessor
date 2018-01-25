@@ -27,6 +27,7 @@
     "cucumber-expressions": "^5.0.7",
     "debug": "^3.0.1",
     "gherkin": "^5.0.0",
-    "glob": "^7.1.2"
+    "glob": "^7.1.2",
+    "through": "^2.3.8"
   }
 }
