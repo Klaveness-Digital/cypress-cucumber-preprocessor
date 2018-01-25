@@ -88,3 +88,5 @@ Scenario
 Based/inspired on great work on https://github.com/sitegeist/gherkin-testcafe , although, with this package we don't have to run cypress programatically - with an external runner, we can use cypress as we are used to :) 
 
 Thanks to the Cypress team for the fantastic work and very exciting tool! :-)
+
+Thanks to @fcurella for fantastic work with making the preprocessor reactive to file changes. :-)

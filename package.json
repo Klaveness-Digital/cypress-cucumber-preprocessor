@@ -1,6 +1,6 @@
 {
   "name": "cypress-cucumber-preprocessor",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Run gherkin-syntaxed specs with cypress.io",
   "main": "index.js",
   "scripts": {
