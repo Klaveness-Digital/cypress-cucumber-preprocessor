@@ -29,5 +29,10 @@
     "gherkin": "^5.0.0",
     "glob": "^7.1.2",
     "through": "^2.3.8"
+  },
+  "devDependencies": {
+    "eslint": "^4.16.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0"
   }
 }

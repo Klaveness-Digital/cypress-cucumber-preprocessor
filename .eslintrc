@@ -1,0 +1,10 @@
+{
+    "extends": "airbnb-base",
+    "plugins": [
+        "cypress"
+    ],
+    "env": {
+        "browser": true,
+        "cypress/globals": true
+    }
+}

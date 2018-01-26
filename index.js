@@ -43,7 +43,7 @@ const compile = (spec) => {
   stepDefinitionsPaths.forEach((path) => {
     definitions.push(
       `{ ${fs.readFileSync(path).toString().replace('cypress-cucumber-preprocessor', 'cypress-cucumber-preprocessor/resolveStepDefinition')}
-      }`
+      }`,
     );
   });
 
@@ -74,42 +74,37 @@ const transform = (file) => {
 };
 
 
-const preprocessor = (options = browserify.defaultOptions) => {
-  return file => {
-
-    if (options.browserifyOptions.transform.indexOf(transform) === -1) {
-      options.browserifyOptions.transform.unshift(
-        transform
+const preprocessor = (options = browserify.defaultOptions) => (file) => {
+  if (options.browserifyOptions.transform.indexOf(transform) === -1) {
+    options.browserifyOptions.transform.unshift(
+        transform,
       );
-    }
+  }
 
-    if (file.shouldWatch) {
+  if (file.shouldWatch) {
+    stepDefinitionsPaths.forEach((stepPath) => {
+      if (watchers[stepPath] === undefined) {
+        const stepFile = new EventEmitter();
+        stepFile.filePath = stepPath;
 
-      stepDefinitionsPaths.forEach((stepPath) => {
-        if (watchers[stepPath] === undefined) {
-          const stepFile = new EventEmitter();
-          stepFile.filePath = stepPath;
+        const bundleDir = file.outputPath.split('/').slice(0, -2);
+        const outputName = stepPath.split('/').slice(-3);
+        stepFile.outputPath = bundleDir.concat(outputName).join('/');
+        stepFile.shouldWatch = file.shouldWatch;
 
-          const bundleDir = file.outputPath.split('/').slice(0, -2);
-          const outputName = stepPath.split('/').slice(-3);
-          stepFile.outputPath = bundleDir.concat(outputName).join('/');
-          stepFile.shouldWatch = file.shouldWatch;
-
-          stepFile.on('rerun', () => {
-            touch(file.filePath);
-          });
-          watchers[stepPath] = browserify(options)(stepFile);
-        } else {
-          log(`Watcher already set for ${stepPath}`);
-        }
-      })
-
-    }
-    return browserify(options)(file);
-  };
+        stepFile.on('rerun', () => {
+          touch(file.filePath);
+        });
+        watchers[stepPath] = browserify(options)(stepFile);
+      } else {
+        log(`Watcher already set for ${stepPath}`);
+      }
+    });
+  }
+  return browserify(options)(file);
 };
 
 module.exports = {
   default: preprocessor,
-  transform: transform,
+  transform,
 };
