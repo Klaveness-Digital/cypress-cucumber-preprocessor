@@ -33,7 +33,7 @@ const createCucumber = (spec, definitions) => (
   }`
 );
 
-function createPattern(appRoot, options) {
+const createPattern = (appRoot, options) => {
   if(options && options.fileServerFolder){
     return cypressOption.fileServerFolder+'/support/step_definitions/**/*.js'
   } else {
