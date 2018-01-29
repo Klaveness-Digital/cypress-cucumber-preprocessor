@@ -33,7 +33,18 @@ const createCucumber = (spec, definitions) => (
   }`
 );
 
-const pattern = `${process.cwd()}/cypress/support/step_definitions/**.js`;
+function createPattern(appRoot, options) {
+  if(options && options.fileServerFolder){
+    return cypressOption.fileServerFolder+'/support/step_definitions/**/*.js'
+  } else {
+    return appRoot + '/cypress/support/step_definitions/**/*.js'
+  }
+};
+
+const appRoot = process.cwd();
+const cypressOption = JSON.parse(fs.readFileSync(appRoot + '/cypress.json', 'utf-8'));
+const pattern = createPattern(appRoot, cypressOption);
+
 const stepDefinitionsPaths = [].concat(glob.sync(pattern));
 
 const compile = (spec) => {
