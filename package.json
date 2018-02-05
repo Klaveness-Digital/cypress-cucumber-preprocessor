@@ -24,6 +24,7 @@
   "homepage": "https://github.com/TheBrainFamily/cypress-cucumber-preprocessor#readme",
   "dependencies": {
     "@cypress/browserify-preprocessor": "^1.0.2",
+    "cucumber": "^4.0.0",
     "cucumber-expressions": "^5.0.7",
     "debug": "^3.0.1",
     "gherkin": "^5.0.0",
