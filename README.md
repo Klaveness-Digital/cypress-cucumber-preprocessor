@@ -1,3 +1,5 @@
+[![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![CircleCI](https://circleci.com/gh/TheBrainFamily/cypress-cucumber-preprocessor.svg?style=shield)](https://circleci.com/gh/TheBrainFamily/cypress-cucumber-preprocessor)
 # Run cucumber/gherkin-syntaxed specs with cypress.io
 
 Please take a look at an example here:
@@ -81,7 +83,11 @@ This is a very fresh code, please let me know if you find any issues or have sug
 
 ## TODO
 
-Scenario
+Scenario Outline support ( #12 )
+
+Make compatible with Linux ( #10 ) - needs a replacement or disabling of fsevents
+
+(Maybe?) Option to customize mocha template ( #3 ) 
 
 ## Credit where it's due!
 
