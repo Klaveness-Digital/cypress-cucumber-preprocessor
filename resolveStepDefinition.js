@@ -1,7 +1,8 @@
-const path = require('path');
-
-const DataTable = require('cucumber/lib/models/data_table').default;
-const { CucumberExpression, ParameterTypeRegistry } = require('cucumber-expressions');
+const DataTable = require("cucumber/lib/models/data_table").default;
+const {
+  CucumberExpression,
+  ParameterTypeRegistry
+} = require("cucumber-expressions");
 
 const parameterTypeRegistry = new ParameterTypeRegistry();
 
@@ -9,58 +10,64 @@ class StepDefinitionRegistry {
   constructor() {
     this.definitions = {};
     this.runtime = {};
-    this.latestType = '';
+    this.latestType = "";
 
-    ['given', 'when', 'then'].forEach((keyword) => {
+    ["given", "when", "then"].forEach(keyword => {
       this.definitions[keyword] = [];
       this.runtime[keyword] = (expression, implementation) => {
         this.definitions[keyword].push({
-
           implementation,
-          expression: new CucumberExpression(expression, parameterTypeRegistry),
+          expression: new CucumberExpression(expression, parameterTypeRegistry)
         });
       };
     });
 
-    this.load = definitionFactoryFunction => definitionFactoryFunction(this.runtime);
+    this.load = definitionFactoryFunction =>
+      definitionFactoryFunction(this.runtime);
 
     this.resolve = (type, text) => {
-      if (type === 'and') {
-        type = this.latestType;
+      let actualType = type;
+      if (type === "and") {
+        actualType = this.latestType;
       }
 
-      if (this.definitions[type]) {
-        this.latestType = type;
-        return this.definitions[type].filter(({ expression }) => expression.match(text))[0];
+      if (this.definitions[actualType]) {
+        this.latestType = actualType;
+        return this.definitions[actualType].filter(({ expression }) =>
+          expression.match(text)
+        )[0];
       }
+      return undefined;
     };
   }
-
 }
 
 const stepDefinitionRegistry = new StepDefinitionRegistry();
 
 function resolveStepDefinition(step) {
-  const stepDefinition = stepDefinitionRegistry.resolve(step.keyword.toLowerCase().trim(), step.text);
+  const stepDefinition = stepDefinitionRegistry.resolve(
+    step.keyword.toLowerCase().trim(),
+    step.text
+  );
 
   return stepDefinition || {};
 }
 
 module.exports = {
-  resolveAndRunStepDefinition: (step) => {
+  resolveAndRunStepDefinition: step => {
     const { expression, implementation } = resolveStepDefinition(step);
     if (expression && implementation) {
       let argument;
       if (step.argument) {
-        if (step.argument.type === 'DataTable') {
+        if (step.argument.type === "DataTable") {
           argument = new DataTable(step.argument);
-        } else if (step.argument.type === 'DocString') {
+        } else if (step.argument.type === "DocString") {
           argument = step.argument.content;
         }
       }
       return implementation(
         ...expression.match(step.text).map(match => match.getValue()),
-        argument,
+        argument
       );
     }
     throw new Error(`Step implementation missing for: ${step.text}`);
@@ -73,5 +80,5 @@ module.exports = {
   },
   then: (expression, implementation) => {
     stepDefinitionRegistry.runtime.then(expression, implementation);
-  },
+  }
 };
