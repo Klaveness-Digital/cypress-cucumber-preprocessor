@@ -59,4 +59,7 @@ typings/
 
 .idea
 
-cypress/videos
+
+#### NPM IGNORE SPECIFICS
+cypress/
+cypress.json
