@@ -1,10 +1,10 @@
 {
   "name": "cypress-cucumber-preprocessor",
-  "version": "0.0.3",
+  "version": "0.1.0-alpha.1",
   "description": "Run gherkin-syntaxed specs with cypress.io",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cypress run"
   },
   "repository": {
     "type": "git",
@@ -32,6 +32,7 @@
     "through": "^2.3.8"
   },
   "devDependencies": {
+    "cypress": "^2.0.1",
     "eslint": "^4.16.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0"
