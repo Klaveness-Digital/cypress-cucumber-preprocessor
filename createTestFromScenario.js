@@ -3,7 +3,7 @@
 const { resolveAndRunStepDefinition } = require("./resolveStepDefinition");
 
 const stepTest = step =>
-  it(step.text, () => {
+  it(`${step.keyword} ${step.text}`, () => {
     resolveAndRunStepDefinition(step);
   });
 
