@@ -24,11 +24,11 @@ Feature: Being a plugin
     """
     Then I ran it and verify that it executes it
 
-#  Scenario Outline: Using Scenario Outlines
-#    When I add <provided number> and <another provided number>
-#    Then I verify that the result is equal the <provided>
-#
-#    Examples:
-#      | provided number | another provided number | provided |
-#      | 1               | 2                       | 3        |
-#      | 100             | 200                     | 300      |
+  Scenario Outline: Using Scenario Outlines
+    When I add <provided number> and <another provided number>
+    Then I verify that the result is equal the <provided>
+
+    Examples:
+      | provided number | another provided number | provided |
+      | 1               | 2                       | 3        |
+      | 100             | 200                     | 300      |
