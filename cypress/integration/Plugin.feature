@@ -32,3 +32,13 @@ Feature: Being a plugin
       | provided number | another provided number | provided |
       | 1               | 2                       | 3        |
       | 100             | 200                     | 300      |
+
+  Scenario Outline: Search the details of a phone
+    Given a list of phones on phones store
+    When I search the phone <brand> in search input
+    Then <brand> <model> appears on the screen
+
+    Examples:
+      | brand   | model |
+      | iPhone  | 6s    |
+      | Samsung | S8    |

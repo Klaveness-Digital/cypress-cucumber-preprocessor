@@ -133,3 +133,37 @@ describe("Basic example", () => {
     gherkinAst.feature.children.forEach(createTestFromScenario);
   });
 });
+
+describe("Scenario outline string example", () => {
+  const spec = `
+  ${feature}
+  Scenario Outline: Search the details of a phone
+    Given a list of phones on phones store
+    When I search the phone <brand> in search input
+    Then <brand> <model> appears on the screen
+    
+    Examples:
+    | brand   | model |
+    | iPhone  | 6s   |
+    | Samsung | S8  |
+  `;
+
+  const gherkinAst = new Parser().parse(spec);
+
+  given("a list of phones on phones store", () => {
+    expect(true).toEqual(true);
+  });
+
+  when("I search the phone {word} in search input", () => {
+    expect(true).toEqual(true);
+  });
+
+  then("{word} {word} appears on the screen", (brand, model) => {
+    expect(typeof model).toBe("string");
+    expect(typeof brand).toBe("string");
+  });
+
+  describe(gherkinAst.feature.name, () => {
+    gherkinAst.feature.children.forEach(createTestFromScenario);
+  });
+});
