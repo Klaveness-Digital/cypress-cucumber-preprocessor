@@ -1,4 +1,4 @@
-const { when, then, given } = require("cypress-cucumber-preprocessor"); // eslint-disable-line
+/* eslint-disable no-undef */
 
 given("a list of phones on phones store", () => {
   expect(true).to.equal(true);

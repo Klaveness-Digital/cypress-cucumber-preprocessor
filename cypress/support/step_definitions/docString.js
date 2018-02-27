@@ -1,4 +1,4 @@
-const { when, then } = require("cypress-cucumber-preprocessor"); // eslint-disable-line
+/* eslint-disable no-undef */
 
 let code = "";
 // eslint-disable-next-line prefer-const

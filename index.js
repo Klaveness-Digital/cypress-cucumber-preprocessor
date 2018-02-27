@@ -16,13 +16,13 @@ const createCucumber = (spec, definitions) =>
   `
   const {resolveAndRunStepDefinition, given, when, then} = require('cypress-cucumber-preprocessor/resolveStepDefinition');
   const { createTestFromScenario } = require('cypress-cucumber-preprocessor/createTestFromScenario');
+  const { createTestsFromFeature } = require('cypress-cucumber-preprocessor/createTestsFromFeature');
   ${eval(definitions).join("\n")}
   const {Parser, Compiler} = require('gherkin');
   const spec = \`${spec}\`
   const gherkinAst = new Parser().parse(spec);
-  describe(gherkinAst.feature.name, () => {
-    gherkinAst.feature.children.forEach(createTestFromScenario);
-  });
+  
+  createTestsFromFeature(gherkinAst);
   `;
 
 const createPattern = () => {

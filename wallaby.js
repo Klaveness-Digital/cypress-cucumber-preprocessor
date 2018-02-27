@@ -6,7 +6,9 @@ module.exports = function (wallaby) {
       {pattern: './*.+(js|jsx|json|snap|css|less|sass|scss|jpg|jpeg|gif|png|svg)', load: false},
       {pattern: '!./*.test.js?(x)', load: false},
       './*.snap',
-      {pattern: '.eslintrc', load: false}
+      {pattern: '.eslintrc', load: false},
+      './cypress/support/step_definitions/*.js',
+      './cypress/integration/*.feature',
     ],
 
     tests: [
