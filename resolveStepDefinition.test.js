@@ -15,7 +15,7 @@ const readAndParseFeatureFile = featureFilePath => {
 
 describe("Scenario Outline", () => {
   require("./cypress/support/step_definitions/scenario_outline_integer");
-  require("./cypress/support/step_definitions/scenario_outline_word");
+  require("./cypress/support/step_definitions/scenario_outline_string");
 
   createTestsFromFeature(
     readAndParseFeatureFile("./cypress/integration/ScenarioOutline.feature")

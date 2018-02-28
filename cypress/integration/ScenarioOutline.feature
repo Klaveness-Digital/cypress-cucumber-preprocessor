@@ -1,7 +1,7 @@
 Feature: Being a plugin handling Scenario Outline
 
   As a cucumber cypress plugin which handles Scenario Outline
-  I want to allow people to write Scenatio Outline tests and run it in cypress
+  I want to allow people to write Scenario Outline tests and run it in cypress
 
   Scenario Outline: Using Scenario Outlines
     When I add <provided number> and <another provided number>
@@ -12,12 +12,13 @@ Feature: Being a plugin handling Scenario Outline
       | 1               | 2                       | 3        |
       | 100             | 200                     | 300      |
 
-  Scenario Outline: Search the details of a phone
-    Given a list of phones on phones store
-    When I search the phone <brand> in search input
-    Then <brand> <model> appears on the screen
+  Scenario Outline: Use juicer with <fruit>
+    Given I put "<fruit>" in a juicer
+    When I switch it on
+    Then I should get "<juice>"
 
     Examples:
-      | brand   | model |
-      | iPhone  | 6s    |
-      | Samsung | S8    |
+      | fruit      | juice               |
+      | apple      | apple juice         |
+      | pineapple  | pineapple juice     |
+      | strawberry | strawberry juice    |
