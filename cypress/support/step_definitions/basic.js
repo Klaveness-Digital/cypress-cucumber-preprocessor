@@ -1,4 +1,4 @@
-const { given, when, then } = require("cypress-cucumber-preprocessor"); // eslint-disable-line
+/* global then, when, given */
 
 given("a feature and a matching step definition file", () => {
   expect(true).to.equal(true);

@@ -15,23 +15,15 @@ const watchers = {};
 const createCucumber = (spec, definitions) =>
   `
   const {resolveAndRunStepDefinition, given, when, then} = require('cypress-cucumber-preprocessor/resolveStepDefinition');
+  const { createTestFromScenario } = require('cypress-cucumber-preprocessor/createTestFromScenario');
+  const { createTestsFromFeature } = require('cypress-cucumber-preprocessor/createTestsFromFeature');
   ${eval(definitions).join("\n")}
   const {Parser, Compiler} = require('gherkin');
   const spec = \`${spec}\`
   const gherkinAst = new Parser().parse(spec);
-  describe(gherkinAst.feature.name, () => {
-    gherkinAst.feature.children.forEach(createTestFromScenario);
-  });
-  function createTestFromScenario (scenario) {
-    describe(scenario.name, () => {
-        scenario.steps.map(
-          step => it(step.text, () => {
-            resolveAndRunStepDefinition(step)
-          })
-        )
-      }
-    )
-  }`;
+  
+  createTestsFromFeature(gherkinAst);
+  `;
 
 const createPattern = () => {
   const appRoot = process.cwd();

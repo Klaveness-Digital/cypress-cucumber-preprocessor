@@ -1,4 +1,4 @@
-const { when, then } = require("cypress-cucumber-preprocessor"); // eslint-disable-line
+/* global then, when */
 
 // you can have external state, and also require things!
 let sum = 0;

@@ -4,7 +4,7 @@
   "description": "Run gherkin-syntaxed specs with cypress.io",
   "main": "index.js",
   "scripts": {
-    "test": "eslint . && cypress run",
+    "test": "eslint . && jest && cypress run",
     "fixStyle": "eslint . --fix"
   },
   "repository": {
@@ -30,7 +30,8 @@
     "debug": "^3.0.1",
     "gherkin": "^5.0.0",
     "glob": "^7.1.2",
-    "through": "^2.3.8"
+    "through": "^2.3.8",
+    "chai": "^4.1.2"
   },
   "devDependencies": {
     "cypress": "^2.0.1",
@@ -38,8 +39,12 @@
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-cypress": "^2.0.1",
-    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-prettier": "^2.6.0",
+    "jest": "^22.4.2",
     "prettier": "^1.10.2"
+  },
+  "jest": {
+    "setupTestFrameworkScriptFile": "<rootDir>/setupTestFramework.js"
   }
 }
