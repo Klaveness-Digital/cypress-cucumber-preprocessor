@@ -83,9 +83,7 @@ This is a very fresh code, please let me know if you find any issues or have sug
 
 ## TODO
 
-Scenario Outline support ( #12 )
-
-Make compatible with Linux ( #10 ) - needs a replacement or disabling of fsevents
+Make watch mode compatible with Linux ( #10 ) - needs a replacement or disabling of fsevents
 
 (Maybe?) Option to customize mocha template ( #3 ) 
 
