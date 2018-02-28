@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+/* global then, when */
 
 let code = "";
 // eslint-disable-next-line prefer-const

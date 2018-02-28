@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+/* global then, when */
 
 // you can have external state, and also require things!
 let sum = 0;

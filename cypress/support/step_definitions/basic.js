@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+/* global then, when, given */
 
 given("a feature and a matching step definition file", () => {
   expect(true).to.equal(true);

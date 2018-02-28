@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+/* global then, when, given */
 
 const fruitToJuice = {
   apple: "apple juice",
