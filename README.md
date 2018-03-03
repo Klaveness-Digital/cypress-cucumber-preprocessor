@@ -23,8 +23,7 @@ Put your step definitions in cypress/support/step_definitions
 Examples:
 cypress/support/step_definitions/google.js
 ```javascript
-const {given} = require('cypress-cucumber-preprocessor')
-
+/* global given */
 // you can have external state, and also require things!
 const url = 'https://google.com'
 
@@ -35,18 +34,19 @@ given('I open Google page', () => {
 
 cypress/support/step_definitions/shared.js
 ```javascript
-const {then} = require('cypress-cucumber-preprocessor')
-
+/* global then */
 then(`I see {string} in the title`, (title) => {
   cy.title().should('include', title)
 })
 ```
 
-The requires are optional - you can just use 
+Since given/when/then are on global scope please use
 ```javascript
 /* global then, when, given */
 ```
-to make IDE happy
+to make IDE/linter happy
+
+We had a pattern to import those explicitly, but for some reason it was messing up the watch mode on Linux :-( (#10)
 
 ## Spec/Feature files
 Your feature file in cypress/integration:
@@ -77,19 +77,21 @@ module.exports = (on, config) => {
 
 Run your cypress the way you would normally do :) click on a .feature file on the list of specs, and see the magic happening!
 
+## Cucumber Expressions
+
+We use https://docs.cucumber.io/cucumber-expressions/ to parse your .feature file, please use that document as your reference 
+
 ## Disclaimer
 
-This is a very fresh code, please let me know if you find any issues or have suggestions for improvements.
+Please let me know if you find any issues or have suggestions for improvements.
 
 ## TODO
-
-Make watch mode compatible with Linux ( #10 ) - needs a replacement or disabling of fsevents
 
 (Maybe?) Option to customize mocha template ( #3 ) 
 
 ## Credit where it's due!
 
-Based/inspired on great work on https://github.com/sitegeist/gherkin-testcafe , although, with this package we don't have to run cypress programatically - with an external runner, we can use cypress as we are used to :) 
+Based/inspired on great work on https://github.com/sitegeist/gherkin-testcafe , although, with this package we don't have to run cypress programmatically - with an external runner, we can use cypress as we are used to :)
 
 Thanks to the Cypress team for the fantastic work and very exciting tool! :-)
 
