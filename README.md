@@ -81,6 +81,24 @@ Run your cypress the way you would normally do :) click on a .feature file on th
 
 We use https://docs.cucumber.io/cucumber-expressions/ to parse your .feature file, please use that document as your reference 
 
+## Development
+
+Install all dependencies:
+```javascript
+npm install
+```
+
+Link the package:
+```javascript
+npm link 
+npm link cypress-cucumber-preprocessor
+```
+
+Run tests:
+```javascript
+npm test
+```
+
 ## Disclaimer
 
 Please let me know if you find any issues or have suggestions for improvements.
