@@ -1,5 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [0.3.0] - 2018-03-14
+### Changed
+Scenario will skip steps after the first failing one ( #23 - reported by @reaktivo )
 
 ## [0.2.0] - 2018-02-28
 ### Added
