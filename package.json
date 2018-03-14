@@ -25,13 +25,14 @@
   "homepage": "https://github.com/TheBrainFamily/cypress-cucumber-preprocessor#readme",
   "dependencies": {
     "@cypress/browserify-preprocessor": "^1.0.2",
+    "chai": "^4.1.2",
     "cucumber": "^4.0.0",
     "cucumber-expressions": "^5.0.7",
     "debug": "^3.0.1",
     "gherkin": "^5.0.0",
     "glob": "^7.1.2",
-    "through": "^2.3.8",
-    "chai": "^4.1.2"
+    "mocha-steps": "^1.1.0",
+    "through": "^2.3.8"
   },
   "devDependencies": {
     "cypress": "^2.0.1",
