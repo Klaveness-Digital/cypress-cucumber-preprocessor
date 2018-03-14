@@ -1,10 +1,12 @@
 /* eslint-disable prefer-template */
+/* global step */
 
+require("mocha-steps");
 const { resolveAndRunStepDefinition } = require("./resolveStepDefinition");
 
-const stepTest = step =>
-  it(`${step.keyword} ${step.text}`, () => {
-    resolveAndRunStepDefinition(step);
+const stepTest = stepDetails =>
+  step(`${stepDetails.keyword} ${stepDetails.text}`, () => {
+    resolveAndRunStepDefinition(stepDetails);
   });
 
 const createTestFromScenario = scenario => {
