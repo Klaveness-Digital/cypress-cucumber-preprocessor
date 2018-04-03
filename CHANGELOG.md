@@ -1,5 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+
+## [0.4.0] - 2018-04-03
+### Fixed
+Requiring files ( #30 - reported by @0xR )
+
+### Changed
+Given, When, Then are interchangeable now. Also - And/But works as well. ( #31 , #28 - thanks to @GregorD1 @jbbn and @imageica for reporting )
+fileServerFolder option is not the preferred way to set path to step_definition anymore. We use cosmiconfig now. ( #16 - thanks to @reaktivo @dvelasquez for reporting and discussion )
+
 ## [0.3.0] - 2018-03-14
 ### Changed
 Scenario will skip steps after the first failing one ( #23 - reported by @reaktivo )

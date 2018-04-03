@@ -73,6 +73,14 @@ module.exports = (on, config) => {
 }
 ```
 
+Step definition files are by default in: cypress/support/step_definitions. If you want to put them somewhere please use [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) format. For example, add to your package.json :
+
+```javascript
+  "cypress-cucumber-preprocessor": {
+    "step_definitions": "cypress/support/step_definitions/"
+  }
+```
+
 ## Running
 
 Run your cypress the way you would normally do :) click on a .feature file on the list of specs, and see the magic happening!
