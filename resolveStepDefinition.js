@@ -12,33 +12,19 @@ class StepDefinitionRegistry {
     this.runtime = {};
     this.latestType = "";
 
-    ["given", "when", "then"].forEach(keyword => {
-      this.definitions[keyword] = [];
-      this.runtime[keyword] = (expression, implementation) => {
-        this.definitions[keyword].push({
-          implementation,
-          expression: new CucumberExpression(expression, parameterTypeRegistry)
-        });
-      };
-    });
+    this.definitions = [];
+    this.runtime = (expression, implementation) => {
+      this.definitions.push({
+        implementation,
+        expression: new CucumberExpression(expression, parameterTypeRegistry)
+      });
+    };
 
     this.load = definitionFactoryFunction =>
       definitionFactoryFunction(this.runtime);
 
-    this.resolve = (type, text) => {
-      let actualType = type;
-      if (type === "and") {
-        actualType = this.latestType;
-      }
-
-      if (this.definitions[actualType]) {
-        this.latestType = actualType;
-        return this.definitions[actualType].filter(({ expression }) =>
-          expression.match(text)
-        )[0];
-      }
-      return undefined;
-    };
+    this.resolve = (type, text) =>
+      this.definitions.filter(({ expression }) => expression.match(text))[0];
   }
 }
 
@@ -73,12 +59,12 @@ module.exports = {
     throw new Error(`Step implementation missing for: ${step.text}`);
   },
   given: (expression, implementation) => {
-    stepDefinitionRegistry.runtime.given(expression, implementation);
+    stepDefinitionRegistry.runtime(expression, implementation);
   },
   when: (expression, implementation) => {
-    stepDefinitionRegistry.runtime.when(expression, implementation);
+    stepDefinitionRegistry.runtime(expression, implementation);
   },
   then: (expression, implementation) => {
-    stepDefinitionRegistry.runtime.then(expression, implementation);
+    stepDefinitionRegistry.runtime(expression, implementation);
   }
 };
