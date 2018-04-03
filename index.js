@@ -2,11 +2,11 @@
 const fs = require("fs");
 const { EventEmitter } = require("events");
 const through = require("through");
-
+const path = require("path");
 const browserify = require("@cypress/browserify-preprocessor");
-
 const log = require("debug")("cypress:cucumber");
 const glob = require("glob");
+const cosmiconfig = require("cosmiconfig");
 
 const watchers = {};
 
@@ -25,38 +25,46 @@ const createCucumber = (spec, definitions) =>
   createTestsFromFeature(gherkinAst);
   `;
 
-const createPattern = () => {
+const stepDefinitionPath = () => {
   const appRoot = process.cwd();
+
+  const explorer = cosmiconfig("cypress-cucumber-preprocessor", { sync: true });
+  const loaded = explorer.load();
+  if (loaded && loaded.config && loaded.config.step_definitions) {
+    return path.resolve(appRoot, loaded.config.step_definitions);
+  }
+
+  // XXX Deprecated, left here for backward compability
   const cypressOptions = JSON.parse(
     fs.readFileSync(`${appRoot}/cypress.json`, "utf-8")
   );
-
   if (cypressOptions && cypressOptions.fileServerFolder) {
-    return `${
-      cypressOptions.fileServerFolder
-    }/support/step_definitions/**/*.js`;
+    return `${cypressOptions.fileServerFolder}/support/step_definitions`;
   }
-  return `${appRoot}/cypress/support/step_definitions/**/*.js`;
+
+  return `${appRoot}/cypress/support/step_definitions`;
 };
+const createPattern = () => `${stepDefinitionPath()}/**/*.js`;
 
 const pattern = createPattern();
 
 const stepDefinitionsPaths = [].concat(glob.sync(pattern));
 
-const compile = spec => {
+const compile = (spec, file) => {
   log("compiling", spec);
-
-  const definitions = [];
-  stepDefinitionsPaths.forEach(path => {
-    definitions.push(
-      `{ ${fs
-        .readFileSync(path)
-        .toString()
-        .replace(
-          "cypress-cucumber-preprocessor",
-          "cypress-cucumber-preprocessor/resolveStepDefinition"
-        )}}`
-    );
+  const pathToUse = path.relative(
+    path.dirname(file),
+    `${process.cwd()}/cypress/support/step_definitions/`
+  );
+  const definitions = stepDefinitionsPaths.map(sdPath => {
+    const definition = fs
+      .readFileSync(sdPath)
+      .toString()
+      .replace(/require\('.\//g, `require('${pathToUse}/`)
+      .replace(/require\(".\//g, `require("${pathToUse}/`);
+    return `{ 
+    ${definition} 
+    }`;
   });
 
   return createCucumber(spec, JSON.stringify(definitions));
@@ -75,7 +83,7 @@ const transform = file => {
   function end() {
     if (file.match(".feature$")) {
       log("compiling feature ", file);
-      this.queue(compile(data));
+      this.queue(compile(data, file));
     } else {
       this.queue(data);
     }
