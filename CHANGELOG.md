@@ -1,5 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [0.5.0] - 2018-04-04
+
+### Added
+Support for Background section ( #21 - thanks to @jmozgawa for implementing this! )
 
 ## [0.4.0] - 2018-04-03
 ### Fixed
