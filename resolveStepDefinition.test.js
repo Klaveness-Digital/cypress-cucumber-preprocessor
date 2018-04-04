@@ -45,3 +45,11 @@ describe("Basic example", () => {
     readAndParseFeatureFile("./cypress/integration/Plugin.feature")
   );
 });
+
+describe("Background section", () => {
+  require("./cypress/support/step_definitions/backgroundSection");
+
+  createTestsFromFeature(
+    readAndParseFeatureFile("./cypress/integration/BackgroundSection.feature")
+  );
+});
