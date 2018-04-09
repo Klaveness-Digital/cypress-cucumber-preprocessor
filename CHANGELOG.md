@@ -1,5 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+
+## [0.6.0] - 2018-04-09
+### Added
+Support for typescript ( #32 - thanks to @StefanNieuwenhuis  for the PR !)
 ## [0.5.0] - 2018-04-04
 
 ### Added

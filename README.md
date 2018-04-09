@@ -111,6 +111,17 @@ npm test
 
 Please let me know if you find any issues or have suggestions for improvements.
 
+## TypeScript
+
+You can use this package with TypeScript!
+
+```javascript
+module.exports = on => {
+  on('file:preprocessor', cypressTypeScriptPreprocessor)
+  on('file:preprocessor', cucumber())
+}
+```
+
 ## TODO
 
 (Maybe?) Option to customize mocha template ( #3 ) 
