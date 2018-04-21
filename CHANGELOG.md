@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.0] - 2018-04-21
+
+### Added
+Regular expressions working in step definitions ( #42 - thanks to @stevepkuo for reporting !)
+### Changed
+Scenarios run as single steps now. ( #44 / #43  - thanks so much to @BenoitAverty not only for the PR but for the courage to question the status quo/think outside of the box here :) )
+This has a downside of less readable/uglier test reports, but allows realistically testing of real-world web applications. We will revisit once Cypress makes necessary adjustments - cypress-io/cypress#686
+
 ## [0.6.0] - 2018-04-09
 ### Added
 Support for typescript ( #32 - thanks to @StefanNieuwenhuis  for the PR !)
