@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2018-07-13
+
+Works with Imports/Exports ! ( #52 #20 )
+This possibly opens the road to using TypeScript as well :-)
+Thanks to @bensampaio for the dead on suggestion how to get around this problem. :-) 
+
 ## [1.1.0] - 2018-07-13
 
 ### Added
