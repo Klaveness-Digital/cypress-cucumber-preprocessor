@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2018-07-13
+
+### Added
+Custom Parameter types ( #66 - thanks to @oltodo !)
+Support for WebStorm Step Definitions recognition ( #56 thanks kayvanbree vadimromanyak )
+
+### Chores
+Updated dependencies ( Thanks @ryzy )
+Fixed documentation 404 link ( Thanks ChrisBashton !)
+Updated documentation to say that TypeScript doesn't work after all :-( ( thanks to @KeithGillette for help with debugging this) 
+
 ## [1.0.0] - 2018-04-21
 
 ### Added

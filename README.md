@@ -23,26 +23,26 @@ Put your step definitions in cypress/support/step_definitions
 Examples:
 cypress/support/step_definitions/google.js
 ```javascript
-/* global given */
+/* global Given */
 // you can have external state, and also require things!
 const url = 'https://google.com'
 
-given('I open Google page', () => {
+Given('I open Google page', () => {
   cy.visit(url)
 })
 ```
 
 cypress/support/step_definitions/shared.js
 ```javascript
-/* global then */
-then(`I see {string} in the title`, (title) => {
+/* global Then */
+Then(`I see {string} in the title`, (title) => {
   cy.title().should('include', title)
 })
 ```
 
-Since given/when/then are on global scope please use
+Since Given/When/Then are on global scope please use
 ```javascript
-/* global then, when, given */
+/* global Given, When, Then */
 ```
 to make IDE/linter happy
 
@@ -111,9 +111,39 @@ npm test
 
 Please let me know if you find any issues or have suggestions for improvements.
 
+## Custom Parameter Type Resolves
+
+Thanks to @Oltodo we can know use Custom Parameter Type Resolves. 
+Here is an [example](cypress/support/step_definitions/customParameterTypes.js) with related [.feature file](cypress/integration/CustomParameterTypes.feature)
+
+## WebStorm Support
+
+If you want WebStorm to resolve your steps, use the capitalized Given/When/Then function names (instead of the initial given/when/then). 
+Unfortunately, at this point WebStorm only understands regexp syntax:
+ ```javascript
+ Given(/^user navigated to the Start page?/, () => { });
+```
+Or a backtick syntax but without Cucumber Expressions :-(.
+In other words, this works:
+```javascript
+Given(`user navigated to the start page`, () => { });
+Then(/(.*?) is chosen/, choice => {})
+```
+
+But this doesn't:
+
+```javascript
+Then(`{word} is chosen`, choice => {})
+```
+ (See #56)
+
+
 ## TypeScript
 
-You can use this package with TypeScript!
+Turns out TypeScript doesn't actually work with our preprocessor. 
+We would love to take a PR that takes care of this!
+
+The starting point was:
 
 ```javascript
 module.exports = on => {
@@ -124,6 +154,7 @@ module.exports = on => {
 
 ## TODO
 
+Typescript!
 (Maybe?) Option to customize mocha template ( #3 ) 
 
 ## Credit where it's due!
