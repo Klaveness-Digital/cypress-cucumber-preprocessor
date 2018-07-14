@@ -140,21 +140,39 @@ Then(`{word} is chosen`, choice => {})
 
 ## TypeScript
 
-Turns out TypeScript doesn't actually work with our preprocessor. 
-We would love to take a PR that takes care of this!
-
-The starting point was:
+If you want to use TypeScript put this in your plugins/index.js:
 
 ```javascript
-module.exports = on => {
-  on('file:preprocessor', cypressTypeScriptPreprocessor)
-  on('file:preprocessor', cucumber())
-}
+const cucumber = require("cypress-cucumber-preprocessor").default;
+const browserify = require("@cypress/browserify-preprocessor");
+
+module.exports = (on) => {
+  on("file:preprocessor", file => {
+      browserify.defaultOptions.browserifyOptions.plugin.push(["tsify"])
+      return cucumber(
+        browserify.defaultOptions
+      )(file);
+  });
+};
+```
+
+...and install tsify. I'm assuming you already have typescript installed. :-)
+
+```bash
+npm install tsify
+```
+
+Then in your .ts files you need to make sure you either require/import the functions defining step definitions, or declare them as global:
+
+```typescript
+declare const Given, When, Then;
+// OR
+const {given, when, then} = require('cypress-cucumber-preprocessor/resolveStepDefinition')
 ```
 
 ## TODO
 
-Typescript!
+Tags!
 (Maybe?) Option to customize mocha template ( #3 ) 
 
 ## Credit where it's due!
