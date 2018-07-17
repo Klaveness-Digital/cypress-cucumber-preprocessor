@@ -2,13 +2,15 @@
 All notable changes to this project will be documented in this file.
 
 ## [1.2.2] - 2017-07-17
-Add example of sharing context between given, when, then steps to README file (#37).
+### Added
+Documented example of sharing context between given, when, then steps to README file (#37).
 
 ## [1.2.1] - 2017-07-14
-Added instructions for using TypeScript ( #61  - thanks to @KeithGillette for discovering that it never actually worked, made possible by 1.2.0 with the input from @bensampaio )
+### Added
+Instructions for using TypeScript ( #61  - thanks to @KeithGillette for discovering that it never actually worked, made possible by 1.2.0 with the input from @bensampaio )
 
 ## [1.2.0] - 2018-07-13
-
+### Fixed
 Works with Imports/Exports ! ( #52 #20 )
 This possibly opens the road to using TypeScript as well :-)
 Thanks to @bensampaio for the dead on suggestion how to get around this problem. :-) 
