@@ -1,11 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.2.2] - 2017-07-17
+## [1.3.0] - 2018
+### Fixed
+Fix output path for bundle directory on windows platform ( #81 - Thanks @agentHoover !)
+### Added
+Improved TypeScript documentation example ( #92 - thanks @mhogdson ! )
+
+## [1.2.2] - 2018-07-17
 ### Added
 Documented example of sharing context between given, when, then steps to README file (#37).
 
-## [1.2.1] - 2017-07-14
+## [1.2.1] - 2018-07-14
 ### Added
 Instructions for using TypeScript ( #61  - thanks to @KeithGillette for discovering that it never actually worked, made possible by 1.2.0 with the input from @bensampaio )
 
