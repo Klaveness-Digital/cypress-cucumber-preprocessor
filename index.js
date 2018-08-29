@@ -1,14 +1,12 @@
 /* eslint-disable no-eval */
 const fs = require("fs");
-const { EventEmitter } = require("events");
 const through = require("through");
 const path = require("path");
 const browserify = require("@cypress/browserify-preprocessor");
 const log = require("debug")("cypress:cucumber");
 const glob = require("glob");
 const cosmiconfig = require("cosmiconfig");
-
-const watchers = {};
+const chokidar = require("chokidar");
 
 // This is the template for the file that we will send back to cypress instead of the text of a
 // feature file
@@ -52,18 +50,14 @@ const createPattern = () => `${stepDefinitionPath()}/**/*.+(js|ts)`;
 
 const pattern = createPattern();
 
-const stepDefinitionsPaths = [].concat(glob.sync(pattern));
+const getStepDefinitionsPaths = () => [].concat(glob.sync(pattern));
 
 const compile = spec => {
   log("compiling", spec);
-  const stepDefinitionsToRequire = stepDefinitionsPaths.map(
+  const stepDefinitionsToRequire = getStepDefinitionsPaths().map(
     sdPath => `require('${sdPath}')`
   );
   return createCucumber(spec, stepDefinitionsToRequire);
-};
-
-const touch = filename => {
-  fs.utimesSync(filename, new Date(), new Date());
 };
 
 const transform = file => {
@@ -72,6 +66,7 @@ const transform = file => {
   function write(buf) {
     data += buf;
   }
+
   function end() {
     if (file.match(".feature$")) {
       log("compiling feature ", file);
@@ -85,30 +80,25 @@ const transform = file => {
   return through(write, end);
 };
 
+const touch = filename => {
+  fs.utimesSync(filename, new Date(), new Date());
+};
+
+let watcher;
 const preprocessor = (options = browserify.defaultOptions) => file => {
   if (options.browserifyOptions.transform.indexOf(transform) === -1) {
     options.browserifyOptions.transform.unshift(transform);
   }
 
   if (file.shouldWatch) {
-    stepDefinitionsPaths.forEach(stepPath => {
-      if (watchers[stepPath] === undefined) {
-        const stepFile = new EventEmitter();
-        stepFile.filePath = stepPath;
-
-        const bundleDir = file.outputPath.split(path.sep).slice(0, -2);
-        const outputName = stepPath.split("/").slice(-3);
-        stepFile.outputPath = bundleDir.concat(outputName).join("/");
-        stepFile.shouldWatch = file.shouldWatch;
-
-        stepFile.on("rerun", () => {
-          touch(file.filePath);
-        });
-        watchers[stepPath] = browserify(options)(stepFile);
-      } else {
-        log(`Watcher already set for ${stepPath}`);
-      }
-    });
+    if (watcher) {
+      watcher.close();
+    }
+    watcher = chokidar
+      .watch(stepDefinitionPath(), { ignoreInitial: true })
+      .on("all", () => {
+        touch(file.filePath);
+      });
   }
   return browserify(options)(file);
 };

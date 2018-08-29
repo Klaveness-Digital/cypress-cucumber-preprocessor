@@ -1,9 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.3.0] - 2018
+## [1.4.0] - 2018-08-29
+
+### Fixed
+Reload step definitions paths after cypress starts up. This allows for recognizing files created while cypress is running. ( Thanks @cvqprs for letting me know about this, rather alarming, issue! )
+
+### Chores
+Watch mode code simplification
+
+## [1.3.0] - 2018-08-27
+
 ### Fixed
 Fix output path for bundle directory on windows platform ( #81 - Thanks @agentHoover !)
+
 ### Added
 Improved TypeScript documentation example ( #92 - thanks @mhogdson ! )
 
@@ -16,6 +26,7 @@ Documented example of sharing context between given, when, then steps to README 
 Instructions for using TypeScript ( #61  - thanks to @KeithGillette for discovering that it never actually worked, made possible by 1.2.0 with the input from @bensampaio )
 
 ## [1.2.0] - 2018-07-13
+
 ### Fixed
 Works with Imports/Exports ! ( #52 #20 )
 This possibly opens the road to using TypeScript as well :-)
