@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [1.5.0] - 2018-09-06
 
+### Fixed
+The return of This! in the step definitions. ( #96 - Thanks for reporting christiansaiki !)
+ 
 ## [1.4.0] - 2018-08-29
 
 ### Fixed
