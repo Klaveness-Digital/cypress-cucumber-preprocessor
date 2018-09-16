@@ -1,5 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+
+## [1.5.1] - 2018-09-16
+
+### Fixed
+Display variable names in scenario outlines instead of placeholder ( #98 - Thanks @novascreen !)
+
 ## [1.5.0] - 2018-09-06
 
 ### Fixed
