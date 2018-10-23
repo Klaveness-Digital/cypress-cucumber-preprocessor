@@ -17,7 +17,6 @@ const createCucumber = (spec, toRequire) =>
   const When = window.When = window.when = when;
   const Then = window.Then = window.then = then;
   window.defineParameterType = defineParameterType;
-  const { createTestFromScenario } = require('cypress-cucumber-preprocessor/createTestFromScenario');
   const { createTestsFromFeature } = require('cypress-cucumber-preprocessor/createTestsFromFeature');
   ${eval(toRequire).join("\n")}
   const {Parser, Compiler} = require('gherkin');

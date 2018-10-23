@@ -1,11 +1,22 @@
 {
   "name": "cypress-cucumber-preprocessor",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "Run gherkin-syntaxed specs with cypress.io",
   "main": "index.js",
   "scripts": {
     "test": "eslint . && jest && cypress run",
     "fixStyle": "eslint . --fix"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged && jest"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
   },
   "repository": {
     "type": "git",
@@ -30,6 +41,7 @@
     "cosmiconfig": "^4.0.0",
     "cucumber": "^4.2.1",
     "cucumber-expressions": "^6.0.1",
+    "cucumber-tag-expressions": "^1.1.1",
     "debug": "^3.0.1",
     "gherkin": "^5.1.0",
     "glob": "^7.1.2",
@@ -44,6 +56,8 @@
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-prettier": "^2.6.0",
     "jest": "^23.1.0",
+    "husky": "^1.1.1",
+    "lint-staged": "^7.3.0",
     "prettier": "^1.13.5"
   },
   "jest": {

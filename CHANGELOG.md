@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.6.0] - 2018-10-23
+### Added
+Finally! Tagging tests! (#100, #58, #46, #24 - Thanks @GlynnJKW @ChrisBAshton @jlin412  @sawasawasawa @lucetius for all the great work!)
+ 
 ## [1.5.1] - 2018-09-16
 
 ### Fixed

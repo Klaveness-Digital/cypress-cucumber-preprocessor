@@ -90,6 +90,15 @@ Feature: The Facebook
     Then I see "Facebook" in the title
 ```
 
+## Tagging tests
+You can use tags to select which test should run using [cucumber's tag expressions](https://github.com/cucumber/cucumber/tree/master/tag-expressions).
+Keep in mind we are using newer syntax, eg. `'not @foo and (@bar or @zap)'`.
+In order to initialize tests using tags you will have to run cypress and pass TAGS environment variable.
+
+Example:
+  ```cypress run -e TAGS='not @foo and (@bar or @zap)'```
+
+
 ## Configuration
 Add it to your plugins:
 
@@ -201,8 +210,7 @@ const {given, when, then} = require('cypress-cucumber-preprocessor/resolveStepDe
 
 ## TODO
 
-Tags!
-(Maybe?) Option to customize mocha template ( #3 ) 
+(Maybe?) Option to customize mocha template ( #3 )
 
 ## Credit where it's due!
 

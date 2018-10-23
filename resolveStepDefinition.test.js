@@ -18,6 +18,10 @@ window.cy = {
   log: jest.fn()
 };
 
+window.Cypress = {
+  env: jest.fn()
+};
+
 const readAndParseFeatureFile = featureFilePath => {
   const spec = fs.readFileSync(featureFilePath);
   return new Parser().parse(spec.toString());
@@ -76,6 +80,33 @@ describe("Custom Parameter Types", () => {
   createTestsFromFeature(
     readAndParseFeatureFile(
       "./cypress/integration/CustomParameterTypes.feature"
+    )
+  );
+});
+
+describe("Tags implementation", () => {
+  require("./cypress/support/step_definitions/tags_implementation");
+
+  createTestsFromFeature(
+    readAndParseFeatureFile("./cypress/integration/TagsImplementation.feature")
+  );
+});
+
+describe("Tags with env TAGS set", () => {
+  window.Cypress = {
+    env: () => "@test-tag and not @ignore-tag"
+  };
+  require("./cypress/support/step_definitions/tags_implementation_with_env_set");
+
+  createTestsFromFeature(
+    readAndParseFeatureFile(
+      "./cypress/integration/TagsImplementationWithEnvSet.feature"
+    )
+  );
+
+  createTestsFromFeature(
+    readAndParseFeatureFile(
+      "./cypress/integration/TagsImplementationWithEnvSetScenarioLevel.feature"
     )
   );
 });
