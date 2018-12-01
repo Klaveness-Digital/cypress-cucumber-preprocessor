@@ -208,6 +208,12 @@ declare const Given, When, Then;
 const {given, when, then} = require('cypress-cucumber-preprocessor/resolveStepDefinition')
 ```
 
+## Using Webpack
+
+You can also use a Webpack loader to process feature files (TypeScript supported). To see how it is done please take 
+a look here 
+[cypress-cucumber-webpack-typescript-example](https://github.com/TheBrainFamily/cypress-cucumber-webpack-typescript-example)
+
 ## TODO
 
 (Maybe?) Option to customize mocha template ( #3 )

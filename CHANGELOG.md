@@ -1,5 +1,5 @@
 # Changelog
-All notable changes to this project will be documented in this file.
+Starting with version 1.6.0 all the changes will be documented [here](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor/releases) 
 
 ## [1.6.0] - 2018-10-23
 ### Added
