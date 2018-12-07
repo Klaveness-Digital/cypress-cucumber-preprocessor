@@ -2,7 +2,7 @@
   "name": "cypress-cucumber-preprocessor",
   "version": "0.0.0-development",
   "description": "Run gherkin-syntaxed specs with cypress.io",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "eslint . && jest && cypress run",
     "fixStyle": "eslint . --fix",
@@ -36,7 +36,7 @@
   },
   "homepage": "https://github.com/TheBrainFamily/cypress-cucumber-preprocessor#readme",
   "dependencies": {
-    "@cypress/browserify-preprocessor": "^1.0.3",
+    "@cypress/browserify-preprocessor": "^1.1.2",
     "chai": "^4.1.2",
     "chokidar": "^2.0.4",
     "cosmiconfig": "^4.0.0",
@@ -49,20 +49,20 @@
     "through": "^2.3.8"
   },
   "devDependencies": {
-    "cypress": "^3.0.1",
+    "cypress": "^3.1.3",
     "eslint": "^4.16.0",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-cypress": "^2.0.1",
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-prettier": "^2.6.0",
-    "jest": "^23.1.0",
+    "jest": "^23.6.0",
     "husky": "^1.1.1",
     "lint-staged": "^7.3.0",
     "prettier": "^1.13.5",
     "semantic-release": "^15.12.3"
   },
   "jest": {
-    "setupTestFrameworkScriptFile": "<rootDir>/setupTestFramework.js"
+    "setupTestFrameworkScriptFile": "<rootDir>/lib/setupTestFramework.js"
   }
 }

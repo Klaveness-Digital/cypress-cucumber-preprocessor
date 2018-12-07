@@ -2,7 +2,7 @@
 
 const {
   shouldProceedCurrentStep
-} = require("cypress-cucumber-preprocessor/tagsHelper"); // eslint-disable-line
+} = require("cypress-cucumber-preprocessor/lib/tagsHelper"); // eslint-disable-line
 
 let parsedTags;
 

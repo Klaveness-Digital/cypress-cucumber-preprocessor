@@ -1,12 +1,14 @@
-/* global when then */
-when("I run one successful step", () => {
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { Then, When } from "cypress-cucumber-preprocessor/steps";
+
+When("I run one successful step", () => {
   expect(true).to.equal(true);
 });
 
-when("I run another that's unsuccessful", () => {
+When("I run another that's unsuccessful", () => {
   expect(true).to.equal(false);
 });
 
-then("I don't run the last step", () => {
+Then("I don't run the last step", () => {
   throw new Error("this test should be skipped");
 });

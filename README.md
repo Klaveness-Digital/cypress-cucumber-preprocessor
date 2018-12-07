@@ -2,31 +2,63 @@
 [![CircleCI](https://circleci.com/gh/TheBrainFamily/cypress-cucumber-preprocessor.svg?style=shield)](https://circleci.com/gh/TheBrainFamily/cypress-cucumber-preprocessor)
 # Run cucumber/gherkin-syntaxed specs with cypress.io
 
-Please take a look at an example here:
+Follow the Setup steps, or if you prefer to hack on a working example, take a look at [https://github.com/TheBrainFamily/cypress-cucumber-example](https://github.com/TheBrainFamily/cypress-cucumber-example
+)
 
-https://github.com/TheBrainFamily/cypress-cucumber-example
+## Setup
 
-
-Important steps:
-
-## Installation
+### Installation
 Install this plugin:
 
 ```shell
 npm install --save-dev cypress-cucumber-preprocessor
 ```
 
-## Step definitions
+### Cypress Configuration
+Add it to your plugins:
+
+cypress/plugins/index.js
+```javascript
+const cucumber = require('cypress-cucumber-preprocessor').default
+module.exports = (on, config) => {
+  on('file:preprocessor', cucumber())
+}
+```
+
+Step definition files are by default in: cypress/support/step_definitions. If you want to put them somewhere please use [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) format. For example, add to your package.json :
+
+```javascript
+  "cypress-cucumber-preprocessor": {
+    "step_definitions": "cypress/support/step_definitions/"
+  }
+```
+
+## Usage
+### Feature files
+
+Put your feature files in cypress/integration/
+
+Example: cypress/integration/Google.feature
+```gherkin
+Feature: The Facebook
+
+  I want to open a social network page
+
+  Scenario: Opening a social network page
+    Given I open Google page
+    Then I see "google" in the title
+```
+
+### Step definitions
 
 Put your step definitions in cypress/support/step_definitions
 
 Examples:
 cypress/support/step_definitions/google.js
 ```javascript
-/* global Given */
-// you can have external state, and also require things!
-const url = 'https://google.com'
+import { Given } from "cypress-cucumber-preprocessor/steps";
 
+const url = 'https://google.com'
 Given('I open Google page', () => {
   cy.visit(url)
 })
@@ -34,7 +66,8 @@ Given('I open Google page', () => {
 
 cypress/support/step_definitions/shared.js
 ```javascript
-/* global Then */
+import { Then } from "cypress-cucumber-preprocessor/steps";
+
 Then(`I see {string} in the title`, (title) => {
   cy.title().should('include', title)
 })
@@ -46,7 +79,17 @@ Since Given/When/Then are on global scope please use
 ```
 to make IDE/linter happy
 
-We had a pattern to import those explicitly, but for some reason it was messing up the watch mode on Linux :-( (#10)
+or import them directly
+
+### Running
+
+Run your cypress the way you would usually do, for example:
+
+```bash
+./node_modules/.bin/cypress open
+```
+
+click on a .feature file on the list of specs, and see the magic happening!
 
 ### Background section
 
@@ -55,20 +98,20 @@ Adding a background section to your feature will enable you to run steps before 
 ```javascript
 let counter = 0;
 
-given("counter has been reset", () => {
+Given("counter has been reset", () => {
   counter = 0;
 });
 
-when("counter is incremented", () => {
+When("counter is incremented", () => {
   counter += 1;
 });
 
-then("counter equals {int}", value => {
+Then("counter equals {int}", value => {
   expect(counter).to.equal(value);
 });
 ```
 
-```
+```gherkin
 Feature: Background Section
   
    Background:
@@ -90,21 +133,21 @@ You can share context between step definitions using `cy.as()` alias.
 
 Example:
 ```javascript
-given('I go to the add new item page', () => {
+Given('I go to the add new item page', () => {
   cy.visit('/addItem');
 });
 
-when('I add a new item', () => { 
+When('I add a new item', () => { 
   cy.get('input[name="addNewItem"]').as('addNewItemInput');
   cy.get('@addNewItemInput').type('My item');
   cy.get('button[name="submitItem"]').click();
 })
 
-then('I see new item added', () => {
+Then('I see new item added', () => {
   cy.get('td:contains("My item")');
 });
 
-then('I can add another item', () => {
+Then('I can add another item', () => {
   expect(cy.get('@addNewItemInput').should('be.empty');
 });
 
@@ -112,21 +155,8 @@ then('I can add another item', () => {
 
 For more information please visit: https://docs.cypress.io/api/commands/as.html
 
-## Spec/Feature files
-Your feature file in cypress/integration:
 
-Example: cypress/integration/Facebook.feature
-```gherkin
-Feature: The Facebook
-
-  I want to open a social network page
-
-  Scenario: Opening a social network page
-    Given I open Facebook page
-    Then I see "Facebook" in the title
-```
-
-## Tagging tests
+### Tagging tests
 You can use tags to select which test should run using [cucumber's tag expressions](https://github.com/cucumber/cucumber/tree/master/tag-expressions).
 Keep in mind we are using newer syntax, eg. `'not @foo and (@bar or @zap)'`.
 In order to initialize tests using tags you will have to run cypress and pass TAGS environment variable.
@@ -134,29 +164,10 @@ In order to initialize tests using tags you will have to run cypress and pass TA
 Example:
   ```cypress run -e TAGS='not @foo and (@bar or @zap)'```
 
+## Custom Parameter Type Resolves
 
-## Configuration
-Add it to your plugins:
-
-cypress/plugins/index.js
-```javascript
-const cucumber = require('cypress-cucumber-preprocessor').default
-module.exports = (on, config) => {
-  on('file:preprocessor', cucumber())
-}
-```
-
-Step definition files are by default in: cypress/support/step_definitions. If you want to put them somewhere please use [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) format. For example, add to your package.json :
-
-```javascript
-  "cypress-cucumber-preprocessor": {
-    "step_definitions": "cypress/support/step_definitions/"
-  }
-```
-
-## Running
-
-Run your cypress the way you would normally do :) click on a .feature file on the list of specs, and see the magic happening!
+Thanks to @Oltodo we can now use Custom Parameter Type Resolves. 
+Here is an [example](cypress/support/step_definitions/customParameterTypes.js) with related [.feature file](cypress/integration/CustomParameterTypes.feature)
 
 ## Cucumber Expressions
 
@@ -165,29 +176,24 @@ We use https://docs.cucumber.io/cucumber/cucumber-expressions/ to parse your .fe
 ## Development
 
 Install all dependencies:
-```javascript
+```bash
 npm install
 ```
 
 Link the package:
-```javascript
+```bash
 npm link 
 npm link cypress-cucumber-preprocessor
 ```
 
 Run tests:
-```javascript
+```bash
 npm test
 ```
 
 ## Disclaimer
 
 Please let me know if you find any issues or have suggestions for improvements.
-
-## Custom Parameter Type Resolves
-
-Thanks to @Oltodo we can know use Custom Parameter Type Resolves. 
-Here is an [example](cypress/support/step_definitions/customParameterTypes.js) with related [.feature file](cypress/integration/CustomParameterTypes.feature)
 
 ## WebStorm Support
 
@@ -241,7 +247,7 @@ Then in your .ts files you need to make sure you either require/import the funct
 ```typescript
 declare const Given, When, Then;
 // OR
-const {given, when, then} = require('cypress-cucumber-preprocessor/resolveStepDefinition')
+import { Given, Then, When } from "cypress-cucumber-preprocessor/steps";
 ```
 
 ## Using Webpack

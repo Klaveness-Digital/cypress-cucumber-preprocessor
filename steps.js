@@ -1,14 +1,12 @@
-// reexporting here for backward compability
+// We know this is a duplicate of ./resolveStepDefinition.
+// We will remove that one soon and leave only this one in a future version.
+
 const {
   given,
   when,
   then,
   defineParameterType
 } = require("./lib/resolveStepDefinition");
-
-console.warn(
-  "DEPRECATION WARNING! Please change your imports from cypress-cucumber-preprocessor/resolveStepDefinition to cypress-cucumber-preprocessor/steps"
-);
 
 module.exports = {
   given,
