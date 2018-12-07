@@ -2,7 +2,7 @@
 [![CircleCI](https://circleci.com/gh/TheBrainFamily/cypress-cucumber-preprocessor.svg?style=shield)](https://circleci.com/gh/TheBrainFamily/cypress-cucumber-preprocessor)
 # Run cucumber/gherkin-syntaxed specs with cypress.io
 
-Follow the Setup steps, or if you prefer to hack on a working example, take a look at [https://github.com/TheBrainFamily/cypress-cucumber-example](https://github.com/TheBrainFamily/cypress-cucumber-example
+Follow the Setup steps, or if you prefer to hack on a working example, take a look [https://github.com/TheBrainFamily/cypress-cucumber-example](https://github.com/TheBrainFamily/cypress-cucumber-example
 )
 
 ## Setup
@@ -25,15 +25,6 @@ module.exports = (on, config) => {
 }
 ```
 
-Step definition files are by default in: cypress/support/step_definitions. If you want to put them somewhere please use [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) format. For example, add to your package.json :
-
-```javascript
-  "cypress-cucumber-preprocessor": {
-    "step_definitions": "cypress/support/step_definitions/"
-  }
-```
-
-## Usage
 ### Feature files
 
 Put your feature files in cypress/integration/
@@ -51,7 +42,73 @@ Feature: The Facebook
 
 ### Step definitions
 
-Put your step definitions in cypress/support/step_definitions
+#### Cypress Cucumber Preprocessor Style (recommended!)
+
+##### Step definitions unique for the feature
+
+###### Configuration
+First please use [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) to create a configuration for the plugin, for example put this section:
+
+```json
+"cypress-cucumber-preprocessor": {
+  "nonGlobalStepDefinitions": true
+}
+``` 
+inside your package.json. (this will become the default option in a future version)
+
+###### Step definitions creation
+Then put your step definitions in cypress/integration with the folder name matching the .feature filename.
+Easier to show than to explain, so, assuming the feature file is in cypress/integration/Google.feature , as proposed above, the preprocessor will read all the files inside cypress/integration/Google/, so: 
+
+cypress/integration/Google/google.js (or any other .js file in the same path)
+```javascript
+import { Given } from "cypress-cucumber-preprocessor/steps";
+
+const url = 'https://google.com'
+Given('I open Google page', () => {
+  cy.visit(url)
+})
+```
+
+This is a good place to put before/beforeEach/after/afterEach hooks related to THAT PARTICULAR FEATURE. This is incredibly hard to get right with pure cucumber.  
+
+##### Reusable step definitions
+
+We also have a way to create reusable step definitions. Put them in cypress/integration/common/
+
+Example:
+cypress/integration/common/i_see_string_in_the_title.js
+```javascript
+import { Then } from "cypress-cucumber-preprocessor/steps";
+
+Then(`I see {string} in the title`, (title) => {
+  cy.title().should('include', title)
+})
+```
+
+This is a good place to put global before/beforeEach/after/afterEach hooks. 
+
+##### Why a new pattern?
+The problem with the legacy structure is that everything is global. This is problematic for multiple reasons.
+- It makes it harder to create .feature files that read nicely - you have to make sure you are not stepping on toes of already existing step definitions. You should be able to write your tests without worrying about reusability, complex regexp matches, or anything like that. Just write a story. Explain what you want to see without getting into the details. Reuse in the .js files, not in something you should consider an always up-to-date, human-readable documentation.
+- The startup times get much worse - because we have to analyze all the different step definitions so we can match the .feature files to the test.
+- Hooks are problematic. If you put before() in a step definition file, you might think that it will run only for the .feature file related to that step definition. You try the feature you work on, everything seems fine and you push the code. Here comes a surprise - it will run for ALL .feature files in your whole project. Very unintuitive. And good luck debugging problems caused by that! This problem was not unique to this plugin, bo to the way cucumberjs operates. 
+ Let's look how this differs with the proposed structure. Assuming you want to have a hook before ./Google.feature file, just create a ./Google/before.js and put the hook there. This should take care of long requested feature - (https://github.com/TheBrainFamily/cypress-cucumber-preprocessor/issues/25)[#25]
+
+If you have a few tests the "oldschool" style is completely fine. But for a large enterprise-grade application, with hundreds or sometimes thousands of .feature files, the fact that everything is global becomes a maintainability nightmare. 
+
+#### Oldschool/Legacy Cucumber style (please let us know if you decide to use it!)
+
+##### Step Definition location configuration
+Step definition files are by default in: cypress/support/step_definitions. If you want to put them somewhere please use [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) format. For example, add to your package.json :
+
+```javascript
+  "cypress-cucumber-preprocessor": {
+    "step_definitions": "cypress/support/step_definitions/"
+  }
+```
+
+Follow your configuration or use the defaults and put your step definitions in cypress/support/step_definitions
 
 Examples:
 cypress/support/step_definitions/google.js
@@ -73,13 +130,16 @@ Then(`I see {string} in the title`, (title) => {
 })
 ```
 
+
+#### Given/When/Then functions
+
 Since Given/When/Then are on global scope please use
 ```javascript
 /* global Given, When, Then */
 ```
 to make IDE/linter happy
 
-or import them directly
+or import them directly as shown in the above examples
 
 ### Running
 
