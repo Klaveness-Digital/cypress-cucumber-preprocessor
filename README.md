@@ -59,6 +59,12 @@ First please use [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) to 
 ``` 
 inside your package.json. (this will become the default option in a future version)
 
+Option | Default value | Description
+------------ | ------------- | -------------
+commonPath | a common folder inside the step_definitions folder | Define the path to a folder containing all common step definitions of your tests
+nonGlobalStepDefinitions | true | If true use the Cypress Cucumber Preprocessor Style pattern for placing step definitions files. If false, we will use the "oldschool" (everything is global) Cucumber style
+step_definitions | | Path to the folder containing our step definitions
+
 ###### Step definitions creation
 Then put your step definitions in cypress/integration with the folder name matching the .feature filename.
 Easier to show than to explain, so, assuming the feature file is in cypress/integration/Google.feature , as proposed above, the preprocessor will read all the files inside cypress/integration/Google/, so: 
