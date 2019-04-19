@@ -25,6 +25,7 @@ module.exports = (on, config) => {
 }
 ```
 
+
 ### Feature files
 
 Put your feature files in cypress/integration/
@@ -278,6 +279,42 @@ Here is an [example](cypress/support/step_definitions/customParameterTypes.js) w
 ## Cucumber Expressions
 
 We use https://docs.cucumber.io/cucumber/cucumber-expressions/ to parse your .feature file, please use that document as your reference 
+
+## cucumber.json file generation
+
+The cypress-cucumber-preprocessor can generate cucumber.json file output as it runs the features files. This is separate from, and in addition to, any mocha reporter configured in cypress.
+
+These files are intended to be used with one of the many available cucumber report generator packages. 
+Seems to work fine with both https://github.com/jenkinsci/cucumber-reports-plugin and https://github.com/wswebcreation/multiple-cucumber-html-reporter
+
+
+Output, by default, is written to the folder cypress/cucumber-json/, and one file is generated per feature.
+
+ 
+This behaviour is configurable. Use cosmiconfig to create a configuration for the plugin, see step definition discussion above, 
+and add the following to the cypress-cucumber-preprocessor section in package.json to turn it off or change the defaults:
+
+```
+  "cypress-cucumber-preprocessor": {
+    "cucumberJson": {
+      "generate": true,
+      "outputFolder": "cucumber-json",
+      "filePrefix": "cucumber-",
+      "fileSuffix": ""
+    }
+  }
+```
+
+Here:
+
+outputFolder: The folder to write the files to, defaults to ```./cypress/cucumber-json```
+
+filePrefix: A separate json file is generated for each feature based on the name of the feature file. All generated file names will be prefixed with this option if specified.
+
+fileSuffix: A suffix to add to each generated filename, defaults to '.cucumber'
+
+generate: Flag, output cucumber.json or not, defaults to true.
+
 
 ## Development
 
