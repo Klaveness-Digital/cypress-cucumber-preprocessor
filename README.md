@@ -319,7 +319,7 @@ Then(`{word} is chosen`, choice => {})
  (See #56)
 
 
-## TypeScript
+## TypeScript without Webpack
 
 If you want to use TypeScript put this in your plugins/index.js:
 
@@ -352,7 +352,9 @@ declare const Given, When, Then;
 import { Given, Then, When } from "cypress-cucumber-preprocessor/steps";
 ```
 
-## Using Webpack
+To see an example take a look here: [https://github.com/TheBrainFamily/cypress-cucumber-typescript-example/](https://github.com/TheBrainFamily/cypress-cucumber-typescript-example/)
+
+## Using Webpack (helpful for using TypeScript)
 
 You can also use a Webpack loader to process feature files (TypeScript supported). To see how it is done please take 
 a look here 
