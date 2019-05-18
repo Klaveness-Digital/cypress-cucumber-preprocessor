@@ -9,6 +9,9 @@
     "fixStyle": "eslint . --fix",
     "semantic-release": "semantic-release"
   },
+  "bin": {
+    "cypress-tags": "cypress-tags.js"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged && jest"

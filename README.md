@@ -237,7 +237,11 @@ Keep in mind we are using newer syntax, eg. `'not @foo and (@bar or @zap)'`.
 In order to initialize tests using tags you will have to run cypress and pass TAGS environment variable.
 
 Example:
-  ```cypress run -e TAGS='not @foo and (@bar or @zap)'```
+  ```./node_modules/.bin/cypress-tags run -e TAGS='not @foo and (@bar or @zap)'```
+
+Please note - we use our own cypress-tags wrapper to speed things up.
+For more details and examples please take a look to the example repo:
+[cypress-cucumber-example](https://github.com/TheBrainFamily/cypress-cucumber-example)
 
 ### Smart tagging
 Start your tests without setting any tags. And then put a @focus on the scenario (or scenarios) you want to focus on while development or bug fixing.
