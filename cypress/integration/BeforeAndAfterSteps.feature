@@ -1,35 +1,32 @@
 Feature: Using Before and After
 
-# After is implicitly tested by resetting the counter.
+Scenario: With Untagged Before
+    Then Untagged Before was called once
+    And Tagged Before was not called
 
-Scenario: With Before only
-    Given I do something
-    And Something else
-    Then Before was called once
+# After is tested in following scenario by verifying that the After ran at the end of the previous one
+Scenario: With Untagged After part 1
+  Given I executed empty step
+
+Scenario: With Untagged After part 2
+  Then Flag should be set by untagged After
+
+# After is tested in following scenario by verifying that the After ran at the end of the previous one.
+@withTaggedAfter
+Scenario: With tagged After part 1
+  Given I executed empty step
+
+Scenario: With tagged After part 2
+  Then Flag should be set by tagged After
 
 @withTaggedBefore
 Scenario: With tagged Before only
-    Given I do something
-    And Something else
-    Then Before with tag was called once
-
-Scenario: With After only
-    Given I do something
-    And Something else
-
-@withTaggedAfter
-Scenario: With tagged After only
-    Given I do something
-    And Something else
-
-Scenario: With Before and After
-    Given I do something
-    And Something else
-    Then Before was called once
+  Then Tagged Before was called once
+  And Untagged Before was called once
 
 @withTaggedBefore
-@withTaggedAfter
-Scenario: With tagged After only
-    Given I do something
-    And Something else
-    Then Before with tag was called once
+@withAnotherTaggedBefore
+Scenario: With multiple tags
+    Given I executed empty step
+    Then Tagged Before was called twice
+    And Untagged Before was called once
