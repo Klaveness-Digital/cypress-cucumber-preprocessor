@@ -1,45 +1,52 @@
-/* global given, when, then, before, after */
 /* eslint-env mocha */
+/* eslint-disable import/no-extraneous-dependencies */
+const {
+  Before,
+  After,
+  Given,
+  Then,
+  When
+} = require("cypress-cucumber-preprocessor/steps");
 
 let beforeCounter = 0;
 let beforeWithTagCounter = 0;
 
-before(() => {
+Before(() => {
   beforeCounter += 1;
 });
 
-before({ tags: "@withTaggedBefore" }, () => {
+Before({ tags: "@withTaggedBefore" }, () => {
   beforeWithTagCounter += 1;
 });
 
-before({ tags: "@willNeverRun" }, () => {
+Before({ tags: "@willNeverRun" }, () => {
   throw new Error("XXX: before hook unexpectedly called.");
 });
 
-after({ tags: "@willNeverRun" }, () => {
+After({ tags: "@willNeverRun" }, () => {
   throw new Error("XXX: after hook unexpectedly called.");
 });
 
-after(() => {
+After(() => {
   beforeCounter = 0;
 });
 
-after({ tags: "@withTaggedAfter" }, () => {
+After({ tags: "@withTaggedAfter" }, () => {
   beforeWithTagCounter = 0;
 });
 
-given("I do something", () => {});
+Given("I do something", () => {});
 
-when("Something else", () => {});
+When("Something else", () => {});
 
-then("Before was called once", () => {
+Then("Before was called once", () => {
   expect(beforeCounter).to.equal(1);
 });
 
-then("Before with tag was called once", () => {
+Then("Before with tag was called once", () => {
   expect(beforeWithTagCounter).to.equal(1);
 });
 
-then("Before was not called", () => {
+Then("Before was not called", () => {
   expect(beforeCounter).to.equal(1);
 });
