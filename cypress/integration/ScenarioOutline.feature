@@ -34,3 +34,11 @@ Feature: Being a plugin handling Scenario Outline
       | 1     | 2      | 3      |
       | 3     | 4      | 7      |
       | 5     | 6      | 11     |
+
+  Scenario Outline: Multiple variables <here> and <here>
+    When I enter variable "<here>" and "<here>"
+    Then I verify that both variables have "<here>" as value
+
+    Examples:
+      | here |
+      | abc  |
