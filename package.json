@@ -70,7 +70,9 @@
     "semantic-release": "^15.12.3"
   },
   "jest": {
-    "setupTestFrameworkScriptFile": "<rootDir>/lib/testHelpers/setupTestFramework.js"
+    "setupFilesAfterEnv": [
+      "<rootDir>/lib/testHelpers/setupTestFramework.js"
+    ]
   },
   "config": {
     "commitizen": {
