@@ -102,7 +102,7 @@ This is a good place to put global before/beforeEach/after/afterEach hooks.
 The problem with the legacy structure is that everything is global. This is problematic for multiple reasons.
 - It makes it harder to create .feature files that read nicely - you have to make sure you are not stepping on toes of already existing step definitions. You should be able to write your tests without worrying about reusability, complex regexp matches, or anything like that. Just write a story. Explain what you want to see without getting into the details. Reuse in the .js files, not in something you should consider an always up-to-date, human-readable documentation.
 - The startup times get much worse - because we have to analyze all the different step definitions so we can match the .feature files to the test.
-- Hooks are problematic. If you put before() in a step definition file, you might think that it will run only for the .feature file related to that step definition. You try the feature you work on, everything seems fine and you push the code. Here comes a surprise - it will run for ALL .feature files in your whole project. Very unintuitive. And good luck debugging problems caused by that! This problem was not unique to this plugin, bo to the way cucumberjs operates. 
+- Hooks are problematic. If you put before() in a step definition file, you might think that it will run only for the .feature file related to that step definition. You try the feature you work on, everything seems fine and you push the code. Here comes a surprise - it will run for ALL .feature files in your whole project. Very unintuitive. And good luck debugging problems caused by that! This problem was not unique to this plugin, but to the way cucumberjs operates. 
  Let's look how this differs with the proposed structure. Assuming you want to have a hook before ./Google.feature file, just create a ./Google/before.js and put the hook there. This should take care of long requested feature - [https://github.com/TheBrainFamily/cypress-cucumber-preprocessor/issues/25](#25)
 
 If you have a few tests the "oldschool" style is completely fine. But for a large enterprise-grade application, with hundreds or sometimes thousands of .feature files, the fact that everything is global becomes a maintainability nightmare. 
@@ -147,7 +147,7 @@ Then(`I see {string} in the title`, (title) => {
 ```
 
 
-#### Given/When/Then functions
+### Given/When/Then functions
 
 Since Given/When/Then are on global scope please use
 ```javascript
@@ -156,6 +156,46 @@ Since Given/When/Then are on global scope please use
 to make IDE/linter happy
 
 or import them directly as shown in the above examples
+
+### Cucumber Before and After hooks
+
+The cypress-cucumber-preprocessor supports both the mocha `before/beforeEach/after/afterEach` hooks and cucumber `Before` and `After` hooks.
+
+The cucumber hooks implementation fully supports tagging as described in [the cucumber js documentation](https://github.com/cucumber/cucumber-js/blob/master/docs/support_files/hooks.md). So they can be conditionally selected based on the tags applied to the Scenario. This is not possible with mocha hooks.
+
+Cucumber Before hooks run after all mocha before and beforeEach hooks have completed and the cucumber After hooks run before all the mocha afterEach and after hooks.
+
+#### Using cucumber hooks
+
+```javascript
+const {
+  Before,
+  After,
+  Given,
+  Then
+} = require("cypress-cucumber-preprocessor/steps");
+
+// this will get called before each scenario
+Before(() => {
+  beforeCounter += 1;
+  beforeWithTagCounter = 0;
+});
+
+// this will only get called before scenarios tagged with @foo
+Before({ tags: "@foo" }, () => {
+  beforeWithTagCounter += 1;
+});
+
+Given("My Step Definition", () => {
+  // ...test code here
+})
+
+```
+
+Note: to avoid confusion with the similarly named mocha before and after hooks, the cucumber hooks are not exported onto global scope. So they need explicitly importing as shown above.
+
+
+
 
 ### Running
 
