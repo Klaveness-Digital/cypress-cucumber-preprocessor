@@ -18,5 +18,8 @@ jobs:
           name: run tests
           command: npm test
       - run:
+          name: slow test run, for sanity
+          command: npm run test:each
+      - run:
           name: release
           command: npm run semantic-release || true
