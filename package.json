@@ -4,7 +4,9 @@
   "description": "Run gherkin-syntaxed specs with cypress.io",
   "main": "lib/index.js",
   "scripts": {
-    "test": "eslint . && jest && cypress run",
+    "test": "eslint . && jest && npm run test:all",
+    "test:all": "cypress run --spec \"**/*.features\"",
+    "test:each": "cypress run --spec \"**/*.feature\"",
     "test:debug": "jest && DEBUG=cypress:* cypress open\n",
     "fixStyle": "eslint . --fix",
     "semantic-release": "semantic-release"
