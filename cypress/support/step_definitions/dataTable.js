@@ -1,9 +1,10 @@
-/* global then, when */
+// eslint-disable-next-line import/no-extraneous-dependencies
+const { Given, When, Then } = require("cypress-cucumber-preprocessor/steps");
 
 // you can have external state, and also require things!
 let sum = 0;
 
-when("I add all following numbers:", dataTable => {
+When("I add all following numbers:", dataTable => {
   // console.log("a, ", dataTable.rawTable.slice(1))
   sum = dataTable.rawTable
     .slice(1)
@@ -14,6 +15,11 @@ when("I add all following numbers:", dataTable => {
     );
 });
 
-then("I verify the datatable result is equal to {int}", result => {
+Then("I verify the datatable result is equal to {int}", result => {
   expect(sum).to.equal(result);
+});
+
+Given("I have a table with some escaped characters in it", dataTable => {
+  console.log(dataTable);
+  // we don't need to do anything, just make sure it doesn't break
 });

@@ -9,3 +9,9 @@ Feature: Being a plugin handling DataTable scenario
       | 1      | 2              |
       | 3      | 4              |
     Then I verify the datatable result is equal to 10
+
+
+  Scenario: New line character
+    Given I have a table with some escaped characters in it
+      | foo      | bar      |
+      | foo\nfoo | bar\nbar |

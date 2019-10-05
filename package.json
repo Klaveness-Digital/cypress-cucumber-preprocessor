@@ -53,6 +53,7 @@
     "debug": "^3.0.1",
     "gherkin": "^5.1.0",
     "glob": "^7.1.2",
+    "js-string-escape": "^1.0.1",
     "through": "^2.3.8"
   },
   "devDependencies": {
