@@ -5,4 +5,4 @@ cd cypress-cucumber-example
 npm install
 rm -rf node_modules/cypress-cucumber-preprocessor
 npm link cypress-cucumber-preprocessor
-npm run test
+npm run test:all
