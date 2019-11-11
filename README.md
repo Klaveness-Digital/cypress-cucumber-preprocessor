@@ -85,7 +85,7 @@ Please make use of [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) t
 Option | Default value | Description
 ------------ | ------------- | -------------
 commonPath | `cypress/integration/common` when `nonGlobalStepDefinitions` is true <br> `cypress/support/step_definitions` when `nonGlobalStepDefinitions` is false | Define the path to a folder containing all common step definitions of your tests
-nonGlobalStepDefinitions | true | If true use the Cypress Cucumber Preprocessor Style pattern for placing step definitions files. If false, we will use the "oldschool" (everything is global) Cucumber style
+nonGlobalStepDefinitions | false | If true use the Cypress Cucumber Preprocessor Style pattern for placing step definitions files. If false, we will use the "oldschool" (everything is global) Cucumber style
 step_definitions | `cypress/support/step_definitions` | Path to the folder containing our step definitions
 
 ## How to organize the tests
