@@ -2,6 +2,7 @@
 
 const { Parser } = require("gherkin");
 const glob = require("glob");
+const path = require("path");
 const fs = require("fs");
 const { execFileSync } = require("child_process");
 
@@ -28,17 +29,56 @@ function parseArgsOrDefault(argPrefix, defaultValue) {
   return argValue !== "" ? argValue : defaultValue;
 }
 
-// TODO currently we only work with feature files in cypress/integration folder.
-// It should be easy to base this on the cypress.json configuration - we are happy to take a PR
-// here if you need this functionality!
-const defaultGlob = "cypress/integration/**/*.feature";
-
-const specGlob = parseArgsOrDefault("GLOB", defaultGlob);
-debug("Found glob", specGlob);
+const envGlob = parseArgsOrDefault("GLOB", false);
+debug("Found glob", envGlob);
 const envTags = parseArgsOrDefault("TAGS", "");
 debug("Found tag expression", envTags);
 
-const paths = glob.sync(specGlob);
+let defaultGlob = "cypress/integration/**/*.feature";
+let ignoreGlob = "";
+let usingCypressConf = true;
+
+try {
+  // TODO : curently we don't allow the override of the cypress.json path
+  // maybe we can set this path in the plugin conf (package.json : "cypressConf": "test/cypress.json")
+  const cypressConf = JSON.parse(fs.readFileSync(path.resolve("cypress.json")));
+  const integrationFolder =
+    cypressConf && cypressConf.integrationFolder
+      ? cypressConf.integrationFolder.replace(/\/$/, "")
+      : "cypress/integration";
+
+  if (cypressConf && cypressConf.ignoreTestFiles) {
+    ignoreGlob = cypressConf.ignoreTestFiles;
+  }
+
+  if (cypressConf && cypressConf.testFiles) {
+    let testFiles = !Array.isArray(cypressConf.testFiles)
+      ? cypressConf.testFiles.split(",")
+      : cypressConf.testFiles;
+    testFiles = testFiles.map(pattern => `${integrationFolder}/${pattern}`);
+    defaultGlob = `{${testFiles.join(",")}}`;
+  } else {
+    defaultGlob = `${integrationFolder}/**/*.feature`;
+  }
+} catch (err) {
+  usingCypressConf = false;
+  defaultGlob = "cypress/integration/**/*.feature";
+}
+
+if (envGlob) usingCypressConf = false; // in this case, we ignore the Cypress conf
+
+const specGlob = envGlob ? envGlob.replace(/.*=/, "") : defaultGlob;
+
+if (envGlob) {
+  debug("Found glob", specGlob);
+}
+
+const paths = glob
+  .sync(specGlob, {
+    nodir: true,
+    ignore: usingCypressConf ? ignoreGlob : ""
+  })
+  .filter(pathName => pathName.endsWith(".feature"));
 
 const featuresToRun = [];
 
