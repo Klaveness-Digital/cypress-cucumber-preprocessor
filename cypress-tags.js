@@ -2,7 +2,6 @@
 
 const { Parser } = require("gherkin");
 const glob = require("glob");
-const path = require("path");
 const fs = require("fs");
 const { execFileSync } = require("child_process");
 
@@ -41,7 +40,7 @@ let usingCypressConf = true;
 try {
   // TODO : curently we don't allow the override of the cypress.json path
   // maybe we can set this path in the plugin conf (package.json : "cypressConf": "test/cypress.json")
-  const cypressConf = JSON.parse(fs.readFileSync(path.resolve("cypress.json")));
+  const cypressConf = require("../../cypress.json");
   const integrationFolder =
     cypressConf && cypressConf.integrationFolder
       ? cypressConf.integrationFolder.replace(/\/$/, "")
@@ -56,7 +55,8 @@ try {
       ? cypressConf.testFiles.split(",")
       : cypressConf.testFiles;
     testFiles = testFiles.map(pattern => `${integrationFolder}/${pattern}`);
-    defaultGlob = `{${testFiles.join(",")}}`;
+    defaultGlob =
+      testFiles.length > 1 ? `{${testFiles.join(",")}}` : testFiles[0];
   } else {
     defaultGlob = `${integrationFolder}/**/*.feature`;
   }
