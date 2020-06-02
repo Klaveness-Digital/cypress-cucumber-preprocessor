@@ -29,49 +29,50 @@ function parseArgsOrDefault(argPrefix, defaultValue) {
 }
 
 const envGlob = parseArgsOrDefault("GLOB", false);
-debug("Found glob", envGlob);
 const envTags = parseArgsOrDefault("TAGS", "");
-debug("Found tag expression", envTags);
 
-let defaultGlob = "cypress/integration/**/*.feature";
+let specGlob = envGlob || "cypress/integration/**/*.feature";
 let ignoreGlob = "";
-let usingCypressConf = true;
+let usingCypressConf = false;
 
-try {
-  // TODO : curently we don't allow the override of the cypress.json path
-  // maybe we can set this path in the plugin conf (package.json : "cypressConf": "test/cypress.json")
-  const cypressConf = require("../../cypress.json");
-  const integrationFolder =
-    cypressConf && cypressConf.integrationFolder
-      ? cypressConf.integrationFolder.replace(/\/$/, "")
-      : "cypress/integration";
+if (!envGlob) {
+  try {
+    // TODO : curently we don't allow the override of the cypress.json path
+    // maybe we can set this path in the plugin conf (package.json : "cypressConf": "test/cypress.json")
+    // eslint-disable-next-line import/no-unresolved,global-require
+    const cypressConf = require("../../cypress.json");
+    const integrationFolder =
+      cypressConf && cypressConf.integrationFolder
+        ? cypressConf.integrationFolder.replace(/\/$/, "")
+        : "cypress/integration";
 
-  if (cypressConf && cypressConf.ignoreTestFiles) {
-    ignoreGlob = cypressConf.ignoreTestFiles;
+    if (cypressConf && cypressConf.ignoreTestFiles) {
+      ignoreGlob = cypressConf.ignoreTestFiles;
+    }
+
+    if (cypressConf && cypressConf.testFiles) {
+      let testFiles = !Array.isArray(cypressConf.testFiles)
+        ? cypressConf.testFiles.split(",")
+        : cypressConf.testFiles;
+      testFiles = testFiles.map(pattern => `${integrationFolder}/${pattern}`);
+      specGlob =
+        testFiles.length > 1 ? `{${testFiles.join(",")}}` : testFiles[0];
+    } else {
+      specGlob = `${integrationFolder}/**/*.feature`;
+    }
+    console.log("Using cypress.json configuration:");
+    console.log("Spec files: ", specGlob);
+    if (ignoreGlob) console.log("Ignored files: ", ignoreGlob);
+  } catch (err) {
+    usingCypressConf = false;
+    specGlob = "cypress/integration/**/*.feature";
+    console.log("Failed to read cypress.json, using default configuration");
+    console.log("Spec files: ", specGlob);
   }
-
-  if (cypressConf && cypressConf.testFiles) {
-    let testFiles = !Array.isArray(cypressConf.testFiles)
-      ? cypressConf.testFiles.split(",")
-      : cypressConf.testFiles;
-    testFiles = testFiles.map(pattern => `${integrationFolder}/${pattern}`);
-    defaultGlob =
-      testFiles.length > 1 ? `{${testFiles.join(",")}}` : testFiles[0];
-  } else {
-    defaultGlob = `${integrationFolder}/**/*.feature`;
-  }
-} catch (err) {
-  usingCypressConf = false;
-  defaultGlob = "cypress/integration/**/*.feature";
 }
 
-if (envGlob) usingCypressConf = false; // in this case, we ignore the Cypress conf
-
-const specGlob = envGlob ? envGlob.replace(/.*=/, "") : defaultGlob;
-
-if (envGlob) {
-  debug("Found glob", specGlob);
-}
+debug("Found glob", specGlob);
+debug("Found tag expression", envTags);
 
 const paths = glob
   .sync(specGlob, {
