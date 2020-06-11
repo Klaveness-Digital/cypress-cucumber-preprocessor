@@ -12,31 +12,43 @@ const debug = (message, ...rest) =>
     ? console.log(`DEBUG: ${message}`, rest.length ? rest : "")
     : null;
 
+function parseArgsOrDefault(argPrefix, defaultValue) {
+  const matchedArg = process.argv
+    .slice(2)
+    .find(arg => arg.includes(`${argPrefix}=`));
+
+  // Cypress requires env vars to be passed as comma separated list
+  // otherwise it only accepts the last provided variable,
+  // the way we replace here accomodates for that.
+  const argValue = matchedArg
+    ? matchedArg.replace(new RegExp(`.*${argPrefix}=`), "").replace(/,.*/, "")
+    : "";
+
+  return argValue !== "" ? argValue : defaultValue;
+}
+
 // TODO currently we only work with feature files in cypress/integration folder.
 // It should be easy to base this on the cypress.json configuration - we are happy to take a PR
 // here if you need this functionality!
 const defaultGlob = "cypress/integration/**/*.feature";
 
-const specArg = process.argv.slice(2).find(arg => arg.indexOf("GLOB=") === 0);
-
-const specGlob = specArg ? specArg.replace(/.*=/, "") : defaultGlob;
-
-if (specArg) {
-  debug("Found glob", specGlob);
-}
+const specGlob = parseArgsOrDefault("GLOB", defaultGlob);
+debug("Found glob", specGlob);
+const envTags = parseArgsOrDefault("TAGS", "");
+debug("Found tag expression", envTags);
 
 const paths = glob.sync(specGlob);
 
 const featuresToRun = [];
 
-const found = process.argv.slice(2).find(arg => arg.indexOf("TAGS=") === 0);
-
-const envTags = found.replace(/.*=/, "");
-debug("Found tag expression", envTags);
-
 paths.forEach(featurePath => {
   const spec = `${fs.readFileSync(featurePath)}`;
   const parsedFeature = new Parser().parse(spec);
+
+  if (!parsedFeature.feature) {
+    debug(`Feature: ${featurePath} is empty`);
+    return;
+  }
 
   const featureTags = parsedFeature.feature.tags;
   const featureShouldRun = shouldProceedCurrentStep(featureTags, envTags);
@@ -54,12 +66,20 @@ paths.forEach(featurePath => {
   }
 });
 
+function getOsSpecificExecutable(command) {
+  return process.platform === "win32" ? `${command}.cmd` : command;
+}
+
+function getCypressExecutable() {
+  const command = getOsSpecificExecutable(`${__dirname}/../.bin/cypress`);
+  // fallback to the globally installed cypress instead
+  return fs.existsSync(command) ? command : getOsSpecificExecutable("cypress");
+}
+
 try {
   if (featuresToRun.length || envTags === "") {
     execFileSync(
-      process.platform === "win32"
-        ? `${__dirname}/../.bin/cypress.cmd`
-        : `${__dirname}/../.bin/cypress`,
+      getCypressExecutable(),
       [...process.argv.slice(2), "--spec", featuresToRun.join(",")],
       {
         stdio: [process.stdin, process.stdout, process.stderr]

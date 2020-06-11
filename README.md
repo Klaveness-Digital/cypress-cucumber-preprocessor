@@ -18,7 +18,7 @@ You can follow the documentation below, or if you prefer to hack on a working ex
   * [Step definitions](#step-definitions)
     * [Step definitions creation](#step-definitions-creation)
     * [Reusable step definitions](#reusable-step-definitions)
-* [How to write tests](#excluding-tests)
+* [How to write tests](#how-to-write-tests)
   * [Cucumber Expressions](#cucumber-expressions)
   * [Given/When/Then functions](#cucumber-functions)
   * [Custom Parameter Type Resolves](#custom-parameter-type-resolves)
@@ -28,6 +28,7 @@ You can follow the documentation below, or if you prefer to hack on a working ex
   * [Smart tagging](#smart-tagging)
 * [How to run the tests](#excluding-tests)
   * [Running tagged tests](#running-tagged-tests)
+  * [Ignoring specific scenarios using tags when executing test runner](#ignoring-specific-scenarios-using-tags-when-executing-test-runner)
   * [Output](#output)
 * [IDE support](#ide-support)
   * [Webstorm](#webstorm)
@@ -328,7 +329,27 @@ Example:
 ```
 
 Please note - we use our own cypress-tags wrapper to speed things up.
+This wrapper calls the cypress executable from local modules and if not found it falls back to the globally installed one.
 For more details and examples please take a look to the [example repo](https://github.com/TheBrainFamily/cypress-cucumber-example).
+
+### Ignoring specific scenarios using tags when executing test runner
+You can also use tags to skip or ignore specific tests/scenarios when running cypress test runner (where you don't have the abilitiy to pass parameters like in the examples above for the execution)
+
+The trick consists in adding the "env" property with the "TAGS" subproperty in the cypress.json configuration file. It would look something like this:
+
+```javascript
+{
+    "env": {
+        "TAGS": "not @ignore"
+    },
+    //rest of configuration options
+    "baseUrl": "yourBaseUrl",       
+    "ignoreTestFiles": "*.js",
+    //etc
+}
+```
+
+Then, any scenarios tagged with @ignore will be skipped when running the tests using the cypress test runner
 
 ### Limiting to a subset of feature files
 You can use a glob expression to select which feature files should be included.
@@ -388,6 +409,14 @@ You will also need to tell the extension the locations of your feature and step 
 Note, that unlike WebStorm which will correctly identify multiple implementations of matching steps, the vscode extension currently resolves to the first matching occurence it finds on its path.
 
 ## TypeScript Support
+
+### Install
+
+Install the plug-in type definitions:
+
+```shell
+npm install --save-dev @types/cypress-cucumber-preprocessor
+```
 
 ### With Webpack
 You can also use a Webpack loader to process feature files (TypeScript supported). To see how it is done please take 
