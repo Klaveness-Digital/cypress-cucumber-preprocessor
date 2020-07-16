@@ -10,3 +10,12 @@ Feature: Being a plugin handling DocString scenario
     variableToVerify = "hello world"
     """
     Then I ran it and verify that it executes it
+
+  Scenario: DocString
+    When I use DocString for freemarker code like this
+    """
+    <div>
+      <h1>${ article.title }</h1>
+    </div>
+    """
+    Then I can interpret it as a string

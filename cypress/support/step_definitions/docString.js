@@ -13,3 +13,12 @@ then("I ran it and verify that it executes it", () => {
   eval(code);
   expect(variableToVerify).to.equal("hello world");
 });
+
+let freemarkerSnippet = "";
+when("I use DocString for freemarker code like this", dataString => {
+  freemarkerSnippet = dataString;
+});
+
+then("I can interpret it as a string", () => {
+  expect(freemarkerSnippet).to.be.a("string");
+});
