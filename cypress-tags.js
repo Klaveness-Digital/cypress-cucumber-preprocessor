@@ -54,7 +54,7 @@ if (!envGlob) {
       let testFiles = !Array.isArray(cypressConf.testFiles)
         ? cypressConf.testFiles.split(",")
         : cypressConf.testFiles;
-      testFiles = testFiles.map(pattern => `${integrationFolder}/${pattern}`);
+      testFiles = testFiles.map((pattern) => `${integrationFolder}/${pattern}`);
       specGlob =
         testFiles.length > 1 ? `{${testFiles.join(",")}}` : testFiles[0];
     } else {
@@ -77,9 +77,9 @@ debug("Found tag expression", envTags);
 const paths = glob
   .sync(specGlob, {
     nodir: true,
-    ignore: usingCypressConf ? ignoreGlob : ""
+    ignore: usingCypressConf ? ignoreGlob : "",
   })
-  .filter(pathName => pathName.endsWith(".feature"));
+  .filter((pathName) => pathName.endsWith(".feature"));
 
 const featuresToRun = [];
 
