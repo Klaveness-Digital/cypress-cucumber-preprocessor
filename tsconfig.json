@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "target": "ES2017",
+    "module": "CommonJS",
+    "types": ["cypress"],
+    "lib": ["ES2019"]
+  },
+  "include": [
+    "lib/**/*.ts",
+    "methods.ts"
+  ]
+}

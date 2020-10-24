@@ -1,0 +1,12 @@
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+
+[*.{js, ts}]
+max_line_length = 80
+bracket_spacing = true
+jsx_bracket_same_line = false
+trim_trailing_whitespace = true
