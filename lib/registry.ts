@@ -52,34 +52,34 @@ export class Registry {
   public methods: {
     Given<T extends unknown[]>(
       description: string | RegExp,
-      body: (this: Mocha.ITestCallbackContext, ...args: T) => void
+      body: (this: Mocha.Context, ...args: T) => void
     ): void;
     When<T extends unknown[]>(
       description: string | RegExp,
-      body: (this: Mocha.ITestCallbackContext, ...args: T) => void
+      body: (this: Mocha.Context, ...args: T) => void
     ): void;
     Then<T extends unknown[]>(
       description: string | RegExp,
-      body: (this: Mocha.ITestCallbackContext, ...args: T) => void
+      body: (this: Mocha.Context, ...args: T) => void
     ): void;
     Step(
-      world: Mocha.ITestCallbackContext,
+      world: Mocha.Context,
       description: string,
       argument?: DataTable | string
     ): void;
     defineParameterType<T>(options: IParameterTypeDefinition<T>): void;
     Before(
-      this: Mocha.ITestCallbackContext,
+      this: Mocha.Context,
       options: { tags?: string },
       fn: () => void
     ): void;
-    Before(this: Mocha.ITestCallbackContext, fn: () => void): void;
+    Before(this: Mocha.Context, fn: () => void): void;
     After(
-      this: Mocha.ITestCallbackContext,
+      this: Mocha.Context,
       options: { tags?: string },
       fn: () => void
     ): void;
-    After(this: Mocha.ITestCallbackContext, fn: () => void): void;
+    After(this: Mocha.Context, fn: () => void): void;
   };
 
   private parameterTypeRegistry: ParameterTypeRegistry;
