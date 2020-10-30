@@ -108,6 +108,12 @@ function* traverseScenario(
       yield* traverseStep(step);
     }
   }
+
+  if (scenario.examples) {
+    for (const example of scenario.examples) {
+      yield* traverseExample(example);
+    }
+  }
 }
 
 function* traverseStep(step: messages.GherkinDocument.Feature.IStep) {
@@ -173,5 +179,25 @@ function* traverseCell(
 
   if (cell.location) {
     yield cell.location;
+  }
+}
+
+function* traverseExample(
+  example: messages.GherkinDocument.Feature.Scenario.IExamples
+) {
+  yield example;
+
+  if (example.location) {
+    yield example.location;
+  }
+
+  if (example.tableHeader) {
+    yield* traverseRow(example.tableHeader);
+  }
+
+  if (example.tableBody) {
+    for (const row of example.tableBody) {
+      yield* traverseRow(row);
+    }
   }
 }
