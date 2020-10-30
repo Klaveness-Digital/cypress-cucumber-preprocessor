@@ -40,6 +40,20 @@ Before(async function ({ gherkinDocument, pickle }) {
       }
     `
   );
+
+  await fs.mkdir(path.join(this.tmpDir, "node_modules", "@badeball"), {
+    recursive: true,
+  });
+
+  await fs.symlink(
+    projectPath,
+    path.join(
+      this.tmpDir,
+      "node_modules",
+      "@badeball",
+      "cypress-cucumber-preprocessor"
+    )
+  );
 });
 
 After(function () {
