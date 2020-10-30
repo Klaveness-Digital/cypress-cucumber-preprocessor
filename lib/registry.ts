@@ -10,21 +10,25 @@ import DataTable from "@cucumber/cucumber/lib/models/data_table";
 
 import parse from "@cucumber/tag-expressions";
 
-import { IParameterTypeDefinition } from "./types";
+import {
+  IHookBody,
+  IParameterTypeDefinition,
+  IStepDefinitionBody,
+} from "./types";
 
-interface IStepDefinition {
+interface IStepDefinition<T extends unknown[]> {
   expression: Expression;
-  implementation: (...args: any[]) => void;
+  implementation: IStepDefinitionBody<T>;
 }
 
 interface IHook {
   node: ReturnType<typeof parse>;
-  implementation: () => void;
+  implementation: IHookBody;
 }
 
 function parseHookArguments(
-  optionsOrFn: (() => void) | { tags?: string },
-  maybeFn?: () => void
+  optionsOrFn: IHookBody | { tags?: string },
+  maybeFn?: IHookBody
 ): IHook {
   const noopNode = { evaluate: () => true };
 
@@ -52,15 +56,15 @@ export class Registry {
   public methods: {
     Given<T extends unknown[]>(
       description: string | RegExp,
-      body: (this: Mocha.Context, ...args: T) => void
+      body: IStepDefinitionBody<T>
     ): void;
     When<T extends unknown[]>(
       description: string | RegExp,
-      body: (this: Mocha.Context, ...args: T) => void
+      body: IStepDefinitionBody<T>
     ): void;
     Then<T extends unknown[]>(
       description: string | RegExp,
-      body: (this: Mocha.Context, ...args: T) => void
+      body: IStepDefinitionBody<T>
     ): void;
     Step(
       world: Mocha.Context,
@@ -71,20 +75,16 @@ export class Registry {
     Before(
       this: Mocha.Context,
       options: { tags?: string },
-      fn: () => void
+      fn: IHookBody
     ): void;
-    Before(this: Mocha.Context, fn: () => void): void;
-    After(
-      this: Mocha.Context,
-      options: { tags?: string },
-      fn: () => void
-    ): void;
-    After(this: Mocha.Context, fn: () => void): void;
+    Before(this: Mocha.Context, fn: IHookBody): void;
+    After(this: Mocha.Context, options: { tags?: string }, fn: IHookBody): void;
+    After(this: Mocha.Context, fn: IHookBody): void;
   };
 
   private parameterTypeRegistry: ParameterTypeRegistry;
 
-  private stepDefinitions: IStepDefinition[];
+  private stepDefinitions: IStepDefinition<unknown[]>[];
 
   private beforeHooks: IHook[];
 
@@ -154,20 +154,20 @@ export class Registry {
     );
   }
 
-  private defineBefore(options: { tags?: string }, fn: () => void): void;
-  private defineBefore(fn: () => void): void;
+  private defineBefore(options: { tags?: string }, fn: IHookBody): void;
+  private defineBefore(fn: IHookBody): void;
   private defineBefore(
-    optionsOrFn: (() => void) | { tags?: string },
-    maybeFn?: () => void
+    optionsOrFn: IHookBody | { tags?: string },
+    maybeFn?: IHookBody
   ) {
     this.beforeHooks.push(parseHookArguments(optionsOrFn, maybeFn));
   }
 
-  private defineAfter(options: { tags?: string }, fn: () => void): void;
-  private defineAfter(fn: () => void): void;
+  private defineAfter(options: { tags?: string }, fn: IHookBody): void;
+  private defineAfter(fn: IHookBody): void;
   private defineAfter(
-    optionsOrFn: (() => void) | { tags?: string },
-    maybeFn?: () => void
+    optionsOrFn: IHookBody | { tags?: string },
+    maybeFn?: IHookBody
   ) {
     this.afterHooks.push(parseHookArguments(optionsOrFn, maybeFn));
   }
@@ -199,7 +199,7 @@ export class Registry {
   }
 
   public runStepDefininition(
-    world: any,
+    world: Mocha.Context,
     text: string,
     argument?: DataTable | string
   ) {
@@ -216,13 +216,13 @@ export class Registry {
     stepDefinition.implementation.apply(world, args);
   }
 
-  public runBeforeHooks(world: any, tags: string[]) {
+  public runBeforeHooks(world: Mocha.Context, tags: string[]) {
     this.beforeHooks
       .filter((beforeHook) => beforeHook.node.evaluate(tags))
       .forEach((hook) => hook.implementation.call(world));
   }
 
-  public runAfterHooks(world: any, tags: string[]) {
+  public runAfterHooks(world: Mocha.Context, tags: string[]) {
     return this.afterHooks
       .filter((beforeHook) => beforeHook.node.evaluate(tags))
       .forEach((hook) => hook.implementation.call(world));

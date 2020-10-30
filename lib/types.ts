@@ -6,6 +6,14 @@ export interface IParameterTypeDefinition<T> {
   preferForRegexpMatch?: boolean;
 }
 
+export interface IHookBody {
+  (this: Mocha.Context): void;
+}
+
+export interface IStepDefinitionBody<T extends unknown[]> {
+  (this: Mocha.Context, ...args: T): void;
+}
+
 export type YieldType<T extends Generator> = T extends Generator<infer R>
   ? R
   : never;
