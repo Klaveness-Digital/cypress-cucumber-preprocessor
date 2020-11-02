@@ -216,16 +216,20 @@ export class Registry {
     stepDefinition.implementation.apply(world, args);
   }
 
-  public runBeforeHooks(world: Mocha.Context, tags: string[]) {
-    this.beforeHooks
-      .filter((beforeHook) => beforeHook.node.evaluate(tags))
-      .forEach((hook) => hook.implementation.call(world));
+  public resolveBeforeHooks(tags: string[]) {
+    return this.beforeHooks.filter((beforeHook) =>
+      beforeHook.node.evaluate(tags)
+    );
   }
 
-  public runAfterHooks(world: Mocha.Context, tags: string[]) {
-    return this.afterHooks
-      .filter((beforeHook) => beforeHook.node.evaluate(tags))
-      .forEach((hook) => hook.implementation.call(world));
+  public resolveAfterHooks(tags: string[]) {
+    return this.afterHooks.filter((beforeHook) =>
+      beforeHook.node.evaluate(tags)
+    );
+  }
+
+  public runHook(world: Mocha.Context, hook: IHook) {
+    hook.implementation.call(world);
   }
 }
 

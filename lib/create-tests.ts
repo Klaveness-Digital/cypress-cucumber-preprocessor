@@ -178,7 +178,9 @@ function createPickle(
       pickle,
     };
 
-    registry.runBeforeHooks(this, tags);
+    for (const hook of registry.resolveBeforeHooks(tags)) {
+      cy.then(() => registry.runHook(this, hook));
+    }
 
     if (pickle.steps) {
       for (const pickleStep of pickle.steps) {
@@ -215,11 +217,13 @@ function createPickle(
           ? pickleStep.argument.docString.content
           : undefined;
 
-        registry.runStepDefininition(this, text, argument);
+        cy.then(() => registry.runStepDefininition(this, text, argument));
       }
     }
 
-    registry.runAfterHooks(this, tags);
+    for (const hook of registry.resolveAfterHooks(tags)) {
+      cy.then(() => registry.runHook(this, hook));
+    }
   });
 }
 
