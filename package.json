@@ -16,9 +16,10 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
+    "test:types": "dtslint --expectOnly types",
     "test:unit": "mocha",
     "test:integration": "cucumber-js",
-    "prepublishOnly": "npm run build && npm run test:unit && npm run test:integration"
+    "prepublishOnly": "npm run build && npm run test:types && npm run test:unit && npm run test:integration"
   },
   "dependencies": {
     "@cucumber/cucumber": "^7.0.0-rc.0",
@@ -36,6 +37,7 @@
     "@types/debug": "^4.1.5",
     "@types/glob": "^7.1.3",
     "cypress": "^5.5.0",
+    "dtslint": "^4.0.5",
     "mocha": "^8.2.0",
     "stream-buffers": "^3.0.2",
     "strip-indent": "^3.0.0",
