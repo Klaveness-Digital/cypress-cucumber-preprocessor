@@ -154,8 +154,6 @@ function createScenario(
   }
 }
 
-declare const window: any;
-
 function createPickle(
   gherkinDocument: messages.IGherkinDocument,
   pickles: messages.IPickle[],

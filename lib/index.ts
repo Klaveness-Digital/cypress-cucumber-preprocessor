@@ -2,11 +2,23 @@ import { PassThrough, Transform, TransformCallback } from "stream";
 
 import { EventEmitter } from "events";
 
+import { messages } from "@cucumber/messages";
+
 import browserify from "@cypress/browserify-preprocessor";
 
 import debug from "./debug";
 
 import { compile } from "./template";
+
+declare global {
+  interface Window {
+    testState: {
+      gherkinDocument: messages.IGherkinDocument;
+      pickles: messages.IPickle[];
+      pickle: messages.IPickle;
+    };
+  }
+}
 
 export function transform(filepath: string) {
   if (!filepath.match(".feature$")) {
