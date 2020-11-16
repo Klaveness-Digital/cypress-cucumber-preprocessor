@@ -72,14 +72,10 @@ export class Registry {
       argument?: DataTable | string
     ): void;
     defineParameterType<T>(options: IParameterTypeDefinition<T>): void;
-    Before(
-      this: Mocha.Context,
-      options: { tags?: string },
-      fn: IHookBody
-    ): void;
-    Before(this: Mocha.Context, fn: IHookBody): void;
-    After(this: Mocha.Context, options: { tags?: string }, fn: IHookBody): void;
-    After(this: Mocha.Context, fn: IHookBody): void;
+    Before(options: { tags?: string }, fn: IHookBody): void;
+    Before(fn: IHookBody): void;
+    After(options: { tags?: string }, fn: IHookBody): void;
+    After(fn: IHookBody): void;
   };
 
   private parameterTypeRegistry: ParameterTypeRegistry;
