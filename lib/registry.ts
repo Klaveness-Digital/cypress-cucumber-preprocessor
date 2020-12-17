@@ -54,15 +54,7 @@ function parseHookArguments(
 
 export class Registry {
   public methods: {
-    Given<T extends unknown[]>(
-      description: string | RegExp,
-      body: IStepDefinitionBody<T>
-    ): void;
-    When<T extends unknown[]>(
-      description: string | RegExp,
-      body: IStepDefinitionBody<T>
-    ): void;
-    Then<T extends unknown[]>(
+    defineStep<T extends unknown[]>(
       description: string | RegExp,
       body: IStepDefinitionBody<T>
     ): void;
@@ -88,9 +80,7 @@ export class Registry {
 
   constructor() {
     this.methods = {
-      Given: this.defineStep.bind(this),
-      When: this.defineStep.bind(this),
-      Then: this.defineStep.bind(this),
+      defineStep: this.defineStep.bind(this),
       Step: this.runStepDefininition.bind(this),
       defineParameterType: this.defineParameterType.bind(this),
       Before: this.defineBefore.bind(this),

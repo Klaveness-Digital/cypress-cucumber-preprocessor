@@ -1,13 +1,11 @@
 import registry from "./registry";
 
 const {
-  Given,
-  When,
-  Then,
+  defineStep,
   Step,
   defineParameterType,
   Before,
   After,
 } = registry.methods;
 
-export { Given, When, Then, Step, defineParameterType, Before, After };
+export { defineStep as Given, defineStep as When, defineStep as Then, defineStep as And, defineStep as But, defineStep, Step, defineParameterType, Before, After };
