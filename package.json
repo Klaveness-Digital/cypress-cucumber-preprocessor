@@ -12,8 +12,13 @@
     "lib/**/*.js",
     "lib/**/*.d.ts",
     "methods.js",
-    "methods.d.ts"
+    "methods.d.ts",
+    "specs-by-tags.js",
+    "specs-by-tags.d.ts"
   ],
+  "bin": {
+    "specs-by-tags": "specs-by-tags.js"
+  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",

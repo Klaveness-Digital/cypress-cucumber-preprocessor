@@ -8,15 +8,11 @@ import { assertAndReturn } from "./assertions";
 
 import registry from "./registry";
 
-import { traverseGherkinDocument } from "./ast-helpers";
+import { traverseGherkinDocument, mapTagName } from "./ast-helpers";
 
 import { YieldType } from "./types";
 
 type Node = ReturnType<typeof parse>;
-
-function mapTagName(value: { name?: string | null }) {
-  return assertAndReturn(value.name, "Expected tag to have a name");
-}
 
 function createFeature(
   gherkinDocument: messages.IGherkinDocument,

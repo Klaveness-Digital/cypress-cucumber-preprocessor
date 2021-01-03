@@ -13,6 +13,7 @@
   },
   "include": [
     "lib/**/*.ts",
+    "specs-by-tags.ts",
     "methods.ts"
   ]
 }
