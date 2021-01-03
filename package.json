@@ -11,12 +11,14 @@
   "files": [
     "lib/**/*.js",
     "lib/**/*.d.ts",
+    "cypress-tags",
     "methods.js",
     "methods.d.ts",
     "specs-by-tags.js",
     "specs-by-tags.d.ts"
   ],
   "bin": {
+    "cypress-tags": "cypress-tags.sh",
     "specs-by-tags": "specs-by-tags.js"
   },
   "scripts": {
