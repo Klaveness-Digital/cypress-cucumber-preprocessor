@@ -10,7 +10,11 @@ function notNull<T>(value: T | null | undefined): value is T {
   return value != null;
 }
 
-export async function compile(data: string, uri: string) {
+export async function compile(
+  this: any,
+  data: string,
+  uri: string = this.resourcePath
+) {
   const options = {
     includeSource: false,
     includeGherkinDocument: true,
