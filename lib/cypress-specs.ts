@@ -8,7 +8,10 @@ import minimatch from "minimatch";
 
 import { assertIsString } from "./assertions";
 
-import { resolveConfiguration } from "./cypress-configuration";
+import {
+  resolveConfiguration,
+  resolveProjectPath,
+} from "./cypress-configuration";
 
 const MINIMATCH_OPTIONS = { dot: true, matchBase: true };
 
@@ -56,11 +59,13 @@ export function find(
     globIgnore.push(path.join(fixturesFolder, "**", "*"));
   }
 
+  const projectPath = resolveProjectPath(options);
+
   const globOptions = {
     sort: true,
     absolute: true,
     nodir: true,
-    cwd: integrationFolder,
+    cwd: path.join(projectPath, integrationFolder),
     ignore: globIgnore.flat(),
   };
 
