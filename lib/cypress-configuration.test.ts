@@ -24,6 +24,7 @@ function example<T extends object>(
   options: T & {
     cypressConfig?: CypressConfig;
     cypressConfigPath?: string;
+    cypressProjectPath?: string;
     cypressEnvConfig?: CypressEnvConfig;
   },
   attribute: string,
@@ -36,23 +37,28 @@ function example<T extends object>(
       cypressConfig,
       cypressConfigPath = "cypress.json",
       cypressEnvConfig,
+      cypressProjectPath,
     } = options;
 
     const cwd = path.join(process.cwd(), "tmp", "unit");
 
+    const fullCypressProjectPath = cypressProjectPath
+      ? path.join(cwd, cypressProjectPath)
+      : cwd;
+
     fs.rmdirSync(cwd, { recursive: true });
-    fs.mkdirSync(cwd, { recursive: true });
+    fs.mkdirSync(fullCypressProjectPath, { recursive: true });
 
     if (cypressConfig) {
       fs.writeFileSync(
-        path.join(cwd, cypressConfigPath),
+        path.join(fullCypressProjectPath, cypressConfigPath),
         JSON.stringify(cypressConfig, null, 2)
       );
     }
 
     if (cypressEnvConfig) {
       fs.writeFileSync(
-        path.join(cwd, "cypress.env.json"),
+        path.join(fullCypressProjectPath, "cypress.env.json"),
         JSON.stringify(cypressEnvConfig, null, 2)
       );
     }
@@ -292,6 +298,73 @@ describe("resolveConfiguration()", () => {
     "integrationFolder",
     "foo/bar"
   );
+
+  // Override with cypress.json & custom project path.
+  example(
+    resolveConfiguration,
+    {
+      argv: ["--project", "foo"],
+      cypressConfig: { integrationFolder: "foo/bar" },
+      cypressProjectPath: "foo",
+    },
+    "integrationFolder",
+    "foo/bar"
+  );
+  example(
+    resolveConfiguration,
+    {
+      argv: ["--project=foo"],
+      cypressConfig: { integrationFolder: "foo/bar" },
+      cypressProjectPath: "foo",
+    },
+    "integrationFolder",
+    "foo/bar"
+  );
+  example(
+    resolveConfiguration,
+    {
+      argv: ["-P", "foo"],
+      cypressConfig: { integrationFolder: "foo/bar" },
+      cypressProjectPath: "foo",
+    },
+    "integrationFolder",
+    "foo/bar"
+  );
+
+  // Override with cypress.json in custom location & custom project path.
+  example(
+    resolveConfiguration,
+    {
+      argv: ["--config-file", "foo.json", "--project", "foo"],
+      cypressConfig: { integrationFolder: "foo/bar" },
+      cypressConfigPath: "foo.json",
+      cypressProjectPath: "foo",
+    },
+    "integrationFolder",
+    "foo/bar"
+  );
+  example(
+    resolveConfiguration,
+    {
+      argv: ["--config-file=foo.json", "--project", "foo"],
+      cypressConfig: { integrationFolder: "foo/bar" },
+      cypressConfigPath: "foo.json",
+      cypressProjectPath: "foo",
+    },
+    "integrationFolder",
+    "foo/bar"
+  );
+  example(
+    resolveConfiguration,
+    {
+      argv: ["-C", "foo.json", "--project", "foo"],
+      cypressConfig: { integrationFolder: "foo/bar" },
+      cypressConfigPath: "foo.json",
+      cypressProjectPath: "foo",
+    },
+    "integrationFolder",
+    "foo/bar"
+  );
 });
 
 describe("resolveEnvironment()", () => {
@@ -490,6 +563,105 @@ describe("resolveEnvironment()", () => {
     resolveEnvironment,
     {
       cypressEnvConfig: { FOO: "foo" },
+    },
+    "FOO",
+    "foo"
+  );
+
+  // Override with cypress.json & custom project path.
+  example(
+    resolveEnvironment,
+    {
+      argv: ["--project", "foo"],
+      cypressConfig: { env: { FOO: "foo" } },
+      cypressProjectPath: "foo",
+    },
+    "FOO",
+    "foo"
+  );
+  example(
+    resolveEnvironment,
+    {
+      argv: ["--project=foo"],
+      cypressConfig: { env: { FOO: "foo" } },
+      cypressProjectPath: "foo",
+    },
+    "FOO",
+    "foo"
+  );
+  example(
+    resolveEnvironment,
+    {
+      argv: ["-P", "foo"],
+      cypressConfig: { env: { FOO: "foo" } },
+      cypressProjectPath: "foo",
+    },
+    "FOO",
+    "foo"
+  );
+
+  // Override with cypress.json in custom location & custom project path.
+  example(
+    resolveEnvironment,
+    {
+      argv: ["--project", "foo", "--config-file", "foo.json"],
+      cypressConfig: { env: { FOO: "foo" } },
+      cypressConfigPath: "foo.json",
+      cypressProjectPath: "foo",
+    },
+    "FOO",
+    "foo"
+  );
+  example(
+    resolveEnvironment,
+    {
+      argv: ["--project=foo", "--config-file", "foo.json"],
+      cypressConfig: { env: { FOO: "foo" } },
+      cypressConfigPath: "foo.json",
+      cypressProjectPath: "foo",
+    },
+    "FOO",
+    "foo"
+  );
+  example(
+    resolveEnvironment,
+    {
+      argv: ["-P", "foo", "--config-file", "foo.json"],
+      cypressConfig: { env: { FOO: "foo" } },
+      cypressConfigPath: "foo.json",
+      cypressProjectPath: "foo",
+    },
+    "FOO",
+    "foo"
+  );
+
+  // Override with cypress.env.json & custom project path.
+  example(
+    resolveEnvironment,
+    {
+      argv: ["--project", "foo"],
+      cypressEnvConfig: { FOO: "foo" },
+      cypressProjectPath: "foo",
+    },
+    "FOO",
+    "foo"
+  );
+  example(
+    resolveEnvironment,
+    {
+      argv: ["--project=foo"],
+      cypressEnvConfig: { FOO: "foo" },
+      cypressProjectPath: "foo",
+    },
+    "FOO",
+    "foo"
+  );
+  example(
+    resolveEnvironment,
+    {
+      argv: ["-P", "foo"],
+      cypressEnvConfig: { FOO: "foo" },
+      cypressProjectPath: "foo",
     },
     "FOO",
     "foo"

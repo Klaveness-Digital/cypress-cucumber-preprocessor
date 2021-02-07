@@ -104,8 +104,9 @@ export function resolveConfiguration(options: {
   const {
     argv = process.argv,
     env = process.env as Record<string, string>,
-    cwd = process.cwd(),
   } = options;
+
+  const projectPath = resolveProjectPath(options);
 
   const cliOrigin: Record<string, string> = Object.fromEntries(
     Array.from(
@@ -160,7 +161,10 @@ export function resolveConfiguration(options: {
 
   let configOrigin: Record<string, any> = {};
 
-  const cypressConfigPath = path.join(cwd, resolveConfigurationFile(options));
+  const cypressConfigPath = path.join(
+    projectPath,
+    resolveConfigurationFile(options)
+  );
 
   if (fs.existsSync(cypressConfigPath)) {
     const content = fs.readFileSync(cypressConfigPath).toString("utf8");
@@ -194,8 +198,9 @@ export function resolveEnvironment(options: {
   const {
     argv = process.argv,
     env = process.env as Record<string, string>,
-    cwd = process.cwd(),
   } = options;
+
+  const projectPath = resolveProjectPath(options);
 
   const cliOrigin: Record<string, string> = Object.fromEntries(
     Array.from(
@@ -237,7 +242,10 @@ export function resolveEnvironment(options: {
       })
   );
 
-  const cypressConfigPath = path.join(cwd, resolveConfigurationFile(options));
+  const cypressConfigPath = path.join(
+    projectPath,
+    resolveConfigurationFile(options)
+  );
 
   let configOrigin: Record<string, any> = {};
 
@@ -251,7 +259,7 @@ export function resolveEnvironment(options: {
     }
   }
 
-  const cypressEnvironmentFilePath = path.join(cwd, "cypress.env.json");
+  const cypressEnvironmentFilePath = path.join(projectPath, "cypress.env.json");
 
   let cypressEnvOrigin: Record<string, any> = {};
 
@@ -284,4 +292,17 @@ export function resolveConfigurationFile(options: { argv?: string[] }): string {
     findArgumentValue(argv, "-C", false) ||
     "cypress.json"
   );
+}
+
+export function resolveProjectPath(options: {
+  argv?: string[];
+  cwd?: string;
+}): string {
+  const { argv = process.argv, cwd = process.cwd() } = options;
+
+  const customProjectPath =
+    findArgumentValue(argv, "--project", true) ||
+    findArgumentValue(argv, "-P", false);
+
+  return customProjectPath ? path.join(cwd, customProjectPath) : cwd;
 }
