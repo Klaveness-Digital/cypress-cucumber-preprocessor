@@ -7,3 +7,10 @@ export function assertAndReturn<T>(
   assert(value, message);
   return value;
 }
+
+export function assertIsString(
+  value: any,
+  message: string
+): asserts value is string {
+  assert(typeof value === "string", message);
+}

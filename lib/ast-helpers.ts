@@ -1,5 +1,7 @@
 import { messages } from "@cucumber/messages";
 
+import { assertAndReturn } from "./assertions";
+
 export function* traverseGherkinDocument(
   gherkinDocument: messages.IGherkinDocument
 ) {
@@ -200,4 +202,8 @@ function* traverseExample(
       yield* traverseRow(row);
     }
   }
+}
+
+export function mapTagName(value: { name?: string | null }) {
+  return assertAndReturn(value.name, "Expected tag to have a name");
 }

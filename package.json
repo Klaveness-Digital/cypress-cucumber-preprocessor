@@ -11,9 +11,16 @@
   "files": [
     "lib/**/*.js",
     "lib/**/*.d.ts",
+    "cypress-tags",
     "methods.js",
-    "methods.d.ts"
+    "methods.d.ts",
+    "specs-by-tags.js",
+    "specs-by-tags.d.ts"
   ],
+  "bin": {
+    "cypress-tags": "cypress-tags.sh",
+    "specs-by-tags": "specs-by-tags.js"
+  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
@@ -32,7 +39,8 @@
     "cosmiconfig": "^4.0.0",
     "debug": "^4.2.0",
     "glob": "^7.1.6",
-    "is-path-inside": "^3.0.2"
+    "is-path-inside": "^3.0.2",
+    "minimatch": "^3.0.4"
   },
   "devDependencies": {
     "@types/debug": "^4.1.5",
