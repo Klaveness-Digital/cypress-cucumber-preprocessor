@@ -1,6 +1,6 @@
 {
   "name": "@badeball/cypress-cucumber-preprocessor",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "keywords": [
     "cypress",
     "cypress-plugin",
