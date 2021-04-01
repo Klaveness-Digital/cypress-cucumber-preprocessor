@@ -219,4 +219,16 @@ export class Registry {
   }
 }
 
-export default new Registry();
+const globalPropertyName =
+  "__cypress_cucumber_preprocessor_registry_dont_use_this";
+
+declare global {
+  interface Window {
+    [globalPropertyName]?: Registry;
+  }
+}
+
+const registry =
+  window[globalPropertyName] || (window[globalPropertyName] = new Registry());
+
+export default registry;
