@@ -474,6 +474,14 @@ describe("resolveEnvironment()", () => {
     "FOO",
     "foo"
   );
+  example(
+    resolveEnvironment,
+    {
+      argv: ["--env", "FOO=foo", "--env", "BAR=BAR"],
+    },
+    "FOO",
+    undefined
+  );
 
   const envTestMatrix: {
     env: Record<string, string>;

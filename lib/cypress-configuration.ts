@@ -209,7 +209,7 @@ export function resolveEnvironment(options: {
         traverseArgvMatching(argv, "-e", false)
       )
     )
-      .reverse()
+      .slice(0, 1)
       .flatMap((argument) => {
         const keypairExpr = /(?:^|,)([^=]+)=([^,$]+)/g;
         const entries: [string, string][] = [];
