@@ -6,9 +6,9 @@ import {
   ParameterType,
 } from "@cucumber/cucumber-expressions";
 
-import DataTable from "@cucumber/cucumber/lib/models/data_table";
-
 import parse from "@cucumber/tag-expressions";
+
+import DataTable from "./data_table";
 
 import {
   IHookBody,

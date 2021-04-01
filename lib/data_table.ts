@@ -1,0 +1,78 @@
+import { messages } from "@cucumber/messages";
+
+import { assertAndReturn } from "./assertions";
+
+function zip<A, B>(collectionA: A[], collectionB: B[]) {
+  return collectionA.map<[A, B]>((element, index) => [
+    element,
+    collectionB[index],
+  ]);
+}
+
+export default class DataTable {
+  private readonly rawTable: string[][];
+
+  constructor(
+    sourceTable: messages.PickleStepArgument.IPickleTable | string[][]
+  ) {
+    if (sourceTable instanceof Array) {
+      this.rawTable = sourceTable;
+    } else {
+      this.rawTable = assertAndReturn(
+        sourceTable.rows,
+        "Expected a PicleTable to have rows"
+      ).map((row) =>
+        assertAndReturn(
+          row.cells,
+          "Expected a PicleTableRow to have cells"
+        ).map((cell) =>
+          assertAndReturn(
+            cell.value,
+            "Expected a PicleTableCell to have a value"
+          )
+        )
+      );
+    }
+  }
+
+  hashes(): any[] {
+    const copy = this.raw();
+    const keys = copy[0];
+    const valuesArray = copy.slice(1);
+    return valuesArray.map((values) => Object.fromEntries(zip(keys, values)));
+  }
+
+  raw(): string[][] {
+    return this.rawTable.slice(0);
+  }
+
+  rows(): string[][] {
+    const copy = this.raw();
+    copy.shift();
+    return copy;
+  }
+
+  rowsHash() {
+    return Object.fromEntries(
+      this.raw().map<[string, string]>((values) => {
+        const [first, second, ...rest] = values;
+
+        if (first == null || second == null || rest.length !== 0) {
+          throw new Error(
+            "rowsHash can only be called on a data table where all rows have exactly two columns"
+          );
+        }
+
+        return [first, second];
+      })
+    );
+  }
+
+  transpose() {
+    const transposed = this.rawTable[0].map((x, i) =>
+      this.rawTable.map((y) => y[i])
+    );
+
+    return new DataTable(transposed);
+  }
+}

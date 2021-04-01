@@ -1,10 +1,10 @@
 import { messages } from "@cucumber/messages";
 
-import DataTable from "@cucumber/cucumber/lib/models/data_table";
-
 import parse from "@cucumber/tag-expressions";
 
 import { assertAndReturn } from "./assertions";
+
+import DataTable from "./data_table";
 
 import registry from "./registry";
 

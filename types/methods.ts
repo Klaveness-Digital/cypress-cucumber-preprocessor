@@ -1,4 +1,4 @@
-import DataTable from "@cucumber/cucumber/lib/models/data_table";
+import DataTable from "../lib/data_table";
 
 import {
   Given,
