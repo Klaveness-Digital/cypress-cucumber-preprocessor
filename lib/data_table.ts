@@ -1,6 +1,6 @@
 import { messages } from "@cucumber/messages";
 
-import { assertAndReturn } from "./assertions";
+import { assert, assertAndReturn } from "./assertions";
 
 function zip<A, B>(collectionA: A[], collectionB: B[]) {
   return collectionA.map<[A, B]>((element, index) => [
@@ -25,12 +25,11 @@ export default class DataTable {
         assertAndReturn(
           row.cells,
           "Expected a PicleTableRow to have cells"
-        ).map((cell) =>
-          assertAndReturn(
-            cell.value,
-            "Expected a PicleTableCell to have a value"
-          )
-        )
+        ).map((cell) => {
+          const { value } = cell;
+          assert(value != null, "Expected a PicleTableCell to have a value");
+          return value;
+        })
       );
     }
   }

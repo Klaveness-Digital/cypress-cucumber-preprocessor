@@ -101,3 +101,30 @@ Feature: data tables
       """
     When I run cypress
     Then it passes
+
+  Scenario: empty cells
+    Given a file named "cypress/integration/a.feature" with:
+      """
+      Feature: a feature
+        Scenario: a scenario
+          Given a table step
+            | Vegetable | Rating |
+            | Apricot   |        |
+            | Brocolli  |        |
+            | Cucumber  |        |
+      """
+    And a file named "cypress/support/step_definitions/steps.js" with:
+      """
+      const assert = require("assert");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      Given("a table step", function(table) {
+        const expected = [
+          ["Apricot", ""],
+          ["Brocolli", ""],
+          ["Cucumber", ""]
+        ];
+        assert.deepEqual(table.rows(), expected);
+      });
+      """
+    When I run cypress
+    Then it passes
