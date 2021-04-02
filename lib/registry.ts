@@ -223,12 +223,15 @@ const globalPropertyName =
   "__cypress_cucumber_preprocessor_registry_dont_use_this";
 
 declare global {
-  interface Window {
-    [globalPropertyName]?: Registry;
+  namespace globalThis {
+    var __cypress_cucumber_preprocessor_registry_dont_use_this:
+      | Registry
+      | undefined;
   }
 }
 
 const registry =
-  window[globalPropertyName] || (window[globalPropertyName] = new Registry());
+  globalThis[globalPropertyName] ||
+  (globalThis[globalPropertyName] = new Registry());
 
 export default registry;
