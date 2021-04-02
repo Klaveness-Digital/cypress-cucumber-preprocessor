@@ -4,10 +4,9 @@ import path from "path";
 
 import util from "util";
 
-import assert from "assert";
-
 import debug from "./debug";
-import { assertAndReturn } from "./assertions";
+
+import { assert, assertAndReturn } from "./assertions";
 
 /**
  * This is obviously a non-exhaustive list.
