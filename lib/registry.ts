@@ -8,6 +8,8 @@ import {
 
 import parse from "@cucumber/tag-expressions";
 
+import { assertAndReturn } from "./assertions";
+
 import DataTable from "./data_table";
 
 import {
@@ -146,7 +148,17 @@ export class Registry {
     optionsOrFn: IHookBody | { tags?: string },
     maybeFn?: IHookBody
   ) {
-    this.beforeHooks.push(parseHookArguments(optionsOrFn, maybeFn));
+    const { implementation, node } = parseHookArguments(optionsOrFn, maybeFn);
+
+    beforeEach(function () {
+      if (
+        node.evaluate(
+          assertAndReturn(Cypress.env("tags"), "Expected tags to be set")
+        )
+      ) {
+        implementation.call(this);
+      }
+    });
   }
 
   private defineAfter(options: { tags?: string }, fn: IHookBody): void;
@@ -155,7 +167,17 @@ export class Registry {
     optionsOrFn: IHookBody | { tags?: string },
     maybeFn?: IHookBody
   ) {
-    this.afterHooks.push(parseHookArguments(optionsOrFn, maybeFn));
+    const { implementation, node } = parseHookArguments(optionsOrFn, maybeFn);
+
+    afterEach(function () {
+      if (
+        node.evaluate(
+          assertAndReturn(Cypress.env("tags"), "Expected tags to be set")
+        )
+      ) {
+        implementation.call(this);
+      }
+    });
   }
 
   private resolveStepDefintion(text: string) {
@@ -200,22 +222,6 @@ export class Registry {
     }
 
     stepDefinition.implementation.apply(world, args);
-  }
-
-  public resolveBeforeHooks(tags: string[]) {
-    return this.beforeHooks.filter((beforeHook) =>
-      beforeHook.node.evaluate(tags)
-    );
-  }
-
-  public resolveAfterHooks(tags: string[]) {
-    return this.afterHooks.filter((beforeHook) =>
-      beforeHook.node.evaluate(tags)
-    );
-  }
-
-  public runHook(world: Mocha.Context, hook: IHook) {
-    hook.implementation.call(world);
   }
 }
 

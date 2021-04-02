@@ -165,16 +165,12 @@ function createPickle(
     return;
   }
 
-  it(scenario.name || "<unamed scenario>", function () {
+  it(scenario.name || "<unamed scenario>", { env: { tags } }, function () {
     window.testState = {
       gherkinDocument,
       pickles,
       pickle,
     };
-
-    for (const hook of registry.resolveBeforeHooks(tags)) {
-      cy.then(() => registry.runHook(this, hook));
-    }
 
     if (pickle.steps) {
       for (const pickleStep of pickle.steps) {
@@ -213,10 +209,6 @@ function createPickle(
 
         cy.then(() => registry.runStepDefininition(this, text, argument));
       }
-    }
-
-    for (const hook of registry.resolveAfterHooks(tags)) {
-      cy.then(() => registry.runHook(this, hook));
     }
   });
 }
