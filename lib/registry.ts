@@ -8,7 +8,7 @@ import {
 
 import parse from "@cucumber/tag-expressions";
 
-import { assertAndReturn } from "./assertions";
+import { assertAndReturn, isString } from "./assertions";
 
 import DataTable from "./data_table";
 
@@ -51,6 +51,32 @@ function parseHookArguments(
     };
   } else {
     throw new Error("Unexpected argument for Before hook");
+  }
+}
+
+function retrieveCurrentTagsOrWarn() {
+  const isFeatureSpec = Cypress.spec.name.endsWith(".feature");
+
+  const envTags = Cypress.env("tags");
+
+  const tags = isFeatureSpec
+    ? envTags
+    : envTags ??
+      (cy.log(
+        "⚠️ cypress-cucumber-preprocessor: Using Cucumber hooks with non-feature files is supported and you can tag them yourself using the `tags` environment variable. Use an explicit, empty array to remove this warning."
+      ),
+      []);
+
+  if (!Array.isArray(tags)) {
+    throw new Error(
+      "cypress-cucumber-preprocessor: Expected an array of tags. This might mean that you have erroneously overriden the environment variable yourself."
+    );
+  } else if (!tags.every(isString)) {
+    throw new Error(
+      "cypress-cucumber-preprocessor: Expected an array of strings. This might mean that you have erroneously overriden the environment variable yourself."
+    );
+  } else {
+    return tags;
   }
 }
 
@@ -151,11 +177,7 @@ export class Registry {
     const { implementation, node } = parseHookArguments(optionsOrFn, maybeFn);
 
     beforeEach(function () {
-      if (
-        node.evaluate(
-          assertAndReturn(Cypress.env("tags"), "Expected tags to be set")
-        )
-      ) {
+      if (node.evaluate(retrieveCurrentTagsOrWarn())) {
         implementation.call(this);
       }
     });
@@ -170,11 +192,7 @@ export class Registry {
     const { implementation, node } = parseHookArguments(optionsOrFn, maybeFn);
 
     afterEach(function () {
-      if (
-        node.evaluate(
-          assertAndReturn(Cypress.env("tags"), "Expected tags to be set")
-        )
-      ) {
+      if (node.evaluate(retrieveCurrentTagsOrWarn())) {
         implementation.call(this);
       }
     });

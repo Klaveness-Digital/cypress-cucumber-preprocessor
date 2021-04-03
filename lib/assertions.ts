@@ -14,9 +14,13 @@ export function assertAndReturn<T>(
   return value;
 }
 
+export function isString(value: any): value is string {
+  return typeof value === "string";
+}
+
 export function assertIsString(
   value: any,
   message: string
 ): asserts value is string {
-  assert(typeof value === "string", message);
+  assert(isString(value), message);
 }
