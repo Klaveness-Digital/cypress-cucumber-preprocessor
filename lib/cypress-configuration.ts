@@ -14,14 +14,99 @@ function isStringEntry(entry: [any, any]): entry is [string, string] {
 
 /**
  * This is obviously a non-exhaustive list.
+ *
+ * Definitions can found in https://github.com/cypress-io/cypress/blob/develop/cli/schema/cypress.schema.json.
  */
-const RECOGNIZED_CONFIGURATION_ATTRIBUTES = [
-  "integrationFolder",
-  "fixturesFolder",
-  "supportFile",
-  "testFiles",
-  "ignoreTestFiles",
-];
+interface ICypressConfiguration {
+  integrationFolder: string;
+  fixturesFolder: string | false;
+  supportFile: string | false;
+  testFiles: string | string[];
+  ignoreTestFiles: string | string[];
+}
+
+function isString(value: unknown): value is string {
+  return typeof value === "string";
+}
+
+function isFalse(value: unknown): value is false {
+  return value === false;
+}
+
+function isStringOrFalse(value: unknown): value is string | false {
+  return isString(value) || isFalse(value);
+}
+
+function isStringOrStringArray(value: unknown): value is string | string[] {
+  return (
+    typeof value === "string" || (Array.isArray(value) && value.every(isString))
+  );
+}
+
+function validateConfigurationEntry(
+  key: string,
+  value: unknown
+): Partial<ICypressConfiguration> {
+  switch (key) {
+    case "integrationFolder":
+      if (!isString(value)) {
+        throw new Error(
+          `Expected a string (integrationFolder), but got ${util.inspect(
+            value
+          )}`
+        );
+      }
+      return { [key]: value };
+    case "fixturesFolder":
+      if (!isStringOrFalse(value)) {
+        throw new Error(
+          `Expected a string or false (fixturesFolder), but got ${util.inspect(
+            value
+          )}`
+        );
+      }
+      return { [key]: value };
+    case "supportFile":
+      if (!isStringOrFalse(value)) {
+        throw new Error(
+          `Expected a string or false (supportFile), but got ${util.inspect(
+            value
+          )}`
+        );
+      }
+      return { [key]: value };
+    case "testFiles":
+      if (!isStringOrStringArray(value)) {
+        throw new Error(
+          `Expected a string or array of strings (testFiles), but got ${util.inspect(
+            value
+          )}`
+        );
+      }
+      return { [key]: value };
+    case "ignoreTestFiles":
+      if (!isStringOrStringArray(value)) {
+        throw new Error(
+          `Expected a string or array of strings (ignoreTestFiles), but got ${util.inspect(
+            value
+          )}`
+        );
+      }
+      return { [key]: value };
+    default:
+      return {};
+  }
+}
+
+function parseJsonFile(filepath: string) {
+  const content = fs.readFileSync(filepath).toString("utf8");
+
+  try {
+    return JSON.parse(content);
+  } catch {
+    throw new Error(`Malformed ${filepath}, expected JSON`);
+  }
+}
 
 export function findLastIndex<T>(
   collection: ArrayLike<T>,
@@ -103,13 +188,14 @@ export function resolveConfiguration(options: {
   argv: string[];
   env: NodeJS.ProcessEnv;
   cwd: string;
-}): Record<string, any> {
+}): ICypressConfiguration {
   const { argv, env } = options;
 
   const projectPath = resolveProjectPath(options);
 
-  const cliOrigin: Record<string, string> = Object.fromEntries(
-    Array.from(
+  const cliOrigin: Partial<ICypressConfiguration> = Object.assign(
+    {},
+    ...Array.from(
       combine(
         traverseArgvMatching(argv, "--config", true),
         traverseArgvMatching(argv, "-c", false)
@@ -118,13 +204,11 @@ export function resolveConfiguration(options: {
       .reverse()
       .flatMap((argument) => {
         const keypairExpr = /(?:^|,)([^=]+)=([^,$]+)/g;
-        const entries: [string, string][] = [];
+        const entries: Partial<ICypressConfiguration>[] = [];
         let match;
 
         while ((match = keypairExpr.exec(argument)) !== null) {
-          if (RECOGNIZED_CONFIGURATION_ATTRIBUTES.includes(match[1])) {
-            entries.push([match[1], match[2]]);
-          }
+          entries.push(validateConfigurationEntry(match[1], match[2]));
         }
 
         return entries;
@@ -133,8 +217,9 @@ export function resolveConfiguration(options: {
 
   const envPrefixExpr = /^cypress_(.+)/i;
 
-  const envOrigin: Record<string, string> = Object.fromEntries(
-    Object.entries(env)
+  const envOrigin: Partial<ICypressConfiguration> = Object.assign(
+    {},
+    ...Object.entries(env)
       .filter((entry) => {
         return envPrefixExpr.test(entry[0]);
       })
@@ -150,17 +235,14 @@ export function resolveConfiguration(options: {
         return [assertAndReturn(match[1]), entry[1]];
       })
       .map((entry) => {
-        return [
+        return validateConfigurationEntry(
           entry[0].includes("_") ? toCamelCase(entry[0]) : entry[0],
-          entry[1],
-        ];
-      })
-      .filter((entry) => {
-        return RECOGNIZED_CONFIGURATION_ATTRIBUTES.includes(entry[0]);
+          entry[1]
+        );
       })
   );
 
-  let configOrigin: Record<string, any> = {};
+  let configOrigin: Partial<ICypressConfiguration> = {};
 
   const cypressConfigPath = path.join(
     projectPath,
@@ -168,9 +250,18 @@ export function resolveConfiguration(options: {
   );
 
   if (fs.existsSync(cypressConfigPath)) {
-    const content = fs.readFileSync(cypressConfigPath).toString("utf8");
+    const cypressConfig = parseJsonFile(cypressConfigPath);
 
-    configOrigin = JSON.parse(content);
+    if (typeof cypressConfig !== "object" || cypressConfig == null) {
+      throw new Error(`Malformed ${cypressConfigPath}, expected an object`);
+    }
+
+    configOrigin = Object.assign(
+      {},
+      ...Object.entries(cypressConfig).map((entry) =>
+        validateConfigurationEntry(...entry)
+      )
+    );
   }
 
   const configuration = Object.assign(

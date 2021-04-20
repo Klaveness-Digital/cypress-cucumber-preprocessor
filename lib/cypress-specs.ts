@@ -26,13 +26,7 @@ export function find(options: {
     supportFile,
     testFiles,
     ignoreTestFiles,
-  } = resolveConfiguration(options) as {
-    integrationFolder: string;
-    fixturesFolder: string | false;
-    supportFile: string | false;
-    testFiles: string | string[];
-    ignoreTestFiles: string | string[];
-  };
+  } = resolveConfiguration(options);
 
   const testFilesPatterns = [testFiles].flat();
   const ignoreTestFilesPatterns = [ignoreTestFiles].flat();
