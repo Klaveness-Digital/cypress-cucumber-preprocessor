@@ -1,4 +1,4 @@
-import cosmiconfig from "cosmiconfig";
+import { cosmiconfig } from "cosmiconfig";
 
 import util from "util";
 
@@ -42,7 +42,7 @@ export class Configuration implements IConfiguration {
 }
 
 export async function resolve() {
-  const result = await cosmiconfig("cypress-cucumber-preprocessor").load();
+  const result = await cosmiconfig("cypress-cucumber-preprocessor").search();
 
   if (result) {
     debug(`resolved configuration ${util.inspect(result.config)}`);

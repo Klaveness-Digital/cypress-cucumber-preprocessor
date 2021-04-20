@@ -47,7 +47,7 @@
     "@cucumber/messages": "^13.1.0",
     "@cucumber/tag-expressions": "^2.0.4",
     "@cypress/browserify-preprocessor": "^3.0.1",
-    "cosmiconfig": "^4.0.0",
+    "cosmiconfig": "^7.0.0",
     "debug": "^4.2.0",
     "glob": "^7.1.6",
     "is-path-inside": "^3.0.2",
