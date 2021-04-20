@@ -4,15 +4,15 @@ import util from "util";
 
 import debug from "./debug";
 
-export interface IConfiguration {
+export interface IPreprocessorConfiguration {
   readonly globalStepDefinitions: boolean;
   readonly stepDefinitionsFolder: string;
   readonly stepDefinitionsCommonFolder: string;
   readonly integrationFolder: string;
 }
 
-export class Configuration implements IConfiguration {
-  constructor(private explicitValues: Partial<IConfiguration>) {}
+export class PreprocessorConfiguration implements IPreprocessorConfiguration {
+  constructor(private explicitValues: Partial<IPreprocessorConfiguration>) {}
 
   get globalStepDefinitions() {
     if (this.explicitValues.globalStepDefinitions === false) {
@@ -50,5 +50,5 @@ export async function resolve() {
     debug("resolved no configuration");
   }
 
-  return new Configuration((result && result.config) || {});
+  return new PreprocessorConfiguration((result && result.config) || {});
 }

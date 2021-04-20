@@ -8,7 +8,10 @@ import isPathInside from "is-path-inside";
 
 import debug from "./debug";
 
-import { IConfiguration, resolve } from "./configuration";
+import {
+  IPreprocessorConfiguration,
+  resolve,
+} from "./preprocessor-configuration";
 
 export async function getStepDefinitionPaths(
   filepath: string
@@ -40,7 +43,7 @@ function trimFeatureExtension(filepath: string) {
 
 export function getStepDefinitionDirectories(
   filepath: string,
-  configuration: IConfiguration,
+  configuration: IPreprocessorConfiguration,
   cwd: string = process.cwd()
 ): string[] {
   const fullIntegrationFolder = path.join(cwd, configuration.integrationFolder);

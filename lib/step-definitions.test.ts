@@ -2,14 +2,17 @@ import util from "util";
 
 import assert from "assert";
 
-import { Configuration, IConfiguration } from "./configuration";
+import {
+  PreprocessorConfiguration,
+  IPreprocessorConfiguration,
+} from "./preprocessor-configuration";
 
 import { getStepDefinitionDirectories } from "./step-definitions";
 
 function example(
   filepath: string,
   cwd: string,
-  explicitValues: Partial<IConfiguration>,
+  explicitValues: Partial<IPreprocessorConfiguration>,
   expected: string[]
 ) {
   it(`should return [${expected.join(
@@ -17,7 +20,7 @@ function example(
   )}] for ${filepath} with ${util.inspect(explicitValues)} in ${cwd}`, () => {
     const actual = getStepDefinitionDirectories(
       filepath,
-      new Configuration(explicitValues),
+      new PreprocessorConfiguration(explicitValues),
       cwd
     );
 
@@ -97,7 +100,7 @@ describe("getStepDefinitionDirectories()", () => {
     assert.throws(() => {
       getStepDefinitionDirectories(
         "/foo/bar/cypress/features/baz.feature",
-        new Configuration({}),
+        new PreprocessorConfiguration({}),
         "/foo/bar"
       );
     }, "/foo/bar/cypress/features/baz.feature is not within cypress/integration");
@@ -107,7 +110,7 @@ describe("getStepDefinitionDirectories()", () => {
     assert.throws(() => {
       getStepDefinitionDirectories(
         "/foo/bar/cypress/integration/baz.feature",
-        new Configuration({}),
+        new PreprocessorConfiguration({}),
         "/baz"
       );
     }, "/foo/bar/cypress/features/baz.feature is not within /baz");
