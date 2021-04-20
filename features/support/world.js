@@ -1,7 +1,10 @@
 const { setWorldConstructor } = require("@cucumber/cucumber");
+const path = require("path");
 const childProcess = require("child_process");
 const { PassThrough } = require("stream");
 const { WritableStreamBuffer } = require("stream-buffers");
+
+const projectPath = path.join(__dirname, "..", "..");
 
 function combine(...streams) {
   return streams.reduce((combined, stream) => {
@@ -16,10 +19,14 @@ function combine(...streams) {
 
 class World {
   async run(extraArgs = []) {
-    const child = childProcess.spawn("npx", ["cypress", "run", ...extraArgs], {
-      stdio: ["ignore", "pipe", "pipe"],
-      cwd: this.tmpDir,
-    });
+    const child = childProcess.spawn(
+      path.join(projectPath, "node_modules", ".bin", "cypress"),
+      ["run", ...extraArgs],
+      {
+        stdio: ["ignore", "pipe", "pipe"],
+        cwd: this.tmpDir,
+      }
+    );
 
     const combined = combine(child.stdout, child.stderr);
 
