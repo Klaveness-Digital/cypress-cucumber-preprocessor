@@ -14,6 +14,7 @@
   "include": [
     "lib/**/*.ts",
     "specs-by-tags.ts",
-    "methods.ts"
+    "methods.ts",
+    "declarations.d.ts"
   ]
 }
