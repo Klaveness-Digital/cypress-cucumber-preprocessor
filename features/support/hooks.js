@@ -33,10 +33,32 @@ Before(async function ({ gherkinDocument, pickle }) {
   await writeFile(
     path.join(this.tmpDir, "cypress", "plugins", "index.js"),
     `
-      const { preprocessor } = require("${projectPath}");
+      const { compile } = require("${projectPath}/lib/template");
+      const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
+
+      const FeatureOnLoadPlugin = {
+        name: "feature",
+        setup(build) {
+          const fs = require("fs");
+
+          build.onLoad({ filter: /\.feature$/ }, async args => {
+            const content = await fs.promises.readFile(args.path, "utf8");
+
+            return {
+              contents: await compile(content, args.path),
+              loader: "js"
+            };
+          });
+        }
+      };
 
       module.exports = (on, config) => {
-        on("file:preprocessor", preprocessor())
+        on(
+          "file:preprocessor",
+          createBundler({
+            plugins: [FeatureOnLoadPlugin]
+          })
+        );
       }
     `
   );
