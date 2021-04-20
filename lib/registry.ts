@@ -8,9 +8,9 @@ import {
 
 import parse from "@cucumber/tag-expressions";
 
-import { assertAndReturn, isString } from "./assertions";
-
 import DataTable from "./data_table";
+
+import { isString } from "./type-guards";
 
 import {
   IHookBody,

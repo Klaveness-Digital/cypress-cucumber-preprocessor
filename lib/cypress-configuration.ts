@@ -8,6 +8,12 @@ import debug from "./debug";
 
 import { assert, assertAndReturn } from "./assertions";
 
+import {
+  isString,
+  isStringOrFalse,
+  isStringOrStringArray,
+} from "./type-guards";
+
 function isStringEntry(entry: [any, any]): entry is [string, string] {
   return typeof entry[0] === "string" && typeof entry[1] === "string";
 }
@@ -23,24 +29,6 @@ interface ICypressConfiguration {
   supportFile: string | false;
   testFiles: string | string[];
   ignoreTestFiles: string | string[];
-}
-
-function isString(value: unknown): value is string {
-  return typeof value === "string";
-}
-
-function isFalse(value: unknown): value is false {
-  return value === false;
-}
-
-function isStringOrFalse(value: unknown): value is string | false {
-  return isString(value) || isFalse(value);
-}
-
-function isStringOrStringArray(value: unknown): value is string | string[] {
-  return (
-    typeof value === "string" || (Array.isArray(value) && value.every(isString))
-  );
 }
 
 function validateConfigurationEntry(

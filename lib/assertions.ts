@@ -1,3 +1,5 @@
+import { isString } from "./type-guards";
+
 export function assert(value: any, message?: string): asserts value {
   if (value) {
     return;
@@ -12,10 +14,6 @@ export function assertAndReturn<T>(
 ): T {
   assert(value, message);
   return value;
-}
-
-export function isString(value: any): value is string {
-  return typeof value === "string";
 }
 
 export function assertIsString(
