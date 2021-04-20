@@ -3,13 +3,12 @@ Feature: tagged Hooks
   Background:
     Given a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const assert = require("assert")
       const { Then } = require("@badeball/cypress-cucumber-preprocessor/methods");
       Then("{word} is true", function(prop) {
-        assert.equal(true, this[prop])
+        expect(true).to.equal(this[prop])
       })
       Then("{word} is false", function(prop) {
-        assert.equal(false, this[prop])
+        expect(false).to.equal(this[prop])
       })
       """
     And a file named "cypress/support/step_definitions/hooks.js" with:

@@ -12,11 +12,10 @@ Feature: doc string
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const assert = require("assert")
       const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
       Given("a doc string step", function(docString) {
-        assert.equal(docString, "The cucumber (Cucumis sativus) is a widely " +
-                                "cultivated plant in the gourd family Cucurbitaceae.")
+        expect(docString).to.equal("The cucumber (Cucumis sativus) is a widely " +
+                                   "cultivated plant in the gourd family Cucurbitaceae.")
       })
       """
     When I run cypress
@@ -34,12 +33,11 @@ Feature: doc string
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const assert = require("assert")
       const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
       Given("a {string} step", function(type, docString) {
-        assert.equal(type, "doc string")
-        assert.equal(docString, "The cucumber (Cucumis sativus) is a widely " +
-                                "cultivated plant in the gourd family Cucurbitaceae.")
+        expect(type).to.equal("doc string")
+        expect(docString).to.equal("The cucumber (Cucumis sativus) is a widely " +
+                                   "cultivated plant in the gourd family Cucurbitaceae.")
       })
       """
     When I run cypress

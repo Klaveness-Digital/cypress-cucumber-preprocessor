@@ -8,10 +8,9 @@ Feature: hooks scope
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const assert = require("assert")
       const { When } = require("@badeball/cypress-cucumber-preprocessor/methods");
       When("a step", function() {
-        assert.equal(this.foo, "bar");
+        expect(this.foo).to.equal("bar");
       });
       """
     And a file named "cypress/support/index.js" with:

@@ -10,7 +10,6 @@ Feature: asynchronous world
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const assert = require("assert")
       const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
       Given("a step asynchronously assigning to World", function() {
         cy.then(() => {
@@ -18,7 +17,7 @@ Feature: asynchronous world
         });
       });
       Given("a step accessing said assignment synchronously", function() {
-        assert.equal(this.foo, "bar");
+        expect(this.foo).to.equal("bar");
       });
       """
     When I run cypress

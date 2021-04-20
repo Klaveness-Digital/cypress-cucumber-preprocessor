@@ -11,14 +11,13 @@ Feature: data tables
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const assert = require("assert");
       const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
       Given("a table step", function(table) {
         const expected = [
           ["Cucumber", "Cucumis sativus"],
           ["Burr Gherkin", "Cucumis anguria"]
         ];
-        assert.deepEqual(table.raw(), expected);
+        expect(table.raw()).to.deep.equal(expected);
       });
       """
     When I run cypress
@@ -37,7 +36,6 @@ Feature: data tables
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const assert = require("assert");
       const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
       Given("a table step", function(table) {
         const expected = [
@@ -45,7 +43,7 @@ Feature: data tables
           ["Brocolli", "2"],
           ["Cucumber", "10"]
         ];
-        assert.deepEqual(table.rows(), expected);
+        expect(table.rows()).to.deep.equal(expected);
       });
       """
     When I run cypress
@@ -62,14 +60,13 @@ Feature: data tables
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const assert = require("assert");
       const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
       Given("a table step", function(table) {
         const expected = {
           "Cucumber": "Cucumis sativus",
           "Burr Gherkin": "Cucumis anguria"
         };
-        assert.deepEqual(table.rowsHash(), expected);
+        expect(table.rowsHash()).to.deep.equal(expected);
       });
       """
     When I run cypress
@@ -88,7 +85,6 @@ Feature: data tables
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const assert = require("assert");
       const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
       Given("a table step", function(table) {
         const expected = [
@@ -96,7 +92,7 @@ Feature: data tables
           {"Vegetable": "Brocolli", "Rating": "2"},
           {"Vegetable": "Cucumber", "Rating": "10"}
         ];
-        assert.deepEqual(table.hashes(), expected);
+        expect(table.hashes()).to.deep.equal(expected);
       });
       """
     When I run cypress
@@ -115,7 +111,6 @@ Feature: data tables
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const assert = require("assert");
       const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
       Given("a table step", function(table) {
         const expected = [
@@ -123,7 +118,7 @@ Feature: data tables
           ["Brocolli", ""],
           ["Cucumber", ""]
         ];
-        assert.deepEqual(table.rows(), expected);
+        expect(table.rows()).to.deep.equal(expected);
       });
       """
     When I run cypress

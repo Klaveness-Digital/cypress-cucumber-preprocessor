@@ -33,10 +33,9 @@ Feature: scenario outlines and examples
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const assert = require("assert")
       const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
       Given("a doc string step", function(docString) {
-        assert.equal(docString, "a foo doc string")
+        expect(docString).to.equal("a foo doc string")
       })
       """
     When I run cypress
@@ -55,10 +54,9 @@ Feature: scenario outlines and examples
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const assert = require("assert")
       const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
       Given("a table step", function(tableData) {
-        assert.equal(tableData.raw()[0][0], "foo")
+        expect(tableData.raw()[0][0]).to.equal("foo")
       })
       """
     When I run cypress

@@ -20,7 +20,6 @@ Feature: hooks ordering
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const assert = require("assert")
       const {
         Given,
         Before,
@@ -31,31 +30,31 @@ Feature: hooks ordering
         counter = 0;
       })
       Before(function() {
-        assert.equal(counter++, 0, "Expected Before() to be called before beforeEach()")
+        expect(counter++, "Expected Before() to be called before beforeEach()").to.equal(0)
       })
       beforeEach(function() {
-        assert.equal(counter++, 1, "Expected beforeEach() to be called after before()")
+        expect(counter++, "Expected beforeEach() to be called after before()").to.equal(1)
       })
       Before(function() {
-        assert.equal(counter++, 2, "Expected Before() to also be called after beforeEach()")
+        expect(counter++, "Expected Before() to also be called after beforeEach()").to.equal(2)
       })
       Given("a background step", function() {
-        assert.equal(counter++, 3, "Expected a background step to be called after Before()")
+        expect(counter++, "Expected a background step to be called after Before()").to.equal(3)
       })
       Given("an ordinary step", function() {
-        assert.equal(counter++, 4, "Expected an ordinary step to be called after a background step")
+        expect(counter++, "Expected an ordinary step to be called after a background step").to.equal(4)
       })
       After(function() {
-        assert.equal(counter++, 5, "Expected After() to be called after ordinary steps")
+        expect(counter++, "Expected After() to be called after ordinary steps").to.equal(5)
       })
       afterEach(function() {
-        assert.equal(counter++, 6, "Expected afterEach() to be called after After()")
+        expect(counter++, "Expected afterEach() to be called after After()").to.equal(6)
       })
       After(function() {
-        assert.equal(counter++, 7, "Expected After() to also be called after afterEach")
+        expect(counter++, "Expected After() to also be called after afterEach").to.equal(7)
       })
       after(function() {
-        assert.equal(counter++, 8, "Expected after() to be called after afterEach()")
+        expect(counter++, "Expected after() to be called after afterEach()").to.equal(8)
       })
       """
     When I run cypress
