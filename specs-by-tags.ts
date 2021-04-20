@@ -49,6 +49,12 @@ export function findByTags(tags: any) {
 }
 
 if (require.main === module) {
+  const { TAGS } = resolveEnvironment({});
+
+  if (TAGS == null || TAGS === "") {
+    process.exit(0);
+  }
+
   const hasSpecArg = process.argv.some((arg) =>
     arg.match(/^(?:-s|--spec(?:=|$))/)
   );
@@ -57,8 +63,6 @@ if (require.main === module) {
     console.error("-s / --spec is already defined");
     process.exit(1);
   }
-
-  const { TAGS } = resolveEnvironment({});
 
   console.log(findByTags(TAGS).join(","));
 }
