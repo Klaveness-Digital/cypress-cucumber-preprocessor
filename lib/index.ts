@@ -84,4 +84,6 @@ export function preprocessor(options = browserify.defaultOptions) {
   };
 }
 
+export { compile };
+
 export default preprocessor;
