@@ -74,4 +74,8 @@ export default class DataTable {
 
     return new DataTable(transposed);
   }
+
+  toString() {
+    return "[object DataTable]";
+  }
 }
