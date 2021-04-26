@@ -1,5 +1,8 @@
 **/*.js
 **/*.d.ts
+!cucumber.js
+!declarations.d.ts
+!types/index.d.ts
 
 # Temporary directory for test execution
 tmp/
