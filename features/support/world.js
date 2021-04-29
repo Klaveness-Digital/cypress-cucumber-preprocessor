@@ -25,6 +25,10 @@ class World {
       {
         stdio: ["ignore", "pipe", "pipe"],
         cwd: this.tmpDir,
+        env: {
+          ...process.env,
+          NO_COLOR: "1",
+        },
       }
     );
 
