@@ -8,6 +8,10 @@ import debug from "./debug";
 
 import { assert, assertAndReturn } from "./assertions";
 
+function isStringEntry(entry: [any, any]): entry is [string, string] {
+  return typeof entry[0] === "string" && typeof entry[1] === "string";
+}
+
 /**
  * This is obviously a non-exhaustive list.
  */
@@ -97,13 +101,10 @@ export function toCamelCase(value: string) {
 
 export function resolveConfiguration(options: {
   argv?: string[];
-  env?: Record<string, string>;
+  env?: NodeJS.ProcessEnv;
   cwd?: string;
 }): Record<string, any> {
-  const {
-    argv = process.argv,
-    env = process.env as Record<string, string>,
-  } = options;
+  const { argv = process.argv, env = process.env } = options;
 
   const projectPath = resolveProjectPath(options);
 
@@ -137,6 +138,7 @@ export function resolveConfiguration(options: {
       .filter((entry) => {
         return envPrefixExpr.test(entry[0]);
       })
+      .filter(isStringEntry)
       .map<[string, string]>((entry) => {
         const match = entry[0].match(envPrefixExpr);
 
@@ -191,13 +193,10 @@ export function resolveConfiguration(options: {
 
 export function resolveEnvironment(options: {
   argv?: string[];
-  env?: Record<string, string>;
+  env?: NodeJS.ProcessEnv;
   cwd?: string;
 }): Record<string, any> {
-  const {
-    argv = process.argv,
-    env = process.env as Record<string, string>,
-  } = options;
+  const { argv = process.argv, env = process.env } = options;
 
   const projectPath = resolveProjectPath(options);
 
@@ -229,6 +228,7 @@ export function resolveEnvironment(options: {
       .filter((entry) => {
         return envPrefixExpr.test(entry[0]);
       })
+      .filter(isStringEntry)
       .map<[string, string]>((entry) => {
         const match = entry[0].match(envPrefixExpr);
 
