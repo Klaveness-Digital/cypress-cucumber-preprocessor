@@ -193,7 +193,7 @@ export function resolveEnvironment(options: {
   argv?: string[];
   env?: Record<string, string>;
   cwd?: string;
-}): any {
+}): Record<string, any> {
   const {
     argv = process.argv,
     env = process.env as Record<string, string>,

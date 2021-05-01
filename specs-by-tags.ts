@@ -10,7 +10,7 @@ import { IdGenerator } from "@cucumber/messages";
 
 import parse from "@cucumber/tag-expressions";
 
-import { assertAndReturn, assertIsString } from "./lib/assertions";
+import { assertIsString } from "./lib/assertions";
 
 import { mapTagName } from "./lib/ast-helpers";
 
@@ -20,17 +20,8 @@ import { find } from "./lib/cypress-specs";
 
 export { find };
 
-export function findByTags(tags: any) {
+export function findByTags(tags: string) {
   const files = find();
-
-  if (!tags) {
-    return files;
-  }
-
-  assertIsString(
-    tags,
-    `Expected "integrationFolder" to be a string, got ${util.inspect(tags)}`
-  );
 
   const testFilter = parse(tags);
 
@@ -54,6 +45,11 @@ if (require.main === module) {
   if (TAGS == null || TAGS === "") {
     process.exit(0);
   }
+
+  assertIsString(
+    TAGS,
+    `Expected "TAGS" to be a string, got ${util.inspect(TAGS)}`
+  );
 
   const hasSpecArg = process.argv.some((arg) =>
     arg.match(/^(?:-s|--spec(?:=|$))/)
