@@ -36,23 +36,23 @@ Before(async function ({ gherkinDocument, pickle }) {
       const { compile } = require("${projectPath}/lib/template");
       const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
 
-      const FeatureOnLoadPlugin = {
-        name: "feature",
-        setup(build) {
-          const fs = require("fs");
-
-          build.onLoad({ filter: /\.feature$/ }, async args => {
-            const content = await fs.promises.readFile(args.path, "utf8");
-
-            return {
-              contents: await compile(content, args.path),
-              loader: "js"
-            };
-          });
-        }
-      };
-
       module.exports = (on, config) => {
+        const FeatureOnLoadPlugin = {
+          name: "feature",
+          setup(build) {
+            const fs = require("fs");
+
+            build.onLoad({ filter: /\.feature$/ }, async args => {
+              const content = await fs.promises.readFile(args.path, "utf8");
+
+              return {
+                contents: await compile(config, content, args.path),
+                loader: "js"
+              };
+            });
+          }
+        };
+
         on(
           "file:preprocessor",
           createBundler({

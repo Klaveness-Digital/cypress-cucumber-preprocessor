@@ -4,6 +4,10 @@ import { IdGenerator } from "@cucumber/messages";
 
 import { assertAndReturn } from "./assertions";
 
+import { ICypressConfiguration } from "./cypress-configuration";
+
+import { resolve } from "./preprocessor-configuration";
+
 import { getStepDefinitionPaths } from "./step-definitions";
 
 function notNull<T>(value: T | null | undefined): value is T {
@@ -12,6 +16,7 @@ function notNull<T>(value: T | null | undefined): value is T {
 
 export async function compile(
   this: any,
+  configuration: ICypressConfiguration,
   data: string,
   uri: string = this.resourcePath
 ) {
@@ -40,7 +45,13 @@ export async function compile(
 
   const pickles = envelopes.map((envelope) => envelope.pickle).filter(notNull);
 
-  const stepDefinitions = await getStepDefinitionPaths(uri);
+  const stepDefinitions = await getStepDefinitionPaths(
+    {
+      cypress: configuration,
+      preprocessor: await resolve(),
+    },
+    uri
+  );
 
   return `
     const createTests = require("@badeball/cypress-cucumber-preprocessor/lib/create-tests");

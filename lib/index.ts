@@ -10,6 +10,8 @@ import debug from "./debug";
 
 import { compile } from "./template";
 
+import { ICypressConfiguration } from "./cypress-configuration";
+
 declare global {
   interface Window {
     testState: {
@@ -20,7 +22,10 @@ declare global {
   }
 }
 
-export function transform(filepath: string) {
+export function transform(
+  configuration: ICypressConfiguration,
+  filepath: string
+) {
   if (!filepath.match(".feature$")) {
     return new PassThrough();
   }
@@ -36,7 +41,10 @@ export function transform(filepath: string) {
     },
     async flush(done: TransformCallback) {
       try {
-        done(null, await compile(buffer.toString("utf8"), filepath));
+        done(
+          null,
+          await compile(configuration, buffer.toString("utf8"), filepath)
+        );
 
         debug(`compiled ${filepath}`);
       } catch (e) {
@@ -83,6 +91,8 @@ export function preprocessor(options = browserify.defaultOptions) {
     return browserify(options)(file);
   };
 }
+
+export { ICypressConfiguration };
 
 export { compile };
 

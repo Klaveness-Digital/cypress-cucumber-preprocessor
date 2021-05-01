@@ -23,7 +23,8 @@ function isStringEntry(entry: [any, any]): entry is [string, string] {
  *
  * Definitions can found in https://github.com/cypress-io/cypress/blob/develop/cli/schema/cypress.schema.json.
  */
-interface ICypressConfiguration {
+export interface ICypressConfiguration {
+  projectRoot: string;
   integrationFolder: string;
   fixturesFolder: string | false;
   supportFile: string | false;
@@ -36,6 +37,13 @@ function validateConfigurationEntry(
   value: unknown
 ): Partial<ICypressConfiguration> {
   switch (key) {
+    case "projectRoot":
+      if (!isString(value)) {
+        throw new Error(
+          `Expected a string (projectRoot), but got ${util.inspect(value)}`
+        );
+      }
+      return { [key]: value };
     case "integrationFolder":
       if (!isString(value)) {
         throw new Error(
@@ -254,6 +262,7 @@ export function resolveConfiguration(options: {
 
   const configuration = Object.assign(
     {
+      projectRoot: resolveProjectPath(options),
       integrationFolder: "cypress/integration",
       fixturesFolder: "cypress/fixtures",
       supportFile: "cypress/support/index.js",

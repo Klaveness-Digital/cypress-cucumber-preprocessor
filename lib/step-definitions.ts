@@ -8,30 +8,29 @@ import isPathInside from "is-path-inside";
 
 import debug from "./debug";
 
-import {
-  IPreprocessorConfiguration,
-  resolve,
-} from "./preprocessor-configuration";
+import { ICypressConfiguration } from "./cypress-configuration";
+
+import { IPreprocessorConfiguration } from "./preprocessor-configuration";
 
 export async function getStepDefinitionPaths(
+  configuration: {
+    cypress: ICypressConfiguration;
+    preprocessor: IPreprocessorConfiguration;
+  },
   filepath: string
 ): Promise<string[]> {
-  const configuration = await resolve();
-
-  const patterns = getStepDefinitionDirectories(filepath, configuration).map(
-    (directory) => `${directory}/**/*.@(js|ts)`
-  );
-
-  debug(`looking for step definitions using ${patterns.join(", ")}`);
-
   const files = (
-    await Promise.all(patterns.map((pattern) => util.promisify(glob)(pattern)))
+    await Promise.all(
+      getStepDefinitionPatterns(configuration, filepath).map((pattern) =>
+        util.promisify(glob)(pattern, { nodir: true })
+      )
+    )
   ).reduce((acum, el) => acum.concat(el), []);
 
   if (files.length === 0) {
     debug("found no step definitions");
   } else {
-    debug(`found step definitions in ${files.join(", ")}`);
+    debug(`found step definitions ${util.inspect(files)}`);
   }
 
   return files;
@@ -41,40 +40,51 @@ function trimFeatureExtension(filepath: string) {
   return filepath.replace(/\.feature$/, "");
 }
 
-export function getStepDefinitionDirectories(
-  filepath: string,
-  configuration: IPreprocessorConfiguration,
-  cwd: string = process.cwd()
+export function getStepDefinitionPatterns(
+  configuration: {
+    cypress: Pick<ICypressConfiguration, "projectRoot" | "integrationFolder">;
+    preprocessor: IPreprocessorConfiguration;
+  },
+  filepath: string
 ): string[] {
-  const fullIntegrationFolder = path.join(cwd, configuration.integrationFolder);
+  const fullIntegrationFolder = path.isAbsolute(
+    configuration.cypress.integrationFolder
+  )
+    ? configuration.cypress.integrationFolder
+    : path.join(
+        configuration.cypress.projectRoot,
+        configuration.cypress.integrationFolder
+      );
 
   if (!isPathInside(filepath, fullIntegrationFolder)) {
     throw new Error(`${filepath} is not inside ${fullIntegrationFolder}`);
   }
 
-  if (!isPathInside(filepath, cwd)) {
-    throw new Error(`${filepath} is not inside ${cwd}`);
-  }
-
-  if (configuration.globalStepDefinitions) {
-    return [path.join(cwd, configuration.stepDefinitionsFolder)];
-  } else {
-    const relativeFilepath = path.relative(
-      path.join(cwd, configuration.integrationFolder),
-      filepath
+  if (!isPathInside(filepath, configuration.cypress.projectRoot)) {
+    throw new Error(
+      `${filepath} is not inside ${configuration.cypress.projectRoot}`
     );
-
-    return [
-      path.join(
-        cwd,
-        configuration.stepDefinitionsFolder,
-        trimFeatureExtension(relativeFilepath)
-      ),
-      path.join(
-        cwd,
-        configuration.stepDefinitionsFolder,
-        configuration.stepDefinitionsCommonFolder
-      ),
-    ];
   }
+
+  debug(
+    `looking for step definitions using ${util.inspect(
+      configuration.preprocessor.stepDefinitions
+    )}`
+  );
+
+  const filepathReplacement = trimFeatureExtension(
+    path.relative(fullIntegrationFolder, filepath)
+  );
+
+  debug(`replacing [filepath] with ${util.inspect(filepathReplacement)}`);
+
+  return (typeof configuration.preprocessor.stepDefinitions === "string"
+    ? [configuration.preprocessor.stepDefinitions]
+    : configuration.preprocessor.stepDefinitions
+  ).map((pattern) =>
+    path.join(
+      configuration.cypress.projectRoot,
+      pattern.replace("[filepath]", filepathReplacement)
+    )
+  );
 }

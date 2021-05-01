@@ -2,26 +2,35 @@ import util from "util";
 
 import assert from "assert";
 
+import { ICypressConfiguration } from "./cypress-configuration";
+
 import {
-  PreprocessorConfiguration,
   IPreprocessorConfiguration,
+  PreprocessorConfiguration,
 } from "./preprocessor-configuration";
 
-import { getStepDefinitionDirectories } from "./step-definitions";
+import { getStepDefinitionPatterns } from "./step-definitions";
 
 function example(
   filepath: string,
-  cwd: string,
-  explicitValues: Partial<IPreprocessorConfiguration>,
+  cypressConfiguration: Pick<
+    ICypressConfiguration,
+    "projectRoot" | "integrationFolder"
+  >,
+  preprocessorConfiguration: Partial<IPreprocessorConfiguration>,
   expected: string[]
 ) {
   it(`should return [${expected.join(
     ", "
-  )}] for ${filepath} with ${util.inspect(explicitValues)} in ${cwd}`, () => {
-    const actual = getStepDefinitionDirectories(
-      filepath,
-      new PreprocessorConfiguration(explicitValues),
-      cwd
+  )}] for ${filepath} with ${util.inspect(preprocessorConfiguration)} in ${
+    cypressConfiguration.projectRoot
+  }`, () => {
+    const actual = getStepDefinitionPatterns(
+      {
+        cypress: cypressConfiguration,
+        preprocessor: new PreprocessorConfiguration(preprocessorConfiguration),
+      },
+      filepath
     );
 
     const throwUnequal = () => {
@@ -42,76 +51,51 @@ function example(
   });
 }
 
-describe("getStepDefinitionDirectories()", () => {
-  example("/foo/bar/cypress/integration/baz.feature", "/foo/bar", {}, [
-    "/foo/bar/cypress/support/step_definitions",
-  ]);
-
+describe("getStepDefinitionPatterns()", () => {
   example(
     "/foo/bar/cypress/integration/baz.feature",
-    "/foo/bar",
-    { stepDefinitionsFolder: "cypress/integration/step_definitions" },
-    ["/foo/bar/cypress/integration/step_definitions"]
-  );
-
-  example(
-    "/foo/bar/cypress/integration/baz.feature",
-    "/foo/bar",
     {
-      globalStepDefinitions: false,
+      projectRoot: "/foo/bar",
+      integrationFolder: "cypress/integration",
     },
-    ["/foo/bar/cypress/integration/baz", "/foo/bar/cypress/integration/common"]
-  );
-
-  example(
-    "/foo/bar/cypress/integration/baz.feature",
-    "/foo/bar",
-    {
-      globalStepDefinitions: false,
-      stepDefinitionsFolder: "cypress/support",
-    },
-    ["/foo/bar/cypress/support/baz", "/foo/bar/cypress/support/common"]
-  );
-
-  example(
-    "/foo/bar/cypress/integration/baz.feature",
-    "/foo/bar",
-    {
-      globalStepDefinitions: false,
-      stepDefinitionsCommonFolder: "universal",
-    },
+    {},
     [
-      "/foo/bar/cypress/integration/baz",
-      "/foo/bar/cypress/integration/universal",
+      "/foo/bar/cypress/integration/baz/**/*",
+      "/foo/bar/cypress/integration/baz.*",
+      "/foo/bar/cypress/support/step_definitions/**/*",
     ]
-  );
-
-  example(
-    "/foo/bar/cypress/features/baz.feature",
-    "/foo/bar",
-    {
-      globalStepDefinitions: false,
-      integrationFolder: "cypress/features",
-    },
-    ["/foo/bar/cypress/features/baz", "/foo/bar/cypress/features/common"]
   );
 
   it("should error when provided a path not within integrationFolder", () => {
     assert.throws(() => {
-      getStepDefinitionDirectories(
-        "/foo/bar/cypress/features/baz.feature",
-        new PreprocessorConfiguration({}),
-        "/foo/bar"
+      getStepDefinitionPatterns(
+        {
+          cypress: {
+            projectRoot: "/foo/bar",
+            integrationFolder: "cypress/integration",
+          },
+          preprocessor: {
+            stepDefinitions: [],
+          },
+        },
+        "/foo/bar/cypress/features/baz.feature"
       );
     }, "/foo/bar/cypress/features/baz.feature is not within cypress/integration");
   });
 
   it("should error when provided a path not within cwd", () => {
     assert.throws(() => {
-      getStepDefinitionDirectories(
-        "/foo/bar/cypress/integration/baz.feature",
-        new PreprocessorConfiguration({}),
-        "/baz"
+      getStepDefinitionPatterns(
+        {
+          cypress: {
+            projectRoot: "/baz",
+            integrationFolder: "cypress/integration",
+          },
+          preprocessor: {
+            stepDefinitions: [],
+          },
+        },
+        "/foo/bar/cypress/integration/baz.feature"
       );
     }, "/foo/bar/cypress/features/baz.feature is not within /baz");
   });

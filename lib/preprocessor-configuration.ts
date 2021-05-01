@@ -4,44 +4,17 @@ import util from "util";
 
 import debug from "./debug";
 
-import { isBoolean, isString } from "./type-guards";
+import { isStringOrStringArray } from "./type-guards";
 
 function validateConfigurationEntry(
   key: string,
   value: unknown
 ): Partial<IPreprocessorConfiguration> {
   switch (key) {
-    case "globalStepDefinitions":
-      if (!isBoolean(value)) {
+    case "stepDefinitions":
+      if (!isStringOrStringArray(value)) {
         throw new Error(
-          `Expected a string (globalStepDefinitions), but got ${util.inspect(
-            value
-          )}`
-        );
-      }
-      return { [key]: value };
-    case "stepDefinitionsFolder":
-      if (!isString(value)) {
-        throw new Error(
-          `Expected a string (stepDefinitionsFolder), but got ${util.inspect(
-            value
-          )}`
-        );
-      }
-      return { [key]: value };
-    case "stepDefinitionsCommonFolder":
-      if (!isString(value)) {
-        throw new Error(
-          `Expected a string (stepDefinitionsCommonFolder), but got ${util.inspect(
-            value
-          )}`
-        );
-      }
-      return { [key]: value };
-    case "integrationFolder":
-      if (!isString(value)) {
-        throw new Error(
-          `Expected a string (integrationFolder), but got ${util.inspect(
+          `Expected a string or array of strings (stepDefinitions), but got ${util.inspect(
             value
           )}`
         );
@@ -53,39 +26,20 @@ function validateConfigurationEntry(
 }
 
 export interface IPreprocessorConfiguration {
-  readonly globalStepDefinitions: boolean;
-  readonly stepDefinitionsFolder: string;
-  readonly stepDefinitionsCommonFolder: string;
-  readonly integrationFolder: string;
+  readonly stepDefinitions: string | string[];
 }
 
 export class PreprocessorConfiguration implements IPreprocessorConfiguration {
   constructor(private explicitValues: Partial<IPreprocessorConfiguration>) {}
 
-  get globalStepDefinitions() {
-    if (this.explicitValues.globalStepDefinitions === false) {
-      return false;
-    }
-
-    return this.explicitValues.globalStepDefinitions || true;
-  }
-
-  get stepDefinitionsFolder() {
-    if (this.explicitValues.stepDefinitionsFolder) {
-      return this.explicitValues.stepDefinitionsFolder;
-    } else if (this.globalStepDefinitions) {
-      return "cypress/support/step_definitions";
-    } else {
-      return this.integrationFolder;
-    }
-  }
-
-  get stepDefinitionsCommonFolder() {
-    return this.explicitValues.stepDefinitionsCommonFolder || "common";
-  }
-
-  get integrationFolder() {
-    return this.explicitValues.integrationFolder || "cypress/integration";
+  get stepDefinitions() {
+    return (
+      this.explicitValues.stepDefinitions || [
+        "cypress/integration/[filepath]/**/*",
+        "cypress/integration/[filepath].*",
+        "cypress/support/step_definitions/**/*",
+      ]
+    );
   }
 }
 
