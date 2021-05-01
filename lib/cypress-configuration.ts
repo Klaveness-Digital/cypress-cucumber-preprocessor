@@ -303,5 +303,13 @@ export function resolveProjectPath(options: {
     findArgumentValue(argv, "--project", true) ||
     findArgumentValue(argv, "-P", false);
 
-  return customProjectPath ? path.join(cwd, customProjectPath) : cwd;
+  if (customProjectPath) {
+    if (path.isAbsolute(customProjectPath)) {
+      return customProjectPath;
+    } else {
+      return path.join(cwd, customProjectPath);
+    }
+  } else {
+    return cwd;
+  }
 }
