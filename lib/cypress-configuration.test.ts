@@ -19,13 +19,20 @@ interface CypressEnvConfig {
   [key: string]: string;
 }
 
-function example<T extends object>(
-  method: (options: T) => any,
-  options: T & {
+function example(
+  method: (options: {
+    argv: string[];
+    env: NodeJS.ProcessEnv;
+    cwd: string;
+  }) => any,
+  options: {
     cypressConfig?: CypressConfig;
     cypressConfigPath?: string;
     cypressProjectPath?: string;
     cypressEnvConfig?: CypressEnvConfig;
+    argv?: string[];
+    env?: NodeJS.ProcessEnv;
+    cwd?: string;
   },
   attribute: string,
   expected: any

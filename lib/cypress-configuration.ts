@@ -100,11 +100,11 @@ export function toCamelCase(value: string) {
 }
 
 export function resolveConfiguration(options: {
-  argv?: string[];
-  env?: NodeJS.ProcessEnv;
-  cwd?: string;
+  argv: string[];
+  env: NodeJS.ProcessEnv;
+  cwd: string;
 }): Record<string, any> {
-  const { argv = process.argv, env = process.env } = options;
+  const { argv, env } = options;
 
   const projectPath = resolveProjectPath(options);
 
@@ -192,11 +192,11 @@ export function resolveConfiguration(options: {
 }
 
 export function resolveEnvironment(options: {
-  argv?: string[];
-  env?: NodeJS.ProcessEnv;
-  cwd?: string;
+  argv: string[];
+  env: NodeJS.ProcessEnv;
+  cwd: string;
 }): Record<string, any> {
-  const { argv = process.argv, env = process.env } = options;
+  const { argv, env } = options;
 
   const projectPath = resolveProjectPath(options);
 
@@ -283,8 +283,8 @@ export function resolveEnvironment(options: {
   return environment;
 }
 
-export function resolveConfigurationFile(options: { argv?: string[] }): string {
-  const { argv = process.argv } = options;
+export function resolveConfigurationFile(options: { argv: string[] }): string {
+  const { argv } = options;
 
   return (
     findArgumentValue(argv, "--config-file", true) ||
@@ -294,10 +294,10 @@ export function resolveConfigurationFile(options: { argv?: string[] }): string {
 }
 
 export function resolveProjectPath(options: {
-  argv?: string[];
-  cwd?: string;
+  argv: string[];
+  cwd: string;
 }): string {
-  const { argv = process.argv, cwd = process.cwd() } = options;
+  const { argv, cwd } = options;
 
   const customProjectPath =
     findArgumentValue(argv, "--project", true) ||

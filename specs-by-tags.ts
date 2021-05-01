@@ -20,8 +20,15 @@ import { find } from "./lib/cypress-specs";
 
 export { find };
 
-export function findByTags(tags: string) {
-  const files = find();
+export function findByTags(
+  tags: string,
+  options: {
+    argv: string[];
+    env: NodeJS.ProcessEnv;
+    cwd: string;
+  }
+) {
+  const files = find(options);
 
   const testFilter = parse(tags);
 
@@ -40,7 +47,11 @@ export function findByTags(tags: string) {
 }
 
 if (require.main === module) {
-  const { TAGS } = resolveEnvironment({});
+  const { TAGS } = resolveEnvironment({
+    argv: process.argv,
+    env: process.env,
+    cwd: process.cwd(),
+  });
 
   if (TAGS == null || TAGS === "") {
     process.exit(0);
@@ -60,5 +71,11 @@ if (require.main === module) {
     process.exit(1);
   }
 
-  console.log(findByTags(TAGS).join(","));
+  console.log(
+    findByTags(TAGS, {
+      argv: process.argv,
+      env: process.env,
+      cwd: process.cwd(),
+    }).join(",")
+  );
 }

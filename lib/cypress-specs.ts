@@ -15,9 +15,11 @@ import {
 
 const MINIMATCH_OPTIONS = { dot: true, matchBase: true };
 
-export function find(
-  options: { argv?: string[]; cwd?: string } = {}
-): string[] {
+export function find(options: {
+  argv: string[];
+  env: NodeJS.ProcessEnv;
+  cwd: string;
+}): string[] {
   const {
     integrationFolder,
     fixturesFolder,
