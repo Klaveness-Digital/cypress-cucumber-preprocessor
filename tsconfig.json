@@ -15,6 +15,7 @@
     "lib/**/*.ts",
     "specs-by-tags.ts",
     "methods.ts",
-    "declarations.d.ts"
+    "declarations.d.ts",
+    "esbuild.ts"
   ]
 }
