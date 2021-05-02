@@ -185,6 +185,8 @@ export function resolveConfiguration(options: {
   env: NodeJS.ProcessEnv;
   cwd: string;
 }): ICypressConfiguration {
+  debug(`attempting to resolve Cypress configuration using ${options}`);
+
   const { argv, env } = options;
 
   const projectPath = resolveProjectPath(options);
@@ -225,7 +227,7 @@ export function resolveConfiguration(options: {
 
         assert(
           match,
-          "cypress-cucumber-preprocessor: expected match after test"
+          "cypress-cucumber-preprocessor: expected match after test, this is likely a bug."
         );
 
         return [assertAndReturn(match[1]), entry[1]];
@@ -284,6 +286,8 @@ export function resolveEnvironment(options: {
   env: NodeJS.ProcessEnv;
   cwd: string;
 }): Record<string, any> {
+  debug(`attempting to resolve Cypress environment using ${options}`);
+
   const { argv, env } = options;
 
   const projectPath = resolveProjectPath(options);
