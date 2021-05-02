@@ -18,7 +18,7 @@
   "files": [
     "lib/**/*.js",
     "lib/**/*.d.ts",
-    "cypress-tags",
+    "cypress-tags.sh",
     "methods.js",
     "methods.d.ts",
     "specs-by-tags.js",
