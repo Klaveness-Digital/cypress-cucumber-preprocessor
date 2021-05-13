@@ -30,23 +30,6 @@ Before(async function ({ gherkinDocument, pickle }) {
     )
   );
 
-  await writeFile(
-    path.join(this.tmpDir, "cypress", "plugins", "index.js"),
-    `
-      const { createEsbuildPlugin } = require("${projectPath}/esbuild");
-      const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
-
-      module.exports = (on, config) => {
-        on(
-          "file:preprocessor",
-          createBundler({
-            plugins: [createEsbuildPlugin(config)]
-          })
-        );
-      }
-    `
-  );
-
   await fs.mkdir(path.join(this.tmpDir, "node_modules", "@badeball"), {
     recursive: true,
   });
@@ -59,6 +42,25 @@ Before(async function ({ gherkinDocument, pickle }) {
       "@badeball",
       "cypress-cucumber-preprocessor"
     )
+  );
+});
+
+Before({ tags: "not @no-default-plugin" }, async function () {
+  await writeFile(
+    path.join(this.tmpDir, "cypress", "plugins", "index.js"),
+    `
+      const { createEsbuildPlugin } = require("@badeball/cypress-cucumber-preprocessor/esbuild");
+      const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
+
+      module.exports = (on, config) => {
+        on(
+          "file:preprocessor",
+          createBundler({
+            plugins: [createEsbuildPlugin(config)]
+          })
+        );
+      }
+    `
   );
 });
 

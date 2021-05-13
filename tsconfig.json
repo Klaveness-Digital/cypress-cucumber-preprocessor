@@ -16,6 +16,8 @@
     "specs-by-tags.ts",
     "methods.ts",
     "declarations.d.ts",
-    "esbuild.ts"
+    "browserify.ts",
+    "esbuild.ts",
+    "webpack.ts"
   ]
 }

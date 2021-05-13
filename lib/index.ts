@@ -61,18 +61,22 @@ type ICypressPreprocessorFile = EventEmitter & {
   shouldWatch: boolean;
 };
 
-function preprendTransformerToOptions(options: any) {
+function preprendTransformerToOptions(
+  configuration: ICypressConfiguration,
+  options: any
+) {
   let wrappedTransform;
 
   if (
     !options.browserifyOptions ||
     !Array.isArray(options.browserifyOptions.transform)
   ) {
-    wrappedTransform = [transform];
-  } else if (!options.browserifyOptions.transform.includes(transform)) {
-    wrappedTransform = [transform, ...options.browserifyOptions.transform];
+    wrappedTransform = [transform.bind(null, configuration)];
   } else {
-    wrappedTransform = options.browserifyOptions.transform;
+    wrappedTransform = [
+      transform.bind(null, configuration),
+      ...options.browserifyOptions.transform,
+    ];
   }
 
   return {
@@ -84,8 +88,14 @@ function preprendTransformerToOptions(options: any) {
   };
 }
 
-export function preprocessor(options = browserify.defaultOptions) {
-  options = preprendTransformerToOptions(options);
+export function preprocessor(
+  configuration: ICypressConfiguration,
+  options = browserify.defaultOptions,
+  { prependTransform = true }: { prependTransform?: boolean } = {}
+) {
+  if (prependTransform) {
+    options = preprendTransformerToOptions(configuration, options);
+  }
 
   return function (file: ICypressPreprocessorFile) {
     return browserify(options)(file);
