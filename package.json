@@ -77,15 +77,11 @@
   },
   "peerDependencies": {
     "@cypress/browserify-preprocessor": "^3.0.1",
-    "@cypress/webpack-preprocessor": "^5.7.0",
     "cypress": "^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0",
     "esbuild": "^0.11.12"
   },
   "peerDependenciesMeta": {
     "@cypress/browserify-preprocessor": {
-      "optional": true
-    },
-    "@cypress/webpack-preprocessor": {
       "optional": true
     },
     "esbuild": {
