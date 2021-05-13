@@ -78,9 +78,10 @@ export function getStepDefinitionPatterns(
 
   debug(`replacing [filepath] with ${util.inspect(filepathReplacement)}`);
 
-  return (typeof configuration.preprocessor.stepDefinitions === "string"
-    ? [configuration.preprocessor.stepDefinitions]
-    : configuration.preprocessor.stepDefinitions
+  return (
+    typeof configuration.preprocessor.stepDefinitions === "string"
+      ? [configuration.preprocessor.stepDefinitions]
+      : configuration.preprocessor.stepDefinitions
   ).map((pattern) =>
     path.join(
       configuration.cypress.projectRoot,

@@ -1,12 +1,7 @@
 import registry from "./registry";
 
-const {
-  defineStep,
-  Step,
-  defineParameterType,
-  Before,
-  After,
-} = registry.methods;
+const { defineStep, Step, defineParameterType, Before, After } =
+  registry.methods;
 
 export {
   defineStep as Given,

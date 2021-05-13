@@ -196,7 +196,7 @@ function createPickle(
               "keyword" in scenarioStep && scenarioStep.keyword,
               "Expected to find a keyword in the scenario step"
             ),
-            message: (text as unknown) as any[], // This property was wrongfully typed in 3.x.y.
+            message: text as unknown as any[], // This property was wrongfully typed in 3.x.y.
           });
         });
 

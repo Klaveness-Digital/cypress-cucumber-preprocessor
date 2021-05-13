@@ -6,8 +6,8 @@ import DataTable from "./data_table";
 
 describe("DataTable", () => {
   describe("table with headers", () => {
-    const dataTable = messages.GherkinDocument.Feature.Step.DataTable.fromObject(
-      {
+    const dataTable =
+      messages.GherkinDocument.Feature.Step.DataTable.fromObject({
         rows: [
           {
             cells: [{ value: "header 1" }, { value: "header 2" }],
@@ -19,8 +19,7 @@ describe("DataTable", () => {
             cells: [{ value: "row 2 col 1" }, { value: "row 2 col 2" }],
           },
         ],
-      }
-    );
+      });
 
     describe("rows", () => {
       it("returns a 2-D array without the header", () => {
@@ -51,8 +50,8 @@ describe("DataTable", () => {
   });
 
   describe("table without headers", () => {
-    const dataTable = messages.GherkinDocument.Feature.Step.DataTable.fromObject(
-      {
+    const dataTable =
+      messages.GherkinDocument.Feature.Step.DataTable.fromObject({
         rows: [
           {
             cells: [{ value: "row 1 col 1" }, { value: "row 1 col 2" }],
@@ -61,8 +60,7 @@ describe("DataTable", () => {
             cells: [{ value: "row 2 col 1" }, { value: "row 2 col 2" }],
           },
         ],
-      }
-    );
+      });
 
     describe("raw", () => {
       it("returns a 2-D array", () => {
@@ -84,8 +82,8 @@ describe("DataTable", () => {
   });
 
   describe("table with something other than 2 columns", () => {
-    const dataTable = messages.GherkinDocument.Feature.Step.DataTable.fromObject(
-      {
+    const dataTable =
+      messages.GherkinDocument.Feature.Step.DataTable.fromObject({
         rows: [
           {
             cells: [{ value: "row 1 col 1" }],
@@ -94,8 +92,7 @@ describe("DataTable", () => {
             cells: [{ value: "row 2 col 1" }],
           },
         ],
-      }
-    );
+      });
 
     describe("rowsHash", () => {
       it("throws an error if not all rows have two columns", function () {
