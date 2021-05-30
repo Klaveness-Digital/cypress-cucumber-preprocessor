@@ -43,8 +43,10 @@ export class PreprocessorConfiguration implements IPreprocessorConfiguration {
   }
 }
 
-export async function resolve() {
-  const result = await cosmiconfig("cypress-cucumber-preprocessor").search();
+export async function resolve(searchFrom?: string) {
+  const result = await cosmiconfig("cypress-cucumber-preprocessor").search(
+    searchFrom
+  );
 
   if (result) {
     const { config: rawConfig } = result;
