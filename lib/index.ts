@@ -107,3 +107,12 @@ export { ICypressConfiguration };
 export { compile };
 
 export default preprocessor;
+
+export {
+  resolveConfiguration as resolveCypressConfiguration,
+  resolveEnvironment as resolveCypressEnvironment,
+} from "./cypress-configuration";
+
+export { resolve as resolvePreprocessorConfiguration } from "./preprocessor-configuration";
+
+export { getStepDefinitionPaths } from "./step-definitions";
