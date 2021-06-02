@@ -35,9 +35,9 @@ export class PreprocessorConfiguration implements IPreprocessorConfiguration {
   get stepDefinitions() {
     return (
       this.explicitValues.stepDefinitions || [
-        "cypress/integration/[filepath]/**/*",
-        "cypress/integration/[filepath].*",
-        "cypress/support/step_definitions/**/*",
+        "cypress/integration/[filepath]/**/*.{js,ts}",
+        "cypress/integration/[filepath].{js,ts}",
+        "cypress/support/step_definitions/**/*.{js,ts}",
       ]
     );
   }

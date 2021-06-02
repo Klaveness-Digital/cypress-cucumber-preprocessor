@@ -60,9 +60,9 @@ describe("getStepDefinitionPatterns()", () => {
     },
     {},
     [
-      "/foo/bar/cypress/integration/baz/**/*",
-      "/foo/bar/cypress/integration/baz.*",
-      "/foo/bar/cypress/support/step_definitions/**/*",
+      "/foo/bar/cypress/integration/baz/**/*.{js,ts}",
+      "/foo/bar/cypress/integration/baz.{js,ts}",
+      "/foo/bar/cypress/support/step_definitions/**/*.{js,ts}",
     ]
   );
 
