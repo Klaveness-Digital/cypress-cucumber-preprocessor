@@ -9,11 +9,11 @@ export function assert(value: any, message?: string): asserts value {
 }
 
 export function assertAndReturn<T>(
-  value: T | false | null | undefined,
+  value: T,
   message?: string
-): T {
+): Exclude<T, false | null | undefined> {
   assert(value, message);
-  return value;
+  return value as Exclude<T, false | null | undefined>;
 }
 
 export function assertIsString(
