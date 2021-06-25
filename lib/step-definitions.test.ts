@@ -9,7 +9,7 @@ import {
   PreprocessorConfiguration,
 } from "./preprocessor-configuration";
 
-import { getStepDefinitionPatterns } from "./step-definitions";
+import { getStepDefinitionPatterns, pathParts } from "./step-definitions";
 
 function example(
   filepath: string,
@@ -51,6 +51,17 @@ function example(
   });
 }
 
+describe("pathParts()", () => {
+  const relativePath = "foo/bar/baz";
+  const expectedParts = ["foo/bar/baz", "foo/bar", "foo"];
+
+  it(`should return ${util.inspect(expectedParts)} for ${util.inspect(
+    relativePath
+  )}`, () => {
+    assert.deepStrictEqual(pathParts(relativePath), expectedParts);
+  });
+});
+
 describe("getStepDefinitionPatterns()", () => {
   example(
     "/foo/bar/cypress/integration/baz.feature",
@@ -63,6 +74,35 @@ describe("getStepDefinitionPatterns()", () => {
       "/foo/bar/cypress/integration/baz/**/*.{js,ts}",
       "/foo/bar/cypress/integration/baz.{js,ts}",
       "/foo/bar/cypress/support/step_definitions/**/*.{js,ts}",
+    ]
+  );
+
+  example(
+    "/cypress/integration/foo/bar/baz.feature",
+    {
+      projectRoot: "/",
+      integrationFolder: "cypress/integration",
+    },
+    {
+      stepDefinitions: "cypress/integration/[filepath]/step_definitions/*.ts",
+    },
+    ["/cypress/integration/foo/bar/baz/step_definitions/*.ts"]
+  );
+
+  example(
+    "/cypress/integration/foo/bar/baz.feature",
+    {
+      projectRoot: "/",
+      integrationFolder: "cypress/integration",
+    },
+    {
+      stepDefinitions: "cypress/integration/[filepart]/step_definitions/*.ts",
+    },
+    [
+      "/cypress/integration/foo/bar/baz/step_definitions/*.ts",
+      "/cypress/integration/foo/bar/step_definitions/*.ts",
+      "/cypress/integration/foo/step_definitions/*.ts",
+      "/cypress/integration/step_definitions/*.ts",
     ]
   );
 
