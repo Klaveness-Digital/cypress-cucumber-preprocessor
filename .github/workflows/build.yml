@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   prepare-versions:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
@@ -17,7 +17,7 @@ jobs:
 
   test:
     needs: prepare-versions
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     container: cypress/base:12
     strategy:
       matrix:
