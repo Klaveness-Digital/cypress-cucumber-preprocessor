@@ -18,8 +18,6 @@ import { resolveEnvironment } from "./lib/cypress-configuration";
 
 import { find } from "./lib/cypress-specs";
 
-export { find };
-
 export function findByTags(
   tags: string,
   options: {
