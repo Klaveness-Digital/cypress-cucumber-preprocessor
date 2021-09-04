@@ -2,7 +2,7 @@ import util from "util";
 
 import assert from "assert";
 
-import { ICypressConfiguration } from "./cypress-configuration";
+import { ICypressConfiguration } from "@badeball/cypress-configuration";
 
 import {
   IPreprocessorConfiguration,

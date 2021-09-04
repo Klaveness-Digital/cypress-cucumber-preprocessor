@@ -1,5 +1,6 @@
 **/*.js
 **/*.d.ts
+!features/**/*
 !cucumber.js
 !declarations.d.ts
 !types/index.d.ts

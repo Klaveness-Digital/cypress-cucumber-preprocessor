@@ -8,9 +8,9 @@ import assert from "assert";
 
 import isPathInside from "is-path-inside";
 
-import debug from "./debug";
+import { ICypressConfiguration } from "@badeball/cypress-configuration";
 
-import { ICypressConfiguration } from "./cypress-configuration";
+import debug from "./debug";
 
 import { IPreprocessorConfiguration } from "./preprocessor-configuration";
 

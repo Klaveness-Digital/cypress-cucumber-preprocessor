@@ -2,9 +2,9 @@ import { generateMessages } from "@cucumber/gherkin";
 
 import { IdGenerator } from "@cucumber/messages";
 
-import { assertAndReturn } from "./assertions";
+import { ICypressConfiguration } from "@badeball/cypress-configuration";
 
-import { ICypressConfiguration } from "./cypress-configuration";
+import { assertAndReturn } from "./assertions";
 
 import { resolve } from "./preprocessor-configuration";
 

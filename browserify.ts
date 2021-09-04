@@ -4,11 +4,11 @@ import { EventEmitter } from "events";
 
 import browserify from "@cypress/browserify-preprocessor";
 
+import { ICypressConfiguration } from "@badeball/cypress-configuration";
+
 import debug from "./lib/debug";
 
 import { compile } from "./lib/template";
-
-import { ICypressConfiguration } from "./lib/cypress-configuration";
 
 export function transform(
   configuration: ICypressConfiguration,

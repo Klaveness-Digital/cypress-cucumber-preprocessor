@@ -10,13 +10,11 @@ import { IdGenerator } from "@cucumber/messages";
 
 import parse from "@cucumber/tag-expressions";
 
+import { getEnvironment, getTestFiles } from "@badeball/cypress-configuration";
+
 import { assertIsString } from "./lib/assertions";
 
 import { mapTagName } from "./lib/ast-helpers";
-
-import { resolveEnvironment } from "./lib/cypress-configuration";
-
-import { find } from "./lib/cypress-specs";
 
 export function findByTags(
   tags: string,
@@ -26,7 +24,7 @@ export function findByTags(
     cwd: string;
   }
 ) {
-  const files = find(options);
+  const files = getTestFiles(options);
 
   const testFilter = parse(tags);
 
@@ -45,7 +43,7 @@ export function findByTags(
 }
 
 if (require.main === module) {
-  const { TAGS } = resolveEnvironment({
+  const { TAGS } = getEnvironment({
     argv: process.argv,
     env: process.env,
     cwd: process.cwd(),

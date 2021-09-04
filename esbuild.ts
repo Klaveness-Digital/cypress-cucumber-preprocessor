@@ -1,6 +1,6 @@
 import esbuild from "esbuild";
 
-import { ICypressConfiguration } from "./lib/cypress-configuration";
+import { ICypressConfiguration } from "@badeball/cypress-configuration";
 
 import { compile } from "./lib/template";
 
