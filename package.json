@@ -35,6 +35,7 @@
     "specs-by-tags": "specs-by-tags.js"
   },
   "scripts": {
+    "clean": "rm {browserify,esbuild,methods,specs-by-tags,webpack}.{js,d.ts} && bash -O globstar -c 'rm lib/**/*.{js,d.ts}'",
     "build": "tsc",
     "watch": "tsc --watch",
     "fmt": "prettier --ignore-path .gitignore --write '**/*.ts'",
@@ -43,7 +44,7 @@
     "test:types": "dtslint --expectOnly types",
     "test:unit": "mocha",
     "test:integration": "cucumber-js",
-    "prepublishOnly": "npm run build && npm run test"
+    "prepublishOnly": "npm run clean && npm run build && npm run test"
   },
   "dependencies": {
     "@badeball/cypress-configuration": "^1.0.0",
