@@ -1,19 +1,19 @@
-const { Given } = require("@cucumber/cucumber");
-const path = require("path");
-const { promises: fs } = require("fs");
-const { name: packageName } = require("../../package");
+import { Given } from "@cucumber/cucumber";
+import path from "path";
+import { promises as fs } from "fs";
+import { name as packageName } from "../../package.json";
 
 async function addOrUpdateConfiguration(
-  absoluteConfigPath,
-  additionalJsonContent
+  absoluteConfigPath: string,
+  additionalJsonContent: string
 ) {
-  let existingConfig;
+  let existingConfig: any;
 
   try {
     existingConfig = JSON.parse(
       (await fs.readFile(absoluteConfigPath)).toString()
     );
-  } catch (e) {
+  } catch (e: any) {
     if (e.code === "ENOENT") {
       existingConfig = {};
     } else {

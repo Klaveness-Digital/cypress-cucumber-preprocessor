@@ -1,10 +1,12 @@
-const { When, Then } = require("@cucumber/cucumber");
-const assert = require("assert");
-const childProcess = require("child_process");
+import { When, Then } from "@cucumber/cucumber";
+import assert from "assert";
+import childProcess from "child_process";
 
-function execAsync(...args) {
+function execAsync(
+  command: string
+): Promise<{ stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
-    childProcess.exec(...args, (error, stdout, stderr) => {
+    childProcess.exec(command, (error, stdout, stderr) => {
       if (error) {
         reject(error);
       } else {
@@ -54,9 +56,9 @@ Then("it should appear as if both tests ran", function () {
 /**
  * Shamelessly copied from the RegExp.escape proposal.
  */
-const rescape = (s) => String(s).replace(/[\\^$*+?.()|[\]{}]/g, "\\$&");
+const rescape = (s: string) => String(s).replace(/[\\^$*+?.()|[\]{}]/g, "\\$&");
 
-const scenarioExpr = (scenarioName) =>
+const scenarioExpr = (scenarioName: string) =>
   new RegExp(`✓ ${rescape(scenarioName)}( \\(\\d+ms\\))?\\n`);
 
 Then(

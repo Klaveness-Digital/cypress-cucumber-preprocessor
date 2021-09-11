@@ -1,13 +1,13 @@
-const { setWorldConstructor } = require("@cucumber/cucumber");
-const path = require("path");
-const childProcess = require("child_process");
-const { PassThrough } = require("stream");
-const { WritableStreamBuffer } = require("stream-buffers");
+import { setWorldConstructor, IWorld } from "@cucumber/cucumber";
+import path from "path";
+import childProcess from "child_process";
+import { PassThrough, Readable } from "stream";
+import { WritableStreamBuffer } from "stream-buffers";
 
 const projectPath = path.join(__dirname, "..", "..");
 
-function combine(...streams) {
-  return streams.reduce((combined, stream) => {
+function combine(...streams: Readable[]) {
+  return streams.reduce<PassThrough>((combined, stream) => {
     stream.pipe(combined, { end: false });
     stream.once(
       "end",
@@ -18,7 +18,7 @@ function combine(...streams) {
 }
 
 class World {
-  async run(extraArgs = []) {
+  async run(this: IWorld, extraArgs = []) {
     const child = childProcess.spawn(
       path.join(projectPath, "node_modules", ".bin", "cypress"),
       ["run", ...extraArgs],
@@ -43,13 +43,13 @@ class World {
     const stderrBuffer = child.stderr.pipe(new WritableStreamBuffer());
     const outputBuffer = combined.pipe(new WritableStreamBuffer());
 
-    const exitCode = await new Promise((resolve) => {
+    const exitCode = await new Promise<number>((resolve) => {
       child.on("close", resolve);
     });
 
-    const stdout = stdoutBuffer.getContentsAsString();
-    const stderr = stderrBuffer.getContentsAsString();
-    const output = outputBuffer.getContentsAsString();
+    const stdout = stdoutBuffer.getContentsAsString() || "";
+    const stderr = stderrBuffer.getContentsAsString() || "";
+    const output = outputBuffer.getContentsAsString() || "";
 
     this.verifiedLastRunError = false;
 

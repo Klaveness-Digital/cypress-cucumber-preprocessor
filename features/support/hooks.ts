@@ -1,12 +1,14 @@
-const { After, Before } = require("@cucumber/cucumber");
-const path = require("path");
-const { promises: fs } = require("fs");
-const { writeFile } = require("./helpers");
+import { After, Before, formatterHelpers } from "@cucumber/cucumber";
+import path from "path";
+import assert from "assert";
+import { promises as fs } from "fs";
+import { writeFile } from "./helpers";
 
 const projectPath = path.join(__dirname, "..", "..");
-const { formatterHelpers } = require("@cucumber/cucumber");
 
 Before(async function ({ gherkinDocument, pickle }) {
+  assert(gherkinDocument.uri, "Expected gherkinDocument.uri to be present");
+
   const relativeUri = path.relative(process.cwd(), gherkinDocument.uri);
 
   const { line } = formatterHelpers.PickleParser.getPickleLocation({
