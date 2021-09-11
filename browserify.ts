@@ -35,7 +35,7 @@ export function transform(
         );
 
         debug(`compiled ${filepath}`);
-      } catch (e) {
+      } catch (e: any) {
         done(e);
       }
     },
