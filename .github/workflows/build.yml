@@ -18,7 +18,7 @@ jobs:
   test:
     needs: prepare-versions
     runs-on: ubuntu-20.04
-    container: cypress/base:12
+    container: cypress/base:17.3.0
     strategy:
       matrix:
         cypress-version: ${{fromJson(needs.prepare-versions.outputs.matrix)}}
