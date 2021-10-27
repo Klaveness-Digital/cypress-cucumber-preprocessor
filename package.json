@@ -35,14 +35,15 @@
     "specs-by-tags": "specs-by-tags.js"
   },
   "scripts": {
-    "clean": "rm {browserify,esbuild,methods,specs-by-tags,webpack}.{js,d.ts} && bash -O globstar -c 'rm lib/**/*.{js,d.ts}'",
+    "clean": "rm {browserify,esbuild,methods,specs-by-tags,webpack}.{js,d.ts} && bash -O globstar -c 'rm lib/**/*.{js,d.ts} test/**/*.{js,d.ts}'",
     "build": "tsc",
     "watch": "tsc --watch",
     "fmt": "prettier --ignore-path .gitignore --write '**/*.ts'",
     "test": "npm run test:fmt && npm run test:types && npm run test:unit && npm run test:integration",
     "test:fmt": "prettier --ignore-path .gitignore --check '**/*.ts'",
     "test:types": "dtslint --expectOnly types",
-    "test:unit": "mocha",
+    "test:unit": "mocha lib/**/*.test.ts",
+    "test:run-all-specs": "mocha --timeout 0 test/run-all-specs.ts",
     "test:integration": "cucumber-js",
     "prepublishOnly": "npm run clean && npm run build && npm run test"
   },
