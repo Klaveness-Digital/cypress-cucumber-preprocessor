@@ -1,3 +1,4 @@
 {
-  "spec": "lib/**/*.test.js"
+  "spec": "lib/**/*.test.js",
+  "require": "ts-node/register"
 }
