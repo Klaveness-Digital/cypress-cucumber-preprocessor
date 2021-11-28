@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "@badeball/cypress-configuration": "^1.0.0",
-    "@cucumber/cucumber": "^7.0.0-rc.0",
+    "@cucumber/cucumber": "^7.3.1",
     "@cucumber/cucumber-expressions": "^10.3.0",
     "@cucumber/gherkin": "^15.0.2",
     "@cucumber/messages": "^13.1.0",
