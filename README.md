@@ -12,10 +12,6 @@ original in the following ways.
  * No support for "all.features"
  * Supports newest Gherkin syntax (IE. Rule-keword)
 
-```
-$ npm install @badeball/cypress-cucumber-preprocessor
-```
-
 It incidentally also fixes the following issues (non-exhaustive).
 
  * [TheBrainFamily/cypress-cucumber-preprocessor#104](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor/issues/104)
@@ -30,4 +26,19 @@ It incidentally also fixes the following issues (non-exhaustive).
  * [TheBrainFamily/cypress-cucumber-preprocessor#448](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor/issues/448)
  * [TheBrainFamily/cypress-cucumber-preprocessor#458](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor/issues/458)
 
+## Installation and setup
+
+```bash
+npm install @badeball/cypress-cucumber-preprocessor --save-dev
+```
+
+or
+
+```bash
+yarn add @badeball/cypress-cucumber-preprocessor --dev
+```
+
+Once installed, set up the preprocessor as a plugin, e.g., in `cypress/plugins/index.js`. See the [loaders' feature files] for examples on how to set up the preprocessor.
+
 [cypress-cucumber-preprocessor]: https://github.com/TheBrainFamily/cypress-cucumber-preprocessor
+[loaders' feature files]: https://github.com/badeball/cypress-cucumber-preprocessor/tree/master/features/loaders
