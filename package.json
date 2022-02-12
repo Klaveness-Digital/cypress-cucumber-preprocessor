@@ -57,8 +57,7 @@
     "cosmiconfig": "^7.0.0",
     "debug": "^4.2.0",
     "glob": "^7.1.6",
-    "is-path-inside": "^3.0.3",
-    "minimatch": "^3.0.4"
+    "is-path-inside": "^3.0.3"
   },
   "devDependencies": {
     "@bahmutov/cypress-esbuild-preprocessor": "^2.1.0",
