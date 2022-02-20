@@ -50,4 +50,4 @@ Feature: target specific scenario
     Then it passes
     And it should appear to have run the scenarios
       | Name                             |
-      | second scenario - Z (example #1) |
+      | second scenario - Z (example #3) |

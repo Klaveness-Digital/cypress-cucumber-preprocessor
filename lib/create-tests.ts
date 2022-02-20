@@ -103,27 +103,23 @@ function createScenario(
       })
       .reduce((acum, el) => acum.concat(el), []);
 
-    const picklesToRun = exampleIds
-      .map((exampleId) =>
-        assertAndReturn(
-          pickles.find(
-            (pickle) =>
-              pickle.astNodeIds && pickle.astNodeIds.includes(exampleId)
-          ),
-          `Expected to find a pickle associated with id = ${exampleId}`
-        )
-      )
-      .filter((pickle) =>
-        testFilter.evaluate(pickle.tags?.map(mapTagName) || [])
+    for (let i = 0; i < exampleIds.length; i++) {
+      const exampleId = exampleIds[i];
+
+      const pickle = assertAndReturn(
+        pickles.find(
+          (pickle) =>
+            pickle.astNodeIds && pickle.astNodeIds.includes(exampleId)
+        ),
+        `Expected to find a pickle associated with id = ${exampleId}`
       );
 
-    for (let i = 0; i < picklesToRun.length; i++) {
-      const pickle = picklesToRun[i];
-
-      const exampleName = `${assertAndReturn(
+      const baseName = assertAndReturn(
         pickle.name,
         "Expected pickle to have a name"
-      )} (example #${i + 1})`;
+      );
+
+      const exampleName = `${baseName} (example #${i + 1})`;
 
       createPickle(
         gherkinDocument,
