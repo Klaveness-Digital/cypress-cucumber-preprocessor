@@ -18,7 +18,13 @@
             },
             "match": {
               "location": "not available:0"
-            }
+            },
+            "embeddings": [
+              {
+                "data": "iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAM0lEQVR4Aa3BAQEAAAiDMKR/51uC7QYjJDGJSUxiEpOYxCQmMYlJTGISk5jEJCYxiUnsARwEAibDACoRAAAAAElFTkSuQmCC",
+                "mime_type": "image/png"
+              }
+            ]
           }
         ],
         "type": "scenario"

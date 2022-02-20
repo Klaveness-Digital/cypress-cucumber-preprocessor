@@ -4,24 +4,37 @@
     "name": "a feature",
     "line": 1,
     "id": "a-feature",
-    "tags": [],
-    "uri": "a.feature",
+    "uri": "cypress/integration/a.feature",
+    "description": "",
     "elements": [
       {
+        "description": "",
         "id": "a-feature;a-scenario",
         "keyword": "Scenario",
         "line": 2,
         "name": "a scenario",
-        "tags": [],
         "type": "scenario",
         "steps": [
           {
-            "arguments": [],
             "keyword": "Given ",
             "line": 3,
             "name": "an undefined step",
             "result": {
               "status": "undefined"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          },
+          {
+            "keyword": "And ",
+            "line": 4,
+            "name": "another step",
+            "result": {
+              "status": "skipped"
+            },
+            "match": {
+              "location": "not available:0"
             }
           }
         ]

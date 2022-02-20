@@ -13,3 +13,5 @@ declare global {
 export { resolve as resolvePreprocessorConfiguration } from "./preprocessor-configuration";
 
 export { getStepDefinitionPaths } from "./step-definitions";
+
+export { default as addCucumberPreprocessorPlugin } from "./add-cucumber-preprocessor-plugin";

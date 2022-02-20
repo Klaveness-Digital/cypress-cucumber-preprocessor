@@ -4,7 +4,14 @@ import util from "util";
 
 import debug from "./debug";
 
-import { isStringOrStringArray } from "./type-guards";
+import { isString, isStringOrStringArray } from "./type-guards";
+
+function hasOwnProperty<X extends {}, Y extends string>(
+  value: X,
+  property: Y
+): value is X & Record<Y, unknown> {
+  return Object.prototype.hasOwnProperty.call(value, property);
+}
 
 function validateConfigurationEntry(
   key: string,
@@ -20,6 +27,81 @@ function validateConfigurationEntry(
         );
       }
       return { [key]: value };
+    case "messages": {
+      if (typeof value !== "object" || value == null) {
+        throw new Error(
+          `Expected an object (messages), but got ${util.inspect(value)}`
+        );
+      }
+      if (
+        !hasOwnProperty(value, "enabled") ||
+        typeof value.enabled !== "boolean"
+      ) {
+        throw new Error(
+          `Expected a boolean (messages.enabled), but got ${util.inspect(
+            value
+          )}`
+        );
+      }
+      let output: string | undefined;
+      if (hasOwnProperty(value, "output")) {
+        if (isString(value.output)) {
+          output = value.output;
+        } else {
+          throw new Error(
+            `Expected a string (messages.output), but got ${util.inspect(
+              value
+            )}`
+          );
+        }
+      }
+      const messagesConfig = {
+        enabled: value.enabled,
+        output,
+      };
+      return { [key]: messagesConfig };
+    }
+    case "json": {
+      if (typeof value !== "object" || value == null) {
+        throw new Error(
+          `Expected an object (json), but got ${util.inspect(value)}`
+        );
+      }
+      if (
+        !hasOwnProperty(value, "enabled") ||
+        typeof value.enabled !== "boolean"
+      ) {
+        throw new Error(
+          `Expected a boolean (json.enabled), but got ${util.inspect(value)}`
+        );
+      }
+      let formatter: string | undefined;
+      if (hasOwnProperty(value, "formatter")) {
+        if (isString(value.formatter)) {
+          formatter = value.formatter;
+        } else {
+          throw new Error(
+            `Expected a string (json.formatter), but got ${util.inspect(value)}`
+          );
+        }
+      }
+      let output: string | undefined;
+      if (hasOwnProperty(value, "output")) {
+        if (isString(value.output)) {
+          output = value.output;
+        } else {
+          throw new Error(
+            `Expected a string (json.output), but got ${util.inspect(value)}`
+          );
+        }
+      }
+      const messagesConfig = {
+        enabled: value.enabled,
+        formatter,
+        output,
+      };
+      return { [key]: messagesConfig };
+    }
     default:
       return {};
   }
@@ -27,6 +109,15 @@ function validateConfigurationEntry(
 
 export interface IPreprocessorConfiguration {
   readonly stepDefinitions: string | string[];
+  readonly messages?: {
+    enabled: boolean;
+    output?: string;
+  };
+  readonly json?: {
+    enabled: boolean;
+    formatter?: string;
+    output?: string;
+  };
 }
 
 export class PreprocessorConfiguration implements IPreprocessorConfiguration {
@@ -34,12 +125,30 @@ export class PreprocessorConfiguration implements IPreprocessorConfiguration {
 
   get stepDefinitions() {
     return (
-      this.explicitValues.stepDefinitions || [
+      this.explicitValues.stepDefinitions ?? [
         "cypress/integration/[filepath]/**/*.{js,ts}",
         "cypress/integration/[filepath].{js,ts}",
         "cypress/support/step_definitions/**/*.{js,ts}",
       ]
     );
+  }
+
+  get messages() {
+    return {
+      enabled:
+        this.json.enabled || (this.explicitValues.messages?.enabled ?? false),
+      output:
+        this.explicitValues.messages?.output ?? "cucumber-messages.ndjson",
+    };
+  }
+
+  get json() {
+    return {
+      enabled: this.explicitValues.json?.enabled ?? false,
+      formatter:
+        this.explicitValues.json?.formatter ?? "cucumber-json-formatter",
+      output: this.explicitValues.json?.output || "cucumber-report.json",
+    };
   }
 }
 

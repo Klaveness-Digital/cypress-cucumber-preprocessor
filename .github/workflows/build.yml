@@ -18,13 +18,19 @@ jobs:
   test:
     needs: prepare-versions
     runs-on: ubuntu-20.04
-    container: cypress/base:17.3.0
+    container:
+      image: cypress/base:17.3.0
     strategy:
       matrix:
         cypress-version: ${{fromJson(needs.prepare-versions.outputs.matrix)}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Cache NPM modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm
       - name: Cache TypeScript installs
         uses: actions/cache@v2
         with:
@@ -35,12 +41,18 @@ jobs:
         with:
           path: ~/.cache/Cypress
           key: cypress@${{ matrix.cypress-version }}
-      - name: Dependencies (1)
-        run: npm install
+      - name: Change owner
+        run: "chown root: ."
+      - name: Dependencies
         env:
           CYPRESS_INSTALL_BINARY: "0"
-      - name: Dependencies (2)
-        run: npm install --no-save cypress@${{ matrix.cypress-version }}
+          CUCUMBER_JSON_FORMATTER_URL: https://github.com/cucumber/common/releases/download/json-formatter%2Fgo%2Fv19.0.0/cucumber-json-formatter-linux-amd64
+        run: |
+          npm install --force && \
+          npm install --no-save cypress@${{ matrix.cypress-version }} && \
+          env -u CYPRESS_INSTALL_BINARY npx cypress install && \
+          curl -L $CUCUMBER_JSON_FORMATTER_URL > /usr/bin/cucumber-json-formatter && \
+          chmod +x /usr/bin/cucumber-json-formatter
       - name: Build
         run: npm run build
       - name: Test

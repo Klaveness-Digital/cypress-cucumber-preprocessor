@@ -9,39 +9,40 @@
     "elements": [
       {
         "description": "",
-        "id": "a-feature;a-scenario;;2",
-        "keyword": "Scenario Outline",
-        "line": 6,
+        "id": "a-feature;a-scenario",
+        "keyword": "Scenario",
+        "line": 2,
         "name": "a scenario",
         "type": "scenario",
         "steps": [
           {
             "keyword": "Given ",
             "line": 3,
-            "name": "a step",
+            "name": "a pending step",
             "result": {
-              "status": "passed"
+              "status": "pending"
             },
             "match": {
               "location": "not available:0"
             }
-          }
-        ]
-      },
-      {
-        "description": "",
-        "id": "a-feature;a-scenario;;3",
-        "keyword": "Scenario Outline",
-        "line": 7,
-        "name": "a scenario",
-        "type": "scenario",
-        "steps": [
+          },
           {
-            "keyword": "Given ",
-            "line": 3,
-            "name": "a step",
+            "keyword": "And ",
+            "line": 4,
+            "name": "another pending step",
             "result": {
-              "status": "passed"
+              "status": "skipped"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          },
+          {
+            "keyword": "And ",
+            "line": 5,
+            "name": "an implemented step",
+            "result": {
+              "status": "skipped"
             },
             "match": {
               "location": "not available:0"

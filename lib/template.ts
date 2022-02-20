@@ -1,3 +1,5 @@
+import path from "path";
+
 import { generateMessages } from "@cucumber/gherkin";
 
 import { IdGenerator } from "@cucumber/messages";
@@ -27,7 +29,9 @@ export async function compile(
     newId: IdGenerator.uuid(),
   };
 
-  const envelopes = generateMessages(data, uri, options);
+  const relativeUri = path.relative(configuration.projectRoot, uri);
+
+  const envelopes = generateMessages(data, relativeUri, options);
 
   if (envelopes[0].parseError) {
     throw new Error(
@@ -45,10 +49,12 @@ export async function compile(
 
   const pickles = envelopes.map((envelope) => envelope.pickle).filter(notNull);
 
+  const preprocessor = await resolve();
+
   const stepDefinitions = await getStepDefinitionPaths(
     {
       cypress: configuration,
-      preprocessor: await resolve(),
+      preprocessor,
     },
     uri
   );
@@ -67,8 +73,10 @@ export async function compile(
 
     createTests(
       registry,
+      ${JSON.stringify(data)},
       ${JSON.stringify(gherkinDocument)},
-      ${JSON.stringify(pickles)}
+      ${JSON.stringify(pickles)},
+      ${preprocessor.messages.enabled}
     );
   `;
 }

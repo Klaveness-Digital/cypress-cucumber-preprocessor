@@ -26,6 +26,7 @@ Before(async function ({ gherkinDocument, pickle }) {
       {
         testFiles: "**/*.feature",
         video: false,
+        nodeVersion: "system",
       },
       null,
       2
@@ -51,10 +52,13 @@ Before({ tags: "not @no-default-plugin" }, async function () {
   await writeFile(
     path.join(this.tmpDir, "cypress", "plugins", "index.js"),
     `
+      const { addCucumberPreprocessorPlugin } = require("@badeball/cypress-cucumber-preprocessor");
       const { createEsbuildPlugin } = require("@badeball/cypress-cucumber-preprocessor/esbuild");
       const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
 
-      module.exports = (on, config) => {
+      module.exports = async (on, config) => {
+        await addCucumberPreprocessorPlugin(on, config);
+
         on(
           "file:preprocessor",
           createBundler({

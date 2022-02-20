@@ -180,7 +180,7 @@ export class Registry {
       args.push(argument);
     }
 
-    stepDefinition.implementation.apply(world, args);
+    return stepDefinition.implementation.apply(world, args);
   }
 }
 
