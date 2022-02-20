@@ -48,6 +48,8 @@ Feature: target specific scenario
   Scenario: run a single scenario outline examples
     When I run cypress with "--env TAGS=@d"
     Then it passes
-    And it should appear to have run the scenarios
+    And it should appear to have run the scenario "second scenario - Z (example #3)"
+    But it should appear to not have run the scenarios
       | Name                             |
-      | second scenario - Z (example #3) |
+      | second scenario - X (example #1) |
+      | second scenario - Y (example #2) |

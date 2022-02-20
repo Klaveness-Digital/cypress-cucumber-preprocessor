@@ -68,11 +68,27 @@ Then(
   }
 );
 
+Then(
+  "it should appear to not have run the scenario {string}",
+  function (scenarioName) {
+    assert.doesNotMatch(this.lastRun.stdout, scenarioExpr(scenarioName));
+  }
+);
+
 Then("it should appear to have run the scenarios", function (scenarioTable) {
   for (const { Name: scenarioName } of scenarioTable.hashes()) {
     assert.match(this.lastRun.stdout, scenarioExpr(scenarioName));
   }
 });
+
+Then(
+  "it should appear to not have run the scenarios",
+  function (scenarioTable) {
+    for (const { Name: scenarioName } of scenarioTable.hashes()) {
+      assert.doesNotMatch(this.lastRun.stdout, scenarioExpr(scenarioName));
+    }
+  }
+);
 
 Then("the output should contain", function (content) {
   assert.match(this.lastRun.stdout, new RegExp(rescape(content)));
