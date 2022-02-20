@@ -232,7 +232,7 @@ export class Registry {
     const stepDefinition = this.resolveStepDefintion(text);
 
     const args = stepDefinition.expression
-      .match(text)
+      .match(text)!
       .map((match) => match.getValue(world));
 
     if (argument) {
