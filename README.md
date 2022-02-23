@@ -1,44 +1,73 @@
 # cypress-cucumber-preprocessor
 
-This is a fork and complete re-write of [cypress-cucumber-preprocessor]. It's
-not meant for the general public, although you're obviously free to try. I
-generally don't provide support in any way at this point. It differs from the
-original in the following ways.
+[![Build status](https://github.com/badeball/cypress-cucumber-preprocessor/actions/workflows/build.yml/badge.svg)](https://github.com/badeball/cypress-cucumber-preprocessor/actions/workflows/build.yml)
+[![Npm package weekly downloads](https://badgen.net/npm/dw/@badeball/cypress-cucumber-preprocessor)](https://npmjs.com/package/@badeball/cypress-cucumber-preprocessor)
 
- * Somewhat simpler configuration options
- * Tested differently
- * Using TypeScript
- * No support for Cucumber JSON reports
- * No support for "all.features"
- * Supports newest Gherkin syntax (IE. Rule-keword)
+This preprocessor aims to provide a developer experience and behavior similar to that of [Cucumber](https://cucumber.io/), to Cypress.
 
-It incidentally also fixes the following issues (non-exhaustive).
+## Installation
 
- * [TheBrainFamily/cypress-cucumber-preprocessor#104](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor/issues/104)
- * [TheBrainFamily/cypress-cucumber-preprocessor#143](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor/issues/143)
- * [TheBrainFamily/cypress-cucumber-preprocessor#170](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor/issues/170)
- * [TheBrainFamily/cypress-cucumber-preprocessor#196](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor/issues/196)
- * [TheBrainFamily/cypress-cucumber-preprocessor#237](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor/issues/237)
- * [TheBrainFamily/cypress-cucumber-preprocessor#348](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor/issues/348)
- * [TheBrainFamily/cypress-cucumber-preprocessor#395](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor/issues/395)
- * [TheBrainFamily/cypress-cucumber-preprocessor#406](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor/issues/406)
- * [TheBrainFamily/cypress-cucumber-preprocessor#428](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor/issues/428)
- * [TheBrainFamily/cypress-cucumber-preprocessor#448](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor/issues/448)
- * [TheBrainFamily/cypress-cucumber-preprocessor#458](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor/issues/458)
-
-## Installation and setup
-
-```bash
-npm install @badeball/cypress-cucumber-preprocessor --save-dev
+```
+$ npm install @badeball/cypress-cucumber-preprocessor
 ```
 
-or
+## Introduction
 
-```bash
-yarn add @badeball/cypress-cucumber-preprocessor --dev
+The preprocessor (with its dependencies) parses Gherkin documents and allows you to write tests as shown below.
+
+```cucumber
+# cypress/integration/duckduckgo.feature
+Feature: duckduckgo.com
+  Scenario: visting the frontpage
+    When I visit duckduckgo.com
+    Then I should see a search bar
 ```
 
-Once installed, set up the preprocessor as a plugin, e.g., in `cypress/plugins/index.js`. See the [loaders' feature files] for examples on how to set up the preprocessor.
+```ts
+// cypress/integration/duckduckgo.ts
+import { When, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
 
-[cypress-cucumber-preprocessor]: https://github.com/TheBrainFamily/cypress-cucumber-preprocessor
-[loaders' feature files]: https://github.com/badeball/cypress-cucumber-preprocessor/tree/master/features/loaders
+When("I visit duckduckgo.com", () => {
+  cy.visit("https://www.duckduckgo.com");
+});
+
+Then("I should see a search bar", () => {
+  cy.get("input").should(
+    "have.attr",
+    "placeholder",
+    "Search the web without being tracked"
+  );
+});
+```
+
+## User guide
+
+For further documentation see [docs](docs/index.md) and [docs/quick-start.md](docs/quick-start.md).
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Building
+
+Building can be done once using:
+
+```
+$ npm run build
+```
+
+Or upon file changes with:
+
+```
+$ npm run watch
+```
+
+There are multiple types of tests, all ran using npm scripts:
+
+```
+$ npm run test:fmt
+$ npm run test:types
+$ npm run test:unit
+$ npm run test:integration # make sure to build first
+$ npm run test # runs all of the above
+```
