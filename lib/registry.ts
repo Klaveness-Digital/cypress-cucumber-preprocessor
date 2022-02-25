@@ -8,6 +8,8 @@ import {
 
 import parse from "@cucumber/tag-expressions";
 
+import { assertAndReturn } from "./assertions";
+
 import DataTable from "./data_table";
 
 import { isString } from "./type-guards";
@@ -23,36 +25,7 @@ interface IStepDefinition<T extends unknown[]> {
   implementation: IStepDefinitionBody<T>;
 }
 
-interface IHook {
-  node: ReturnType<typeof parse>;
-  implementation: IHookBody;
-}
-
-function parseHookArguments(
-  optionsOrFn: IHookBody | { tags?: string },
-  maybeFn?: IHookBody
-): IHook {
-  const noopNode = { evaluate: () => true };
-
-  if (typeof optionsOrFn === "function") {
-    if (maybeFn) {
-      throw new Error("Unexpected argument for Before hook");
-    }
-
-    return { implementation: optionsOrFn, node: noopNode };
-  } else if (typeof optionsOrFn === "object") {
-    if (typeof maybeFn !== "function") {
-      throw new Error("Unexpected argument for Before hook");
-    }
-
-    return {
-      node: optionsOrFn.tags ? parse(optionsOrFn.tags) : noopNode,
-      implementation: maybeFn,
-    };
-  } else {
-    throw new Error("Unexpected argument for Before hook");
-  }
-}
+const noopNode = { evaluate: () => true };
 
 function retrieveCurrentTagsOrWarn() {
   const isFeatureSpec = Cypress.spec.name.endsWith(".feature");
@@ -81,50 +54,23 @@ function retrieveCurrentTagsOrWarn() {
 }
 
 export class Registry {
-  public methods: {
-    defineStep<T extends unknown[]>(
-      description: string | RegExp,
-      body: IStepDefinitionBody<T>
-    ): void;
-    Step(
-      world: Mocha.Context,
-      description: string,
-      argument?: DataTable | string
-    ): void;
-    defineParameterType<T>(options: IParameterTypeDefinition<T>): void;
-    Before(options: { tags?: string }, fn: IHookBody): void;
-    Before(fn: IHookBody): void;
-    After(options: { tags?: string }, fn: IHookBody): void;
-    After(fn: IHookBody): void;
-  };
-
   private parameterTypeRegistry: ParameterTypeRegistry;
 
   private stepDefinitions: IStepDefinition<unknown[]>[];
 
-  private beforeHooks: IHook[];
-
-  private afterHooks: IHook[];
-
   constructor() {
-    this.methods = {
-      defineStep: this.defineStep.bind(this),
-      Step: this.runStepDefininition.bind(this),
-      defineParameterType: this.defineParameterType.bind(this),
-      Before: this.defineBefore.bind(this),
-      After: this.defineAfter.bind(this),
-    };
+    this.defineStep = this.defineStep.bind(this);
+    this.runStepDefininition = this.runStepDefininition.bind(this);
+    this.defineParameterType = this.defineParameterType.bind(this);
+    this.defineBefore = this.defineBefore.bind(this);
+    this.defineAfter = this.defineAfter.bind(this);
 
     this.parameterTypeRegistry = new ParameterTypeRegistry();
 
     this.stepDefinitions = [];
-
-    this.beforeHooks = [];
-
-    this.afterHooks = [];
   }
 
-  private defineStep(description: string | RegExp, implementation: () => void) {
+  public defineStep(description: string | RegExp, implementation: () => void) {
     if (typeof description === "string") {
       this.stepDefinitions.push({
         expression: new CucumberExpression(
@@ -146,7 +92,7 @@ export class Registry {
     }
   }
 
-  private defineParameterType<T>({
+  public defineParameterType<T>({
     name,
     regexp,
     transformer,
@@ -168,32 +114,22 @@ export class Registry {
     );
   }
 
-  private defineBefore(options: { tags?: string }, fn: IHookBody): void;
-  private defineBefore(fn: IHookBody): void;
-  private defineBefore(
-    optionsOrFn: IHookBody | { tags?: string },
-    maybeFn?: IHookBody
-  ) {
-    const { implementation, node } = parseHookArguments(optionsOrFn, maybeFn);
+  public defineBefore(options: { tags?: string }, fn: IHookBody) {
+    const node = options.tags ? parse(options.tags) : noopNode;
 
     beforeEach(function () {
       if (node.evaluate(retrieveCurrentTagsOrWarn())) {
-        implementation.call(this);
+        fn.call(this);
       }
     });
   }
 
-  private defineAfter(options: { tags?: string }, fn: IHookBody): void;
-  private defineAfter(fn: IHookBody): void;
-  private defineAfter(
-    optionsOrFn: IHookBody | { tags?: string },
-    maybeFn?: IHookBody
-  ) {
-    const { implementation, node } = parseHookArguments(optionsOrFn, maybeFn);
+  public defineAfter(options: { tags?: string }, fn: IHookBody) {
+    const node = options.tags ? parse(options.tags) : noopNode;
 
     afterEach(function () {
       if (node.evaluate(retrieveCurrentTagsOrWarn())) {
-        implementation.call(this);
+        fn.call(this);
       }
     });
   }
@@ -243,9 +179,6 @@ export class Registry {
   }
 }
 
-const globalPropertyName =
-  "__cypress_cucumber_preprocessor_registry_dont_use_this";
-
 declare global {
   namespace globalThis {
     var __cypress_cucumber_preprocessor_registry_dont_use_this:
@@ -254,8 +187,28 @@ declare global {
   }
 }
 
-const registry =
-  globalThis[globalPropertyName] ||
-  (globalThis[globalPropertyName] = new Registry());
+const globalPropertyName =
+  "__cypress_cucumber_preprocessor_registry_dont_use_this";
 
-export default registry;
+export function withRegistry(fn: () => void): Registry {
+  const registry = new Registry();
+  assignRegistry(registry);
+  fn();
+  freeRegistry();
+  return registry;
+}
+
+export function assignRegistry(registry: Registry) {
+  globalThis[globalPropertyName] = registry;
+}
+
+export function freeRegistry() {
+  delete globalThis[globalPropertyName];
+}
+
+export function getRegistry() {
+  return assertAndReturn(
+    globalThis[globalPropertyName],
+    "Expected to find a global registry (this usually means you are trying to define steps or hooks in support/index.js, which is not supported)"
+  );
+}

@@ -54,13 +54,17 @@ export async function compile(
   );
 
   return `
-    const createTests = require("@badeball/cypress-cucumber-preprocessor/lib/create-tests");
+    const { default: createTests } = require("@badeball/cypress-cucumber-preprocessor/lib/create-tests");
+    const { withRegistry } = require("@badeball/cypress-cucumber-preprocessor/lib/registry");
 
-    ${stepDefinitions
-      .map((stepDefintion) => `require("${stepDefintion}");`)
-      .join("\n    ")}
+    const registry = withRegistry(() => {
+      ${stepDefinitions
+        .map((stepDefintion) => `require("${stepDefintion}");`)
+        .join("\n    ")}
+    });
 
-    createTests.default(
+    createTests(
+      registry,
       ${JSON.stringify(gherkinDocument)},
       ${JSON.stringify(pickles)}
     );

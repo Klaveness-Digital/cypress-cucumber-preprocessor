@@ -6,7 +6,7 @@ import { assertAndReturn } from "./assertions";
 
 import DataTable from "./data_table";
 
-import registry from "./registry";
+import { assignRegistry, freeRegistry, Registry } from "./registry";
 
 import { traverseGherkinDocument, mapTagName } from "./ast-helpers";
 
@@ -15,6 +15,7 @@ import { YieldType } from "./types";
 type Node = ReturnType<typeof parse>;
 
 function createFeature(
+  registry: Registry,
   gherkinDocument: messages.IGherkinDocument,
   pickles: messages.IPickle[],
   feature: messages.GherkinDocument.IFeature,
@@ -24,9 +25,21 @@ function createFeature(
     if (feature.children) {
       for (const child of feature.children) {
         if (child.scenario) {
-          createScenario(gherkinDocument, pickles, child.scenario, testFilter);
+          createScenario(
+            registry,
+            gherkinDocument,
+            pickles,
+            child.scenario,
+            testFilter
+          );
         } else if (child.rule) {
-          createRule(gherkinDocument, pickles, child.rule, testFilter);
+          createRule(
+            registry,
+            gherkinDocument,
+            pickles,
+            child.rule,
+            testFilter
+          );
         }
       }
     }
@@ -34,6 +47,7 @@ function createFeature(
 }
 
 function createRule(
+  registry: Registry,
   gherkinDocument: messages.IGherkinDocument,
   pickles: messages.IPickle[],
   rule: messages.GherkinDocument.Feature.FeatureChild.IRule,
@@ -43,7 +57,13 @@ function createRule(
     if (rule.children) {
       for (const child of rule.children) {
         if (child.scenario) {
-          createScenario(gherkinDocument, pickles, child.scenario, testFilter);
+          createScenario(
+            registry,
+            gherkinDocument,
+            pickles,
+            child.scenario,
+            testFilter
+          );
         }
       }
     }
@@ -86,6 +106,7 @@ const gherkinDocumentsAstIdMaps = createWeakCache(
 );
 
 function createScenario(
+  registry: Registry,
   gherkinDocument: messages.IGherkinDocument,
   pickles: messages.IPickle[],
   scenario: messages.GherkinDocument.Feature.IScenario,
@@ -108,8 +129,7 @@ function createScenario(
 
       const pickle = assertAndReturn(
         pickles.find(
-          (pickle) =>
-            pickle.astNodeIds && pickle.astNodeIds.includes(exampleId)
+          (pickle) => pickle.astNodeIds && pickle.astNodeIds.includes(exampleId)
         ),
         `Expected to find a pickle associated with id = ${exampleId}`
       );
@@ -122,6 +142,7 @@ function createScenario(
       const exampleName = `${baseName} (example #${i + 1})`;
 
       createPickle(
+        registry,
         gherkinDocument,
         pickles,
         { ...scenario, name: exampleName },
@@ -142,11 +163,19 @@ function createScenario(
       `Expected to find a pickle associated with id = ${scenarioId}`
     );
 
-    createPickle(gherkinDocument, pickles, scenario, pickle, testFilter);
+    createPickle(
+      registry,
+      gherkinDocument,
+      pickles,
+      scenario,
+      pickle,
+      testFilter
+    );
   }
 }
 
 function createPickle(
+  registry: Registry,
   gherkinDocument: messages.IGherkinDocument,
   pickles: messages.IPickle[],
   scenario: messages.GherkinDocument.Feature.IScenario,
@@ -162,6 +191,8 @@ function createPickle(
   }
 
   it(scenario.name || "<unamed scenario>", { env: { tags } }, function () {
+    assignRegistry(registry);
+
     window.testState = {
       gherkinDocument,
       pickles,
@@ -226,6 +257,7 @@ function collectTagNamesFromGherkinDocument(
 }
 
 export default function createTests(
+  registry: Registry,
   gherkinDocument: messages.IGherkinDocument,
   pickles: messages.IPickle[]
 ) {
@@ -243,10 +275,15 @@ export default function createTests(
 
   if (gherkinDocument.feature) {
     createFeature(
+      registry,
       gherkinDocument,
       pickles,
       gherkinDocument.feature,
       testFilter
     );
   }
+
+  afterEach(function () {
+    freeRegistry();
+  });
 }
