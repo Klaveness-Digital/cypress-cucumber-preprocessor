@@ -56,6 +56,11 @@ function retrieveCurrentTagsOrWarn() {
 export class Registry {
   private parameterTypeRegistry: ParameterTypeRegistry;
 
+  private preliminaryStepDefinitions: {
+    description: string | RegExp;
+    implementation: () => void;
+  }[] = [];
+
   private stepDefinitions: IStepDefinition<unknown[]>[];
 
   constructor() {
@@ -70,26 +75,38 @@ export class Registry {
     this.stepDefinitions = [];
   }
 
+  public finalize() {
+    for (const { description, implementation } of this
+      .preliminaryStepDefinitions) {
+      if (typeof description === "string") {
+        this.stepDefinitions.push({
+          expression: new CucumberExpression(
+            description,
+            this.parameterTypeRegistry
+          ),
+          implementation,
+        });
+      } else {
+        this.stepDefinitions.push({
+          expression: new RegularExpression(
+            description,
+            this.parameterTypeRegistry
+          ),
+          implementation,
+        });
+      }
+    }
+  }
+
   public defineStep(description: string | RegExp, implementation: () => void) {
-    if (typeof description === "string") {
-      this.stepDefinitions.push({
-        expression: new CucumberExpression(
-          description,
-          this.parameterTypeRegistry
-        ),
-        implementation,
-      });
-    } else if (description instanceof RegExp) {
-      this.stepDefinitions.push({
-        expression: new RegularExpression(
-          description,
-          this.parameterTypeRegistry
-        ),
-        implementation,
-      });
-    } else {
+    if (typeof description !== "string" && !(description instanceof RegExp)) {
       throw new Error("Unexpected argument for step definition");
     }
+
+    this.preliminaryStepDefinitions.push({
+      description,
+      implementation,
+    });
   }
 
   public defineParameterType<T>({

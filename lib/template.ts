@@ -63,6 +63,8 @@ export async function compile(
         .join("\n    ")}
     });
 
+    registry.finalize();
+
     createTests(
       registry,
       ${JSON.stringify(gherkinDocument)},
