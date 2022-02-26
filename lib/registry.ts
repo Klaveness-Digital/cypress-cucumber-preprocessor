@@ -113,21 +113,9 @@ export class Registry {
     name,
     regexp,
     transformer,
-    useForSnippets,
-    preferForRegexpMatch,
   }: IParameterTypeDefinition<T>) {
-    if (typeof useForSnippets !== "boolean") useForSnippets = true;
-    if (typeof preferForRegexpMatch !== "boolean") preferForRegexpMatch = false;
-
     this.parameterTypeRegistry.defineParameterType(
-      new ParameterType(
-        name,
-        regexp,
-        null,
-        transformer,
-        useForSnippets,
-        preferForRegexpMatch
-      )
+      new ParameterType(name, regexp, null, transformer, true, false)
     );
   }
 
