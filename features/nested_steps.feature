@@ -9,7 +9,7 @@ Feature: nesten steps
       """
     And a file named "cypress/integration/a.js" with:
       """
-      const { Given, Step } = require("@badeball/cypress-cucumber-preprocessor");
+      const { Given, Step } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a nested step", function() {
         Step(this, "another step");
       });

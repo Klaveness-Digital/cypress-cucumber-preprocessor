@@ -45,7 +45,7 @@ Feature: world
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given, When, Then } = require("@badeball/cypress-cucumber-preprocessor");
+      const { Given, When, Then } = require("@klaveness/cypress-cucumber-preprocessor");
 
       Given("a variable set to {int}", function(number) {
         this.setTo(number);

@@ -17,7 +17,7 @@ Feature: mixing feature and non-feature specs
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { When, isFeature, doesFeatureMatch } = require("@badeball/cypress-cucumber-preprocessor");
+      const { When, isFeature, doesFeatureMatch } = require("@klaveness/cypress-cucumber-preprocessor");
       When("a step", function() {
         expect(isFeature()).to.be.true;
         expect(doesFeatureMatch("@foo")).to.be.true;
@@ -25,7 +25,7 @@ Feature: mixing feature and non-feature specs
       """
     And a file named "cypress/integration/b.spec.js" with:
       """
-      const { isFeature } = require("@badeball/cypress-cucumber-preprocessor");
+      const { isFeature } = require("@klaveness/cypress-cucumber-preprocessor");
       it("should work", () => {
         expect(isFeature()).to.be.false;
       });

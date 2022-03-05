@@ -12,7 +12,7 @@ Feature: scenario outlines and examples
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      const { Given } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a foo step", function() {})
       """
     When I run cypress
@@ -33,7 +33,7 @@ Feature: scenario outlines and examples
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      const { Given } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a doc string step", function(docString) {
         expect(docString).to.equal("a foo doc string")
       })
@@ -54,7 +54,7 @@ Feature: scenario outlines and examples
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      const { Given } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a table step", function(tableData) {
         expect(tableData.raw()[0][0]).to.equal("foo")
       })

@@ -16,7 +16,7 @@ Feature: smart tagging
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      const { Given } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a step", function(table) {});
       """
     When I run cypress
@@ -36,7 +36,7 @@ Feature: smart tagging
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      const { Given } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a step", function(table) {});
       """
     When I run cypress
@@ -62,7 +62,7 @@ Feature: smart tagging
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      const { Given } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a step", function(table) {});
       """
     When I run cypress
@@ -90,7 +90,7 @@ Feature: smart tagging
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      const { Given } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a step", function(table) {});
       """
     When I run cypress
@@ -113,7 +113,7 @@ Feature: smart tagging
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      const { Given } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a step", function(table) {});
       """
     When I run cypress

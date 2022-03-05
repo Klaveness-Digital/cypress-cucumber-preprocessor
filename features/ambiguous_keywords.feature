@@ -9,7 +9,7 @@ Feature: ambiguous keyword
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { When } = require("@badeball/cypress-cucumber-preprocessor");
+      const { When } = require("@klaveness/cypress-cucumber-preprocessor");
       When("a step", function() {});
       """
     When I run cypress

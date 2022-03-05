@@ -3,7 +3,7 @@
 A step definition can transfer state to a subsequent step definition by storing state in instance variables, as shown below.
 
 ```ts
-import { Given } from "@badeball/cypress-cucumber-preprocessor";
+import { Given } from "@klaveness/cypress-cucumber-preprocessor";
 
 Given("a step asynchronously assigning to World", function() {
   cy.then(() => {
@@ -52,7 +52,7 @@ beforeEach(function () {
 
 ```ts
 // cypress/support/step_definitions/steps.js
-import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import { Given, When, Then } from "@klaveness/cypress-cucumber-preprocessor";
 
 Given("a variable set to {int}", function(number) {
   this.setTo(number);

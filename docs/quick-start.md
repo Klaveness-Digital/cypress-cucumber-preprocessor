@@ -1,8 +1,6 @@
 # Installation
 
-```
-$ npm install @badeball/cypress-cucumber-preprocessor
-```
+See [badeball/cypress-cucumber-preprocessor](https://github.com/badeball/cypress-cucumber-preprocessor) for a public, community-maintained edition and installation instructions.
 
 # Configuration
 
@@ -34,7 +32,7 @@ Feature: duckduckgo.com
 
 ```ts
 // cypress/integration/duckduckgo.ts
-import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import { When, Then } from "@klaveness/cypress-cucumber-preprocessor";
 
 When("I visit duckduckgo.com", () => {
   cy.visit("https://www.duckduckgo.com");

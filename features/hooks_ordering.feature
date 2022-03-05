@@ -25,7 +25,7 @@ Feature: hooks ordering
         Given,
         Before,
         After
-      } = require("@badeball/cypress-cucumber-preprocessor")
+      } = require("@klaveness/cypress-cucumber-preprocessor")
       let counter;
       before(function() {
         counter = 0;

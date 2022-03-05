@@ -1,5 +1,5 @@
 import * as browserify from "@cypress/browserify-preprocessor";
-import { preprocessor } from "@badeball/cypress-cucumber-preprocessor/browserify";
+import { preprocessor } from "@klaveness/cypress-cucumber-preprocessor/browserify";
 
 export default (
   on: Cypress.PluginEvents,

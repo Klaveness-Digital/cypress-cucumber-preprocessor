@@ -3,7 +3,7 @@ Feature: tagged Hooks
   Background:
     Given a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Then } = require("@badeball/cypress-cucumber-preprocessor");
+      const { Then } = require("@klaveness/cypress-cucumber-preprocessor");
       Then("{word} is true", function(prop) {
         expect(true).to.equal(this[prop])
       })
@@ -15,7 +15,7 @@ Feature: tagged Hooks
       """
       const {
         Before
-      } = require("@badeball/cypress-cucumber-preprocessor");
+      } = require("@klaveness/cypress-cucumber-preprocessor");
       Before(function() {
         this.foo = false
         this.bar = false

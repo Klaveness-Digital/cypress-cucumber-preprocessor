@@ -33,7 +33,7 @@ Before(async function ({ gherkinDocument, pickle }) {
     )
   );
 
-  await fs.mkdir(path.join(this.tmpDir, "node_modules", "@badeball"), {
+  await fs.mkdir(path.join(this.tmpDir, "node_modules", "@klaveness"), {
     recursive: true,
   });
 
@@ -42,7 +42,7 @@ Before(async function ({ gherkinDocument, pickle }) {
     path.join(
       this.tmpDir,
       "node_modules",
-      "@badeball",
+      "@klaveness",
       "cypress-cucumber-preprocessor"
     ),
     "dir"
@@ -53,8 +53,8 @@ Before({ tags: "not @no-default-plugin" }, async function () {
   await writeFile(
     path.join(this.tmpDir, "cypress", "plugins", "index.js"),
     `
-      const { addCucumberPreprocessorPlugin } = require("@badeball/cypress-cucumber-preprocessor");
-      const { createEsbuildPlugin } = require("@badeball/cypress-cucumber-preprocessor/esbuild");
+      const { addCucumberPreprocessorPlugin } = require("@klaveness/cypress-cucumber-preprocessor");
+      const { createEsbuildPlugin } = require("@klaveness/cypress-cucumber-preprocessor/esbuild");
       const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
 
       module.exports = async (on, config) => {

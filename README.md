@@ -1,17 +1,10 @@
 # cypress-cucumber-preprocessor
 
-[![Build status](https://github.com/badeball/cypress-cucumber-preprocessor/actions/workflows/build.yml/badge.svg)](https://github.com/badeball/cypress-cucumber-preprocessor/actions/workflows/build.yml)
-[![Npm package weekly downloads](https://badgen.net/npm/dw/@badeball/cypress-cucumber-preprocessor)](https://npmjs.com/package/@badeball/cypress-cucumber-preprocessor)
-
 This preprocessor aims to provide a developer experience and behavior similar to that of [Cucumber](https://cucumber.io/), to Cypress.
-
-> :information_source: The repositor has recently moved from `github.com/TheBrainFamily` to `github.com/badeball`. Read more about the transfer of ownership [here](https://github.com/badeball/cypress-cucumber-preprocessor/issues/689).
 
 ## Installation
 
-```
-$ npm install @badeball/cypress-cucumber-preprocessor
-```
+See [badeball/cypress-cucumber-preprocessor](https://github.com/badeball/cypress-cucumber-preprocessor) for a public, community-maintained edition and installation instructions.
 
 ## Introduction
 
@@ -27,7 +20,7 @@ Feature: duckduckgo.com
 
 ```ts
 // cypress/integration/duckduckgo.ts
-import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import { When, Then } from "@klaveness/cypress-cucumber-preprocessor";
 
 When("I visit duckduckgo.com", () => {
   cy.visit("https://www.duckduckgo.com");
@@ -48,7 +41,7 @@ For further documentation see [docs](docs/readme.md) and [docs/quick-start.md](d
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [badeball/cypress-cucumber-preprocessor](https://github.com/badeball/cypress-cucumber-preprocessor) for a public, community-maintained edition and contribution instructions.
 
 ## Building
 
@@ -73,7 +66,3 @@ $ npm run test:unit
 $ npm run test:integration # make sure to build first
 $ npm run test # runs all of the above
 ```
-
-## Attribution
-
-A special thanks goes out to [Łukasz Gandecki](https://github.com/lgandecki) for developing and maintaning the cypress-cucumber integration before me, in addition to [all other contributors](https://github.com/badeball/cypress-cucumber-preprocessor/graphs/contributors). Some of the work has partially been sponsored by [Klaveness Digital](https://www.klavenessdigital.com/).

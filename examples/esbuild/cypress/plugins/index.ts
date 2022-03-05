@@ -1,5 +1,5 @@
 import * as createBundler from "@bahmutov/cypress-esbuild-preprocessor";
-import { createEsbuildPlugin } from "@badeball/cypress-cucumber-preprocessor/esbuild";
+import { createEsbuildPlugin } from "@klaveness/cypress-cucumber-preprocessor/esbuild";
 
 export default (
   on: Cypress.PluginEvents,

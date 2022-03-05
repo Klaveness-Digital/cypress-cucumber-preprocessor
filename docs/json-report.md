@@ -13,7 +13,7 @@ JSON reports can be enabled using the `json.enabled` property. The preprocessor 
 This **requires** you to have registered this module in your [plugin file](https://docs.cypress.io/guides/core-concepts/writing-and-organizing-tests#Plugins-file), as shown below.
 
 ```ts
-import { addCucumberPreprocessorPlugin } from "@badeball/cypress-cucumber-preprocessor";
+import { addCucumberPreprocessorPlugin } from "@klaveness/cypress-cucumber-preprocessor";
 
 export default async (
   on: Cypress.PluginEvents,
@@ -37,7 +37,7 @@ The report is outputted to `cucumber-report.json` in the project directory, but 
 Text, images and other data can be added to the output of the messages and JSON reports with attachments.
 
 ```ts
-import { Given, attach } from "@badeball/cypress-cucumber-preprocessor";
+import { Given, attach } from "@klaveness/cypress-cucumber-preprocessor";
 
 Given("a step", function() {
   attach("foobar");
@@ -47,7 +47,7 @@ Given("a step", function() {
 By default, text is saved with a MIME type of text/plain. You can also specify a different MIME type.
 
 ```ts
-import { Given, attach } from "@badeball/cypress-cucumber-preprocessor";
+import { Given, attach } from "@klaveness/cypress-cucumber-preprocessor";
 
 Given("a step", function() {
   attach('{ "name": "foobar" }', "application/json");
@@ -57,7 +57,7 @@ Given("a step", function() {
 Images and other binary data can be attached using a ArrayBuffer. The data will be base64 encoded in the output.
 
 ```ts
-import { Given, attach } from "@badeball/cypress-cucumber-preprocessor";
+import { Given, attach } from "@klaveness/cypress-cucumber-preprocessor";
 
 Given("a step", function() {
   attach(new TextEncoder().encode("foobar").buffer, "text/plain");
@@ -67,7 +67,7 @@ Given("a step", function() {
 If you've already got a base64-encoded string, you can prefix your mime type with `base64:` to indicate this.
 
 ```ts
-import { Given, attach } from "@badeball/cypress-cucumber-preprocessor";
+import { Given, attach } from "@klaveness/cypress-cucumber-preprocessor";
 
 Given("a step", function() {
   attach("Zm9vYmFy", "base64:text/plain");

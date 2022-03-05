@@ -1,12 +1,12 @@
 {
-  "name": "@badeball/cypress-cucumber-preprocessor",
+  "name": "@klaveness/cypress-cucumber-preprocessor",
   "version": "9.0.0",
   "author": "Jonas Amundsen",
   "license": "MIT",
-  "homepage": "https://github.com/badeball/cypress-cucumber-preprocessor",
+  "homepage": "https://github.com/Klaveness-Digital/cypress-cucumber-preprocessor",
   "repository": {
     "type": "git",
-    "url": "https://github.com/badeball/cypress-cucumber-preprocessor.git"
+    "url": "https://github.com/Klaveness-Digital/cypress-cucumber-preprocessor.git"
   },
   "keywords": [
     "cypress",

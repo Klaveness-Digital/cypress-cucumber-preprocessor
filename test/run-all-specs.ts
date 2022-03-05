@@ -42,7 +42,7 @@ describe("Run all specs", () => {
     await writeFile(
       path.join(this.tmpDir, "cypress", "plugins", "index.js"),
       `
-        const { createEsbuildPlugin } = require("@badeball/cypress-cucumber-preprocessor/esbuild");
+        const { createEsbuildPlugin } = require("@klaveness/cypress-cucumber-preprocessor/esbuild");
         const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
 
         module.exports = (on, config) => {
@@ -56,7 +56,7 @@ describe("Run all specs", () => {
       `
     );
 
-    await fs.mkdir(path.join(this.tmpDir, "node_modules", "@badeball"), {
+    await fs.mkdir(path.join(this.tmpDir, "node_modules", "@klaveness"), {
       recursive: true,
     });
 
@@ -65,7 +65,7 @@ describe("Run all specs", () => {
       path.join(
         this.tmpDir,
         "node_modules",
-        "@badeball",
+        "@klaveness",
         "cypress-cucumber-preprocessor"
       )
     );
@@ -79,7 +79,7 @@ describe("Run all specs", () => {
     `;
 
     const steps = `
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      const { Given } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a step", function() {});
     `;
 

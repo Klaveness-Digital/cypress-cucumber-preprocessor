@@ -22,7 +22,7 @@ Feature: target specific scenario
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      const { Given } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a step", function() {})
       """
 

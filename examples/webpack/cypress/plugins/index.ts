@@ -26,7 +26,7 @@ export default (
               test: /\.feature$/,
               use: [
                 {
-                  loader: "@badeball/cypress-cucumber-preprocessor/webpack",
+                  loader: "@klaveness/cypress-cucumber-preprocessor/webpack",
                   options: config,
                 },
               ],

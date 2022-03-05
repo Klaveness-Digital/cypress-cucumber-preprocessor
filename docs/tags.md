@@ -39,7 +39,7 @@ Tags are inherited by child elements. Tags that are placed above a `Feature` wil
 Normally when running a subset of scenarios using `cypress run --env tags=@foo`, you could potentially encounter files containing no matching scenarios. These can be pre-filtered away by setting `filterSpecs` to `true`, thus saving you execution time. This **requires** you to have registered this module in your [plugin file](https://docs.cypress.io/guides/core-concepts/writing-and-organizing-tests#Plugins-file), as shown below.
 
 ```ts
-import { addCucumberPreprocessorPlugin } from "@badeball/cypress-cucumber-preprocessor";
+import { addCucumberPreprocessorPlugin } from "@klaveness/cypress-cucumber-preprocessor";
 
 export default async (
   on: Cypress.PluginEvents,

@@ -8,7 +8,7 @@ Feature: custom parameter type
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given, defineParameterType } = require("@badeball/cypress-cucumber-preprocessor");
+      const { Given, defineParameterType } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a step in {color}", function(color) {});
       defineParameterType({
         name: "color",

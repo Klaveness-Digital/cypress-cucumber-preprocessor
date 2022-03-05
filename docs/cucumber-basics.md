@@ -19,7 +19,7 @@ Feature: a feature
 ```
 
 ```ts
-import { Given, DataTable } from "@badeball/cypress-cucumber-preprocessor";
+import { Given, DataTable } from "@klaveness/cypress-cucumber-preprocessor";
 
 Given(/^a table step$/, (table: DataTable) => {
   const expected = [
@@ -47,7 +47,7 @@ Custom parameter types can be registered using `defineParameterType()`. They sha
 You can return `"pending"` from a step defintion or a chain to mark a step as pending. This will halt the execution and Cypress will report the test as "skipped".
 
 ```ts
-import { When } from "@badeball/cypress-cucumber-preprocessor";
+import { When } from "@klaveness/cypress-cucumber-preprocessor";
 
 When("a step", () => {
   return "pending";
@@ -55,7 +55,7 @@ When("a step", () => {
 ```
 
 ```ts
-import { When } from "@badeball/cypress-cucumber-preprocessor";
+import { When } from "@klaveness/cypress-cucumber-preprocessor";
 
 When("a step", () => {
   cy.then(() => {
@@ -69,7 +69,7 @@ When("a step", () => {
 You can invoke other steps from a step using `Step()`, as shown below.
 
 ```ts
-import { When, Step } from "@badeball/cypress-cucumber-preprocessor";
+import { When, Step } from "@klaveness/cypress-cucumber-preprocessor";
 
 When("I fill in the entire form", function () {
   Step(this, 'I fill in "john.doe" for "Username"');
@@ -84,7 +84,7 @@ import {
   When,
   Step,
   DataTable
-} from "@badeball/cypress-cucumber-preprocessor";
+} from "@klaveness/cypress-cucumber-preprocessor";
 
 When("I fill in the entire form", function () {
   Step(
@@ -104,7 +104,7 @@ When("I fill in the entire form", function () {
 `Before()` and `After()` is similar to Cypress' `beforeEach()` and `afterEach()`, but they can be selected to conditionally run based on the tags of each scenario, as shown below. Furthermore, failure in these hooks does **not** result in remaining tests being skipped. This is contrary to Cypress' `beforeEach` and `afterEach`.
 
 ```ts
-import { Before } from "@badeball/cypress-cucumber-preprocessor";
+import { Before } from "@klaveness/cypress-cucumber-preprocessor";
 
 Before(function () {
   // This hook will be executed before all scenarios.

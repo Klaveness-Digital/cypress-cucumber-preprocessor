@@ -20,7 +20,7 @@ Feature: attachments
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given, attach } = require("@badeball/cypress-cucumber-preprocessor");
+      const { Given, attach } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a step", function() {
         attach("foobar")
       })
@@ -38,7 +38,7 @@ Feature: attachments
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given, attach } = require("@badeball/cypress-cucumber-preprocessor");
+      const { Given, attach } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a step", function() {
         attach(new TextEncoder().encode("foobar").buffer, "text/plain")
       })
@@ -57,7 +57,7 @@ Feature: attachments
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
       const { fromByteArray } = require("base64-js");
-      const { Given, attach } = require("@badeball/cypress-cucumber-preprocessor");
+      const { Given, attach } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a step", function() {
         attach(fromByteArray(new TextEncoder().encode("foobar")), "base64:text/plain")
       })

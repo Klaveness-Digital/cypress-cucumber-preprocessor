@@ -10,7 +10,7 @@ Feature: browserify + typescript
     And a file named "cypress/plugins/index.ts" with:
       """
       import browserify from "@cypress/browserify-preprocessor";
-      import { preprocessor } from "@badeball/cypress-cucumber-preprocessor/browserify";
+      import { preprocessor } from "@klaveness/cypress-cucumber-preprocessor/browserify";
 
       export default (
         on: Cypress.PluginEvents,
@@ -27,7 +27,7 @@ Feature: browserify + typescript
       """
     And a file named "cypress/support/step_definitions/steps.ts" with:
       """
-      import { Given } from "@badeball/cypress-cucumber-preprocessor";
+      import { Given } from "@klaveness/cypress-cucumber-preprocessor";
       Given("a step", function(this: Mocha.Context) {});
       """
     When I run cypress

@@ -10,7 +10,7 @@ Feature: esbuild + typescript
     And a file named "cypress/plugins/index.ts" with:
       """
       import createBundler from "@bahmutov/cypress-esbuild-preprocessor";
-      import { createEsbuildPlugin } from "@badeball/cypress-cucumber-preprocessor/esbuild";
+      import { createEsbuildPlugin } from "@klaveness/cypress-cucumber-preprocessor/esbuild";
 
       export default (
         on: Cypress.PluginEvents,
@@ -26,7 +26,7 @@ Feature: esbuild + typescript
       """
     And a file named "cypress/support/step_definitions/steps.ts" with:
       """
-      import { Given } from "@badeball/cypress-cucumber-preprocessor";
+      import { Given } from "@klaveness/cypress-cucumber-preprocessor";
       Given("a step", function(this: Mocha.Context) {});
       """
     When I run cypress
