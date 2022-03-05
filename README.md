@@ -42,7 +42,7 @@ Then("I should see a search bar", () => {
 
 ## User guide
 
-For further documentation see [docs](docs/index.md) and [docs/quick-start.md](docs/quick-start.md).
+For further documentation see [docs](docs/readme.md) and [docs/quick-start.md](docs/quick-start.md).
 
 ## Contributing
 
