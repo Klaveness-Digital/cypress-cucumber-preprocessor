@@ -44,6 +44,22 @@ const Status = {
   Failed: "FAILED" as unknown as 6,
 };
 
+interface InternalProperties {
+  pickle: messages.IPickle;
+  testCaseStartedId: string;
+  remainingSteps: messages.Pickle.IPickleStep[];
+}
+
+function storeInternalProperties(properties: InternalProperties) {
+  cy.wrap(properties, { log: false }).as(INTERNAL_PROPERTY_NAME);
+}
+
+function retrieveInternalProperties(): Cypress.Chainable<InternalProperties> {
+  return cy.get<InternalProperties>("@" + INTERNAL_PROPERTY_NAME, {
+    log: false,
+  });
+}
+
 function createFeature(
   context: CompositionContext,
   feature: messages.GherkinDocument.IFeature
@@ -244,21 +260,21 @@ function createPickle(
     };
 
     if (!pickle.steps) {
-      this[INTERNAL_PROPERTY_NAME] = {
+      storeInternalProperties({
         pickle,
         testCaseStartedId,
         remainingSteps: [],
-      };
+      });
     }
 
     if (pickle.steps) {
       const remainingSteps = [...pickle.steps];
 
-      this[INTERNAL_PROPERTY_NAME] = {
+      storeInternalProperties({
         pickle,
         testCaseStartedId,
         remainingSteps,
-      };
+      });
 
       for (const pickleStep of pickle.steps) {
         const text = assertAndReturn(
@@ -446,84 +462,77 @@ export default function createTests(
   afterEach(function () {
     freeRegistry();
 
-    const currentTest = assertAndReturn(
-      this.currentTest,
-      "Expected to find current test"
-    );
+    retrieveInternalProperties().then((properties) => {
+      const { testCaseStartedId, remainingSteps } = properties;
 
-    const { pickle, testCaseStartedId, remainingSteps, lastKnownStatus } =
-      assertAndReturn(
-        currentTest.ctx?.[INTERNAL_PROPERTY_NAME],
-        "Expected to find internal properties"
-      );
+      if (remainingSteps.length > 0) {
+        const error = assertAndReturn(
+          this.currentTest?.err?.message,
+          "Expected to find an error message"
+        );
 
-    if (remainingSteps.length > 0) {
-      const error = assertAndReturn(
-        this.currentTest?.err?.message,
-        "Expected to find an error message"
-      );
+        const failedStep = assertAndReturn(
+          remainingSteps.shift(),
+          "Expected there to be a remaining step"
+        );
 
-      const failedStep = assertAndReturn(
-        remainingSteps.shift(),
-        "Expected there to be a remaining step"
-      );
-
-      const failedTestStepFinished: messages.IEnvelope = error.includes(
-        "Step implementation missing"
-      )
-        ? {
-            testStepFinished: {
-              testStepId: failedStep.id,
-              testCaseStartedId,
-              testStepResult: {
-                status: Status.Undefined,
+        const failedTestStepFinished: messages.IEnvelope = error.includes(
+          "Step implementation missing"
+        )
+          ? {
+              testStepFinished: {
+                testStepId: failedStep.id,
+                testCaseStartedId,
+                testStepResult: {
+                  status: Status.Undefined,
+                },
               },
+            }
+          : {
+              testStepFinished: {
+                testStepId: failedStep.id,
+                testCaseStartedId,
+                testStepResult: {
+                  status: Status.Failed,
+                  message: this.currentTest?.err?.message,
+                },
+              },
+            };
+
+        messages.push(failedTestStepFinished);
+
+        for (const skippedStep of remainingSteps) {
+          const skippedTestStepStarted: messages.IEnvelope = {
+            testStepStarted: {
+              testStepId: skippedStep.id,
+              testCaseStartedId,
             },
-          }
-        : {
+          };
+
+          messages.push(skippedTestStepStarted);
+
+          const skippedTestStepFinished: messages.IEnvelope = {
             testStepFinished: {
-              testStepId: failedStep.id,
+              testStepId: skippedStep.id,
               testCaseStartedId,
               testStepResult: {
-                status: Status.Failed,
-                message: this.currentTest?.err?.message,
+                status: Status.Skipped,
               },
             },
           };
 
-      messages.push(failedTestStepFinished);
-
-      for (const skippedStep of remainingSteps) {
-        const skippedTestStepStarted: messages.IEnvelope = {
-          testStepStarted: {
-            testStepId: skippedStep.id,
-            testCaseStartedId,
-          },
-        };
-
-        messages.push(skippedTestStepStarted);
-
-        const skippedTestStepFinished: messages.IEnvelope = {
-          testStepFinished: {
-            testStepId: skippedStep.id,
-            testCaseStartedId,
-            testStepResult: {
-              status: Status.Skipped,
-            },
-          },
-        };
-
-        messages.push(skippedTestStepFinished);
+          messages.push(skippedTestStepFinished);
+        }
       }
-    }
 
-    const testCaseFinished: messages.IEnvelope = {
-      testCaseFinished: {
-        testCaseStartedId,
-      },
-    };
+      const testCaseFinished: messages.IEnvelope = {
+        testCaseFinished: {
+          testCaseStartedId,
+        },
+      };
 
-    messages.push(testCaseFinished);
+      messages.push(testCaseFinished);
+    });
   });
 
   after(() => {
