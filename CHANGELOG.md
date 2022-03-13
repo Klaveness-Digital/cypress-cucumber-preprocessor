@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v7.0.1
+
+- Reduce reliability on internal properties of cypress + mocha
+
 ## v7.0.0
 
 Breaking changes
