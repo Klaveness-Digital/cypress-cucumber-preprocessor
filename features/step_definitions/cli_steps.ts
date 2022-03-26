@@ -59,7 +59,7 @@ Then("it should appear as if both tests ran", function () {
 const rescape = (s: string) => String(s).replace(/[\\^$*+?.()|[\]{}]/g, "\\$&");
 
 const scenarioExpr = (scenarioName: string) =>
-  new RegExp(`✓ ${rescape(scenarioName)}( \\(\\d+ms\\))?\\n`);
+  new RegExp(`(?:✓|√) ${rescape(scenarioName)}( \\(\\d+ms\\))?\\n`);
 
 Then(
   "it should appear to have run the scenario {string}",

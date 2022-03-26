@@ -31,10 +31,12 @@ function* traverseTree(object: any): Generator<object, void, any> {
   }
 }
 
-function removeDurationAttributes(tree: any) {
+function prepareJsonReport(tree: any) {
   for (const node of traverseTree(tree)) {
     if (hasOwnProperty(node, "duration")) {
       delete node.duration;
+    } else if (hasOwnProperty(node, "uri") && typeof node.uri === "string") {
+      node.uri = node.uri.replace(/\\/g, "/");
     }
   }
 
@@ -80,9 +82,7 @@ Then(
       fixturePath
     );
 
-    const actualJsonOutput = removeDurationAttributes(
-      JSON.parse(json.toString())
-    );
+    const actualJsonOutput = prepareJsonReport(JSON.parse(json.toString()));
 
     if (process.env.WRITE_FIXTURES) {
       await fs.writeFile(

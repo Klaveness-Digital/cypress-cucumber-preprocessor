@@ -53,6 +53,8 @@ export default async function addCucumberPreprocessorPlugin(
                 );
               }
             });
+
+            child.on("error", reject);
           });
         } finally {
           await json.close();
