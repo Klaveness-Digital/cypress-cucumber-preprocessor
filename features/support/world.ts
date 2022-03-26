@@ -6,6 +6,8 @@ import { WritableStreamBuffer } from "stream-buffers";
 
 const projectPath = path.join(__dirname, "..", "..");
 
+const isWin = process.platform === "win32";
+
 function combine(...streams: Readable[]) {
   return streams.reduce<PassThrough>((combined, stream) => {
     stream.pipe(combined, { end: false });
@@ -20,7 +22,12 @@ function combine(...streams: Readable[]) {
 class World {
   async run(this: IWorld, extraArgs = []) {
     const child = childProcess.spawn(
-      path.join(projectPath, "node_modules", ".bin", "cypress"),
+      path.join(
+        projectPath,
+        "node_modules",
+        ".bin",
+        isWin ? "cypress.cmd" : "cypress"
+      ),
       ["run", ...extraArgs],
       {
         stdio: ["ignore", "pipe", "pipe"],
