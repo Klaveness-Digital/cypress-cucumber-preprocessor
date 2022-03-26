@@ -15,6 +15,7 @@
   ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "browser": "methods.js",
   "files": [
     "lib/**/*.js",
     "lib/**/*.d.ts",

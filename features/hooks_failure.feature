@@ -8,7 +8,7 @@ Feature: hooks failure
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { When, After } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { When, After } = require("@badeball/cypress-cucumber-preprocessor");
       When("a step", function() {
         throw new Error("foobar");
       });

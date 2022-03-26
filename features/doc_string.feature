@@ -12,7 +12,7 @@ Feature: doc string
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("a doc string step", function(docString) {
         expect(docString).to.equal("The cucumber (Cucumis sativus) is a widely " +
                                    "cultivated plant in the gourd family Cucurbitaceae.")
@@ -33,7 +33,7 @@ Feature: doc string
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("a {string} step", function(type, docString) {
         expect(type).to.equal("doc string")
         expect(docString).to.equal("The cucumber (Cucumis sativus) is a widely " +

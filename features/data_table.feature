@@ -11,7 +11,7 @@ Feature: data tables
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("a table step", function(table) {
         const expected = [
           ["Cucumber", "Cucumis sativus"],
@@ -36,7 +36,7 @@ Feature: data tables
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("a table step", function(table) {
         const expected = [
           ["Apricot", "5"],
@@ -60,7 +60,7 @@ Feature: data tables
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("a table step", function(table) {
         const expected = {
           "Cucumber": "Cucumis sativus",
@@ -85,7 +85,7 @@ Feature: data tables
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("a table step", function(table) {
         const expected = [
           {"Vegetable": "Apricot", "Rating": "5"},
@@ -111,7 +111,7 @@ Feature: data tables
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("a table step", function(table) {
         const expected = [
           ["Apricot", ""],

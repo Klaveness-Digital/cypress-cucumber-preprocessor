@@ -9,7 +9,7 @@ Feature: localisation
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("et steg", function() {});
       """
     When I run cypress

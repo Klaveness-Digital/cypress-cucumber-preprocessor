@@ -34,7 +34,7 @@ Feature: duckduckgo.com
 
 ```ts
 // cypress/integration/duckduckgo.ts
-import { When, Then } from "@badeball/cypress-cucumber-preprocessor/methods";
+import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
 When("I visit duckduckgo.com", () => {
   cy.visit("https://www.duckduckgo.com");
