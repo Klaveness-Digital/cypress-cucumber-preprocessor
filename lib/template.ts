@@ -74,7 +74,7 @@ export async function compile(
 
     const registry = withRegistry(() => {
       ${stepDefinitions
-        .map((stepDefintion) => `require("${stepDefintion}");`)
+        .map((stepDefintion) => `require(${stringify(stepDefintion)});`)
         .join("\n    ")}
     });
 
