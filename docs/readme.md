@@ -6,4 +6,5 @@
 * [Step definitions](step-definitions.md)
 * [Tags](tags.md)
 * [JSON report](json-report.md)
+* [Localisation](localisation.md)
 * [Frequently asked questions](faq.md)
