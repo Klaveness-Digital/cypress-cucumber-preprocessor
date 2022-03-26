@@ -23,6 +23,8 @@ import { resolve } from "./preprocessor-configuration";
 
 import { notNull } from "./type-guards";
 
+import { getTags } from "./environment-helpers";
+
 export default async function addCucumberPreprocessorPlugin(
   on: Cypress.PluginEvents,
   config: Cypress.PluginConfigOptions
@@ -125,7 +127,7 @@ export default async function addCucumberPreprocessorPlugin(
     },
   });
 
-  const tags = config.env.TAGS ? String(config.env.TAGS) : null;
+  const tags = getTags(config.env);
 
   if (tags !== null && preprocessor.filterSpecs) {
     const node = parse(tags);
