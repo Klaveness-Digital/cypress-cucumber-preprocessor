@@ -12,9 +12,7 @@ import { resolve } from "./preprocessor-configuration";
 
 import { getStepDefinitionPaths } from "./step-definitions";
 
-function notNull<T>(value: T | null | undefined): value is T {
-  return value != null;
-}
+import { notNull } from "./type-guards";
 
 export async function compile(
   this: any,

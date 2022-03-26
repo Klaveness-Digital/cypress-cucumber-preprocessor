@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unrelased
+
+- Removed `cypress-tags` executable in favor of `filterSpecs` configuration.
+
 ## v7.0.1
 
 - Reduce reliability on internal properties of cypress + mocha

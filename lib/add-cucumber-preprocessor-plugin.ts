@@ -1,4 +1,4 @@
-import { promises as fs, constants as fsConstants } from "fs";
+import syncFs, { promises as fs, constants as fsConstants } from "fs";
 
 import path from "path";
 
@@ -6,9 +6,22 @@ import child_process from "child_process";
 
 import { messages } from "@cucumber/messages";
 
+import parse from "@cucumber/tag-expressions";
+
+import { generateMessages } from "@cucumber/gherkin";
+
+import { IdGenerator } from "@cucumber/messages";
+
+import {
+  getTestFiles,
+  ICypressConfiguration,
+} from "@badeball/cypress-configuration";
+
 import { TASK_APPEND_MESSAGES, TASK_TEST_STEP_STARTED } from "./constants";
 
 import { resolve } from "./preprocessor-configuration";
+
+import { notNull } from "./type-guards";
 
 export default async function addCucumberPreprocessorPlugin(
   on: Cypress.PluginEvents,
@@ -109,4 +122,35 @@ export default async function addCucumberPreprocessorPlugin(
       return true;
     },
   });
+
+  const tags = config.env.TAGS ? String(config.env.TAGS) : null;
+
+  if (tags !== null && preprocessor.filterSpecs) {
+    const node = parse(tags);
+
+    (config as any).testFiles = getTestFiles(
+      config as unknown as ICypressConfiguration
+    ).filter((testFile) => {
+      const content = syncFs.readFileSync(testFile).toString("utf-8");
+
+      const options = {
+        includeSource: false,
+        includeGherkinDocument: false,
+        includePickles: true,
+        newId: IdGenerator.incrementing(),
+      };
+
+      const envelopes = generateMessages(content, testFile, options);
+
+      const pickles = envelopes
+        .map((envelope) => envelope.pickle)
+        .filter(notNull);
+
+      return pickles.some((pickle) =>
+        node.evaluate(pickle.tags?.map((tag) => tag.name).filter(notNull) ?? [])
+      );
+    });
+  }
+
+  return config;
 }

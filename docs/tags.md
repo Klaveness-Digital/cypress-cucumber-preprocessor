@@ -36,10 +36,20 @@ Tags are inherited by child elements. Tags that are placed above a `Feature` wil
 
 ## Running a subset of scenarios
 
-Normally when running a subset of scenarios using `cypress run --env TAGS=@foo`, you could potentially encounter files containing no matching scenarios. The executable `cypress-tags` exist to first filter Gherkin documents with matching scenarios, thus saving you execution time.
+Normally when running a subset of scenarios using `cypress run --env TAGS=@foo`, you could potentially encounter files containing no matching scenarios. These can be pre-filtered away by setting `filterSpecs` to `true`, thus saving you execution time. This requires you to have registered this module in your [plugin file](https://docs.cypress.io/guides/core-concepts/writing-and-organizing-tests#Plugins-file), as shown below.
 
-```
-$ npx cypress-tags --env TAGS=@foo
+```ts
+import { addCucumberPreprocessorPlugin } from "@badeball/cypress-cucumber-preprocessor";
+
+export default (
+  on: Cypress.PluginEvents,
+  config: Cypress.PluginConfigOptions
+): Cypress.PluginConfigOptions => {
+  await addCucumberPreprocessorPlugin(on, config);
+
+  // Make sure to return the config object as it might have been modified by the plugin.
+  return config;
+}
 ```
 
 ## Smart tagging
