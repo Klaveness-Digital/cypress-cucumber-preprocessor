@@ -12,11 +12,9 @@ import { resolve } from "./preprocessor-configuration";
 
 import { getStepDefinitionPaths } from "./step-definitions";
 
-const { stringify } = JSON;
+import { notNull } from "./type-guards";
 
-function notNull<T>(value: T | null | undefined): value is T {
-  return value != null;
-}
+const { stringify } = JSON;
 
 export async function compile(
   this: any,

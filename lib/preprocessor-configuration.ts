@@ -4,7 +4,7 @@ import util from "util";
 
 import debug from "./debug";
 
-import { isString, isStringOrStringArray } from "./type-guards";
+import { isString, isStringOrStringArray, isBoolean } from "./type-guards";
 
 function hasOwnProperty<X extends {}, Y extends string>(
   value: X,
@@ -102,6 +102,14 @@ function validateConfigurationEntry(
       };
       return { [key]: messagesConfig };
     }
+    case "filterSpecs": {
+      if (!isBoolean(value)) {
+        throw new Error(
+          `Expected a boolean (filterSpecs), but got ${util.inspect(value)}`
+        );
+      }
+      return { [key]: value };
+    }
     default:
       return {};
   }
@@ -118,6 +126,7 @@ export interface IPreprocessorConfiguration {
     formatter?: string;
     output?: string;
   };
+  readonly filterSpecs?: boolean;
 }
 
 export class PreprocessorConfiguration implements IPreprocessorConfiguration {
@@ -149,6 +158,10 @@ export class PreprocessorConfiguration implements IPreprocessorConfiguration {
         this.explicitValues.json?.formatter ?? "cucumber-json-formatter",
       output: this.explicitValues.json?.output || "cucumber-report.json",
     };
+  }
+
+  get filterSpecs() {
+    return this.explicitValues.filterSpecs ?? false;
   }
 }
 

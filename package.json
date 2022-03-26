@@ -20,22 +20,15 @@
     "lib/**/*.d.ts",
     "browserify.js",
     "browserify.d.ts",
-    "cypress-tags.sh",
     "esbuild.js",
     "esbuild.d.ts",
     "methods.js",
     "methods.d.ts",
-    "specs-by-tags.js",
-    "specs-by-tags.d.ts",
     "webpack.js",
     "webpack.d.ts"
   ],
-  "bin": {
-    "cypress-tags": "cypress-tags.sh",
-    "specs-by-tags": "specs-by-tags.js"
-  },
   "scripts": {
-    "clean": "rm {browserify,esbuild,methods,specs-by-tags,webpack}.{js,d.ts} && bash -O globstar -c 'rm lib/**/*.{js,d.ts} test/**/*.{js,d.ts}'",
+    "clean": "rm {browserify,esbuild,methods,webpack}.{js,d.ts} && bash -O globstar -c 'rm lib/**/*.{js,d.ts} test/**/*.{js,d.ts}'",
     "build": "tsc",
     "watch": "tsc --watch",
     "fmt": "prettier --ignore-path .gitignore --write '**/*.ts'",
@@ -48,7 +41,7 @@
     "prepublishOnly": "npm run clean && npm run build && npm run test"
   },
   "dependencies": {
-    "@badeball/cypress-configuration": "^1.0.1",
+    "@badeball/cypress-configuration": "^2.0.0",
     "@cucumber/cucumber-expressions": "^15.0.1",
     "@cucumber/gherkin": "^15.0.2",
     "@cucumber/messages": "^13.2.1",

@@ -21,3 +21,7 @@ export function isStringOrStringArray(
     typeof value === "string" || (Array.isArray(value) && value.every(isString))
   );
 }
+
+export function notNull<T>(value: T | null | undefined): value is T {
+  return value != null;
+}

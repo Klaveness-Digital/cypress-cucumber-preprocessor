@@ -66,6 +66,8 @@ Before({ tags: "not @no-default-plugin" }, async function () {
             plugins: [createEsbuildPlugin(config)]
           })
         );
+
+        return config;
       }
     `
   );

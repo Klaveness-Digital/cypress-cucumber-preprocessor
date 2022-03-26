@@ -14,7 +14,6 @@
   "include": [
     "lib/**/*.ts",
     "test/**/*.ts",
-    "specs-by-tags.ts",
     "methods.ts",
     "declarations.d.ts",
     "browserify.ts",
