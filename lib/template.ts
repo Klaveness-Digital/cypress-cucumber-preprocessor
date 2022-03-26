@@ -12,6 +12,8 @@ import { resolve } from "./preprocessor-configuration";
 
 import { getStepDefinitionPaths } from "./step-definitions";
 
+const { stringify } = JSON;
+
 function notNull<T>(value: T | null | undefined): value is T {
   return value != null;
 }
@@ -59,9 +61,16 @@ export async function compile(
     uri
   );
 
+  const prepareLibPath = (...parts: string[]) =>
+    stringify(path.join(__dirname, ...parts));
+
+  const createTestsPath = prepareLibPath("create-tests");
+
+  const registryPath = prepareLibPath("registry");
+
   return `
-    const { default: createTests } = require("@badeball/cypress-cucumber-preprocessor/lib/create-tests");
-    const { withRegistry } = require("@badeball/cypress-cucumber-preprocessor/lib/registry");
+    const { default: createTests } = require(${createTestsPath});
+    const { withRegistry } = require(${registryPath});
 
     const registry = withRegistry(() => {
       ${stepDefinitions
@@ -73,9 +82,9 @@ export async function compile(
 
     createTests(
       registry,
-      ${JSON.stringify(data)},
-      ${JSON.stringify(gherkinDocument)},
-      ${JSON.stringify(pickles)},
+      ${stringify(data)},
+      ${stringify(gherkinDocument)},
+      ${stringify(pickles)},
       ${preprocessor.messages.enabled}
     );
   `;
