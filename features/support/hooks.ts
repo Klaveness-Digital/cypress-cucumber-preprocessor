@@ -44,7 +44,8 @@ Before(async function ({ gherkinDocument, pickle }) {
       "node_modules",
       "@badeball",
       "cypress-cucumber-preprocessor"
-    )
+    ),
+    "dir"
   );
 });
 
