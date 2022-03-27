@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unrelased
+## v8.0.0
 
 - Removed `cypress-tags` executable in favor of `filterSpecs` configuration.
 
