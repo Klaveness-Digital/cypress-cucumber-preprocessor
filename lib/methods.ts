@@ -1,4 +1,9 @@
+import { fromByteArray } from "base64-js";
+
+import { TASK_CREATE_STRING_ATTACHMENT } from "./constants";
+
 import DataTable from "./data_table";
+
 import { getRegistry } from "./registry";
 
 import {
@@ -53,6 +58,42 @@ function defineAfter(
     getRegistry().defineAfter(optionsOrFn, maybeFn);
   } else {
     throw new Error("Unexpected argument for After hook");
+  }
+}
+
+function createStringAttachment(
+  data: string,
+  mediaType: string,
+  encoding: "BASE64" | "IDENTITY"
+) {
+  cy.task(TASK_CREATE_STRING_ATTACHMENT, {
+    data,
+    mediaType,
+    encoding,
+  });
+}
+
+export function attach(data: string | ArrayBuffer, mediaType?: string) {
+  if (typeof data === "string") {
+    mediaType = mediaType ?? "text/plain";
+
+    if (mediaType.startsWith("base64:")) {
+      createStringAttachment(data, mediaType.replace("base64:", ""), "BASE64");
+    } else {
+      createStringAttachment(data, mediaType ?? "text/plain", "IDENTITY");
+    }
+  } else if (data instanceof ArrayBuffer) {
+    if (typeof mediaType !== "string") {
+      throw Error("ArrayBuffer attachments must specify a media type");
+    }
+
+    createStringAttachment(
+      fromByteArray(new Uint8Array(data)),
+      mediaType,
+      "BASE64"
+    );
+  } else {
+    throw Error("Invalid attachment data: must be a ArrayBuffer or string");
   }
 }
 
