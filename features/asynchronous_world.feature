@@ -10,7 +10,7 @@ Feature: asynchronous world
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("a step asynchronously assigning to World", function() {
         cy.then(() => {
           this.foo = "bar";

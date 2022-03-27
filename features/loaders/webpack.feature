@@ -51,7 +51,7 @@ Feature: webpack + typescript
       """
     And a file named "cypress/support/step_definitions/steps.ts" with:
       """
-      import { Given } from "@badeball/cypress-cucumber-preprocessor/methods";
+      import { Given } from "@badeball/cypress-cucumber-preprocessor";
       Given("a step", function(this: Mocha.Context) {});
       """
     When I run cypress

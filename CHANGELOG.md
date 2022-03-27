@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 - Removed `cypress-tags` executable in favor of `filterSpecs` configuration.
 
+- Instead of importing `@badeball/cypress-cucumber-preprocessor/methods` one simply import `@badeball/cypress-cucumber-preprocessor`.
+
 ## v7.0.1
 
 - Reduce reliability on internal properties of cypress + mocha

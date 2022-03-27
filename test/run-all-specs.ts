@@ -79,7 +79,7 @@ describe("Run all specs", () => {
     `;
 
     const steps = `
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("a step", function() {});
     `;
 

@@ -20,7 +20,7 @@ Feature: JSON formatter
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("a step", function() {})
       """
     When I run cypress
@@ -40,7 +40,7 @@ Feature: JSON formatter
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("a step", function() {})
       """
     When I run cypress
@@ -62,7 +62,7 @@ Feature: JSON formatter
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("a step", function() {})
       """
     When I run cypress
@@ -85,7 +85,7 @@ Feature: JSON formatter
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("a failing step", function() {
         throw "some error"
       })
@@ -111,7 +111,7 @@ Feature: JSON formatter
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("a defined step", function () {})
       """
     When I run cypress
@@ -135,7 +135,7 @@ Feature: JSON formatter
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("a pending step", function () {
         return "pending";
       });
@@ -157,7 +157,7 @@ Feature: JSON formatter
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
       """
-      const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("a step", function () {
         cy.visit("index.html");
         cy.get("div").screenshot();

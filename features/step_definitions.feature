@@ -11,7 +11,7 @@ Feature: step definitions
         """
       And a file named "cypress/integration/a.js" with:
         """
-        const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+        const { Given } = require("@badeball/cypress-cucumber-preprocessor");
         Given("a step", function() {});
         """
       When I run cypress
@@ -26,7 +26,7 @@ Feature: step definitions
         """
       And a file named "cypress/integration/a/steps.js" with:
         """
-        const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+        const { Given } = require("@badeball/cypress-cucumber-preprocessor");
         Given("a step", function() {});
         """
       When I run cypress
@@ -41,7 +41,7 @@ Feature: step definitions
         """
       And a file named "cypress/support/step_definitions/steps.js" with:
         """
-        const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
+        const { Given } = require("@badeball/cypress-cucumber-preprocessor");
         Given("a step", function() {});
         """
       When I run cypress
