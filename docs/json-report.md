@@ -15,7 +15,7 @@ This **requires** you to have registered this module in your [plugin file](https
 ```ts
 import { addCucumberPreprocessorPlugin } from "@badeball/cypress-cucumber-preprocessor";
 
-export default (
+export default async (
   on: Cypress.PluginEvents,
   config: Cypress.PluginConfigOptions
 ): Cypress.PluginConfigOptions => {
