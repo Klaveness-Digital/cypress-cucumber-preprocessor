@@ -87,7 +87,7 @@ Then(
     if (process.env.WRITE_FIXTURES) {
       await fs.writeFile(
         absoluteExpectedJsonpath,
-        JSON.stringify(actualJsonOutput, null, 2)
+        JSON.stringify(actualJsonOutput, null, 2) + "\n"
       );
     } else {
       const expectedJsonOutput = JSON.parse(

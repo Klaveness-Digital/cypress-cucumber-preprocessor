@@ -17,7 +17,11 @@ import {
   ICypressConfiguration,
 } from "@badeball/cypress-configuration";
 
-import { TASK_APPEND_MESSAGES, TASK_TEST_STEP_STARTED } from "./constants";
+import {
+  TASK_APPEND_MESSAGES,
+  TASK_CREATE_STRING_ATTACHMENT,
+  TASK_TEST_STEP_STARTED,
+} from "./constants";
 
 import { resolve } from "./preprocessor-configuration";
 
@@ -123,6 +127,23 @@ export default async function addCucumberPreprocessorPlugin(
 
     [TASK_TEST_STEP_STARTED]: (testStepStartedId) => {
       currentTestStepStartedId = testStepStartedId;
+      return true;
+    },
+
+    [TASK_CREATE_STRING_ATTACHMENT]: async ({ data, mediaType, encoding }) => {
+      const message: messages.IEnvelope = {
+        attachment: {
+          testStepId: currentTestStepStartedId,
+          body: data,
+          mediaType: mediaType,
+          contentEncoding: encoding,
+        },
+      };
+
+      await fs.writeFile(messagesPath, JSON.stringify(message) + "\n", {
+        flag: "a",
+      });
+
       return true;
     },
   });

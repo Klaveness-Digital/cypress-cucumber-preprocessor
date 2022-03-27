@@ -177,4 +177,4 @@ Feature: JSON formatter
       """
     When I run cypress
     Then it passes
-    And there should be a JSON output similar to "fixtures/screenshot.json"
+    And there should be a JSON output similar to "fixtures/attachments/screenshot.json"

@@ -8,6 +8,8 @@ All notable changes to this project will be documented in this file.
 
 - Instead of importing `@badeball/cypress-cucumber-preprocessor/methods` one simply import `@badeball/cypress-cucumber-preprocessor`.
 
+- Add attach() to support attachments in JSON reports.
+
 ## v7.0.1
 
 - Reduce reliability on internal properties of cypress + mocha

@@ -46,6 +46,7 @@ export const defineParameterType = createUnimplementation(
   Methods.defineParameterType
 );
 export const Step = createUnimplementation(Methods.Step);
+export const attach = createUnimplementation(Methods.attach);
 
 export function defineBefore(options: { tags?: string }, fn: IHookBody): void;
 export function defineBefore(fn: IHookBody): void;
