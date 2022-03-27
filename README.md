@@ -71,3 +71,7 @@ $ npm run test:unit
 $ npm run test:integration # make sure to build first
 $ npm run test # runs all of the above
 ```
+
+## Attribution
+
+A special thanks goes out to [Łukasz Gandecki](https://github.com/lgandecki) for developing and maintaning the cypress-cucumber integration before me, in addition to [all other contributors](https://github.com/badeball/cypress-cucumber-preprocessor/graphs/contributors). Some of the work has partially been sponsored by [Klaveness Digital](https://www.klavenessdigital.com/).
