@@ -1,6 +1,6 @@
 # Tags
 
-Tests can be filtered using the (Cypress-) [environment variable](https://docs.cypress.io/guides/guides/environment-variables) `TAGS`. Note that the term "environment variable" here does **not** refer to OS-level environment variables.
+Tests can be filtered using the (Cypress-) [environment variable](https://docs.cypress.io/guides/guides/environment-variables) `tags` or `TAGS`. Note that the term "environment variable" here does **not** refer to OS-level environment variables.
 
 A feature or scenario can have as many tags as you like, separated by spaces. Tags can be placed above the following Gherkin elements.
 
@@ -36,7 +36,7 @@ Tags are inherited by child elements. Tags that are placed above a `Feature` wil
 
 ## Running a subset of scenarios
 
-Normally when running a subset of scenarios using `cypress run --env TAGS=@foo`, you could potentially encounter files containing no matching scenarios. These can be pre-filtered away by setting `filterSpecs` to `true`, thus saving you execution time. This requires you to have registered this module in your [plugin file](https://docs.cypress.io/guides/core-concepts/writing-and-organizing-tests#Plugins-file), as shown below.
+Normally when running a subset of scenarios using `cypress run --env tags=@foo`, you could potentially encounter files containing no matching scenarios. These can be pre-filtered away by setting `filterSpecs` to `true`, thus saving you execution time. This requires you to have registered this module in your [plugin file](https://docs.cypress.io/guides/core-concepts/writing-and-organizing-tests#Plugins-file), as shown below.
 
 ```ts
 import { addCucumberPreprocessorPlugin } from "@badeball/cypress-cucumber-preprocessor";
@@ -54,4 +54,4 @@ export default (
 
 ## Smart tagging
 
-In the absence of a `TAGS` value and presence of a scenario with `@focus`, only said scenario will run. You can in other words use this tag as you would use `.only()` in Mocha.
+In the absence of a `tags` value and presence of a scenario with `@focus`, only said scenario will run. You can in other words use this tag as you would use `.only()` in Mocha.

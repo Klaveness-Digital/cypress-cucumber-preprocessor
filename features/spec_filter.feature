@@ -26,6 +26,6 @@ Feature: filter spec
       const { Given } = require("@badeball/cypress-cucumber-preprocessor/methods");
       Given("a step", function() {})
       """
-    When I run cypress with "--env TAGS=@foo"
+    When I run cypress with "--env tags=@foo"
     Then it passes
     And it should appear to not have ran spec "b.feature"

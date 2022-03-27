@@ -16,6 +16,8 @@ import { YieldType } from "./types";
 
 import { TASK_APPEND_MESSAGES, TASK_TEST_STEP_STARTED } from "./constants";
 
+import { getTags } from "./environment-helpers";
+
 type Node = ReturnType<typeof parse>;
 
 interface CompositionContext {
@@ -415,7 +417,7 @@ export default function createTests(
 ) {
   const noopNode = { evaluate: () => true };
 
-  const environmentTags = Cypress.env("TAGS");
+  const environmentTags = getTags(Cypress.env());
 
   const messages: messages.IEnvelope[] = [];
 
