@@ -1,8 +1,14 @@
 import { messages } from "@cucumber/messages";
 
-import * as Methods from "./methods";
+import DataTable from "./data_table";
 
-import { IHookBody } from "./types";
+import {
+  IHookBody,
+  IParameterTypeDefinition,
+  IStepDefinitionBody,
+} from "./types";
+
+import * as Methods from "./methods";
 
 declare global {
   interface Window {
@@ -28,38 +34,49 @@ function createUnimplemented() {
   return new Error("Cucumber methods aren't available in a node environment");
 }
 
-function createUnimplementation<T extends (...args: any[]) => any>(
-  fn: T
-): (...args: Parameters<T>) => ReturnType<T> {
-  return (...args) => {
-    throw createUnimplemented();
-  };
+export function defineStep<T extends unknown[]>(
+  description: string | RegExp,
+  implementation: IStepDefinitionBody<T>
+) {
+  throw createUnimplemented();
 }
 
-export const Given = createUnimplementation(Methods.Given);
-export const When = createUnimplementation(Methods.When);
-export const Then = createUnimplementation(Methods.Then);
-export const And = createUnimplementation(Methods.And);
-export const But = createUnimplementation(Methods.But);
-export const defineStep = createUnimplementation(Methods.defineStep);
-export const defineParameterType = createUnimplementation(
-  Methods.defineParameterType
-);
-export const Step = createUnimplementation(Methods.Step);
-export const attach = createUnimplementation(Methods.attach);
+export {
+  defineStep as Given,
+  defineStep as When,
+  defineStep as Then,
+  defineStep as And,
+  defineStep as But,
+};
 
-export function defineBefore(options: { tags?: string }, fn: IHookBody): void;
-export function defineBefore(fn: IHookBody): void;
-export function defineBefore(
+export function Step(
+  world: Mocha.Context,
+  text: string,
+  argument?: DataTable | string
+) {
+  throw createUnimplemented();
+}
+
+export function defineParameterType<T>(options: IParameterTypeDefinition<T>) {
+  throw createUnimplemented();
+}
+
+export function attach(data: string | ArrayBuffer, mediaType?: string) {
+  throw createUnimplemented();
+}
+
+export function Before(options: { tags?: string }, fn: IHookBody): void;
+export function Before(fn: IHookBody): void;
+export function Before(
   optionsOrFn: IHookBody | { tags?: string },
   maybeFn?: IHookBody
 ) {
   throw createUnimplemented();
 }
 
-export function defineAfter(options: { tags?: string }, fn: IHookBody): void;
-export function defineAfter(fn: IHookBody): void;
-export function defineAfter(
+export function After(options: { tags?: string }, fn: IHookBody): void;
+export function After(fn: IHookBody): void;
+export function After(
   optionsOrFn: IHookBody | { tags?: string },
   maybeFn?: IHookBody
 ) {
