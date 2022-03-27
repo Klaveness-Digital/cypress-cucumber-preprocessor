@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 - Removed `cypress-tags` executable in favor of `filterSpecs` configuration.
 
+- Tags can be specified using lower-case `tags`.
+
 - Instead of importing `@badeball/cypress-cucumber-preprocessor/methods` one simply import `@badeball/cypress-cucumber-preprocessor`.
 
 - Add attach() to support attachments in JSON reports.
