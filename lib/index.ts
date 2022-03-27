@@ -65,3 +65,5 @@ export function defineAfter(
 ) {
   throw createUnimplemented();
 }
+
+export { default as DataTable } from "./data_table";
