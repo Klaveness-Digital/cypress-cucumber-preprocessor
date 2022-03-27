@@ -27,6 +27,6 @@ It's impossible to fix an issue that we can't reproduce ourselves and issues lac
 
 You will have much better luck getting a response if you do the maintainers the favor by creating a clonable and minimal repository illustrating the issue.
 
-If you can't be bothered to do that, you're essentially saying your time is more valuable than ours and that simply isn't true, nor does it inspire us to care.
+If you can't take your time to do that, you're essentially saying your time is more valuable than ours and that simply isn't true, nor does it inspire us to help you.
 
 Don't ever post screenshots of errors unless they're also accompanied by text. We're not going to perform OCR on your ticket just to be able to help you.
