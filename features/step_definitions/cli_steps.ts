@@ -1,3 +1,4 @@
+import util from "util";
 import { Given, When, Then } from "@cucumber/cucumber";
 import assert from "assert";
 import childProcess from "child_process";
@@ -60,31 +61,40 @@ Then("it should appear to not have ran spec {string}", function (spec) {
   );
 });
 
+Then("I should not see {string} in the output", function (string) {
+  if (this.lastRun.stdout.includes(string)) {
+    assert.fail(`Expected to not find ${util.inspect(string)}, but did`);
+  }
+});
+
 /**
  * Shamelessly copied from the RegExp.escape proposal.
  */
 const rescape = (s: string) => String(s).replace(/[\\^$*+?.()|[\]{}]/g, "\\$&");
 
-const scenarioExpr = (scenarioName: string) =>
+const runScenarioExpr = (scenarioName: string) =>
   new RegExp(`(?:✓|√) ${rescape(scenarioName)}( \\(\\d+ms\\))?\\n`);
+
+const pendingScenarioExpr = (scenarioName: string) =>
+  new RegExp(`- ${rescape(scenarioName)}\n`);
 
 Then(
   "it should appear to have run the scenario {string}",
   function (scenarioName) {
-    assert.match(this.lastRun.stdout, scenarioExpr(scenarioName));
+    assert.match(this.lastRun.stdout, runScenarioExpr(scenarioName));
   }
 );
 
 Then(
   "it should appear to not have run the scenario {string}",
   function (scenarioName) {
-    assert.doesNotMatch(this.lastRun.stdout, scenarioExpr(scenarioName));
+    assert.doesNotMatch(this.lastRun.stdout, runScenarioExpr(scenarioName));
   }
 );
 
 Then("it should appear to have run the scenarios", function (scenarioTable) {
   for (const { Name: scenarioName } of scenarioTable.hashes()) {
-    assert.match(this.lastRun.stdout, scenarioExpr(scenarioName));
+    assert.match(this.lastRun.stdout, runScenarioExpr(scenarioName));
   }
 });
 
@@ -92,7 +102,7 @@ Then(
   "it should appear to not have run the scenarios",
   function (scenarioTable) {
     for (const { Name: scenarioName } of scenarioTable.hashes()) {
-      assert.doesNotMatch(this.lastRun.stdout, scenarioExpr(scenarioName));
+      assert.doesNotMatch(this.lastRun.stdout, runScenarioExpr(scenarioName));
     }
   }
 );
@@ -100,3 +110,10 @@ Then(
 Then("the output should contain", function (content) {
   assert.match(this.lastRun.stdout, new RegExp(rescape(content)));
 });
+
+Then(
+  "it should appear to have skipped the scenario {string}",
+  function (scenarioName) {
+    assert.match(this.lastRun.stdout, pendingScenarioExpr(scenarioName));
+  }
+);

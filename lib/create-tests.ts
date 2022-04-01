@@ -18,6 +18,8 @@ import { TASK_APPEND_MESSAGES, TASK_TEST_STEP_STARTED } from "./constants";
 
 import { getTags } from "./environment-helpers";
 
+import { notNull } from "./type-guards";
+
 type Node = ReturnType<typeof parse>;
 
 interface CompositionContext {
@@ -25,6 +27,7 @@ interface CompositionContext {
   gherkinDocument: messages.IGherkinDocument;
   pickles: messages.IPickle[];
   testFilter: Node;
+  omitFiltered: boolean;
   messages: {
     enabled: boolean;
     stack: messages.IEnvelope[];
@@ -62,6 +65,40 @@ function retrieveInternalProperties(): Cypress.Chainable<InternalProperties> {
   });
 }
 
+function findPickleById(context: CompositionContext, astId: string) {
+  return assertAndReturn(
+    context.pickles.find(
+      (pickle) => pickle.astNodeIds && pickle.astNodeIds.includes(astId)
+    ),
+    `Expected to find a pickle associated with id = ${astId}`
+  );
+}
+
+function collectExampleIds(
+  examples: messages.GherkinDocument.Feature.Scenario.IExamples[]
+) {
+  return examples
+    .map((examples) => {
+      return assertAndReturn(
+        examples.tableBody,
+        "Expected to find a table body"
+      ).map((row) =>
+        assertAndReturn(row.id, "Expected table row to have an id")
+      );
+    })
+    .reduce((acum, el) => acum.concat(el), []);
+}
+
+function collectTagNames(
+  tags: messages.GherkinDocument.Feature.ITag[] | null | undefined
+) {
+  return (
+    tags?.map((tag) =>
+      assertAndReturn(tag.name, "Expected tag to have a name")
+    ) ?? []
+  );
+}
+
 function createFeature(
   context: CompositionContext,
   feature: messages.GherkinDocument.IFeature
@@ -83,6 +120,36 @@ function createRule(
   context: CompositionContext,
   rule: messages.GherkinDocument.Feature.FeatureChild.IRule
 ) {
+  const picklesWithinRule = rule.children
+    ?.map((child) => child.scenario)
+    .filter(notNull)
+    .flatMap((scenario) => {
+      if (scenario.examples) {
+        return collectExampleIds(scenario.examples).map((exampleId) => {
+          return findPickleById(context, exampleId);
+        });
+      } else {
+        const scenarioId = assertAndReturn(
+          scenario.id,
+          "Expected scenario to have an id"
+        );
+
+        return findPickleById(context, scenarioId);
+      }
+    });
+
+  if (picklesWithinRule) {
+    if (context.omitFiltered) {
+      const matches = picklesWithinRule.filter((pickle) =>
+        context.testFilter.evaluate(collectTagNames(pickle.tags))
+      );
+
+      if (matches.length === 0) {
+        return;
+      }
+    }
+  }
+
   describe(rule.name || "<unamed rule>", () => {
     if (rule.children) {
       for (const child of rule.children) {
@@ -134,26 +201,12 @@ function createScenario(
   scenario: messages.GherkinDocument.Feature.IScenario
 ) {
   if (scenario.examples) {
-    const exampleIds = scenario.examples
-      .map((examples) => {
-        return assertAndReturn(
-          examples.tableBody,
-          "Expected to find a table body"
-        ).map((row) =>
-          assertAndReturn(row.id, "Expected table row to have an id")
-        );
-      })
-      .reduce((acum, el) => acum.concat(el), []);
+    const exampleIds = collectExampleIds(scenario.examples);
 
     for (let i = 0; i < exampleIds.length; i++) {
       const exampleId = exampleIds[i];
 
-      const pickle = assertAndReturn(
-        context.pickles.find(
-          (pickle) => pickle.astNodeIds && pickle.astNodeIds.includes(exampleId)
-        ),
-        `Expected to find a pickle associated with id = ${exampleId}`
-      );
+      const pickle = findPickleById(context, exampleId);
 
       const baseName = assertAndReturn(
         pickle.name,
@@ -170,12 +223,7 @@ function createScenario(
       "Expected scenario to have an id"
     );
 
-    const pickle = assertAndReturn(
-      context.pickles.find(
-        (pickle) => pickle.astNodeIds && pickle.astNodeIds.includes(scenarioId)
-      ),
-      `Expected to find a pickle associated with id = ${scenarioId}`
-    );
+    const pickle = findPickleById(context, scenarioId);
 
     createPickle(context, scenario, pickle);
   }
@@ -232,15 +280,21 @@ function createPickle(
 
   const astIdMap = gherkinDocumentsAstIdMaps.get(gherkinDocument);
 
-  const tags = pickle.tags ? pickle.tags.map(mapTagName) : [];
+  const tags = collectTagNames(pickle.tags);
+
+  const scenarioName = scenario.name || "<unamed scenario>";
 
   if (!testFilter.evaluate(tags)) {
+    if (!context.omitFiltered) {
+      it.skip(scenarioName);
+    }
+
     return;
   }
 
   let attempt = 0;
 
-  it(scenario.name || "<unamed scenario>", { env: { tags } }, function () {
+  it(scenarioName, { env: { tags } }, function () {
     assignRegistry(registry);
 
     const testCaseStartedId = uuid();
@@ -398,10 +452,8 @@ function collectTagNamesFromGherkinDocument(
   const tagNames: string[] = [];
 
   for (const node of traverseGherkinDocument(gherkinDocument)) {
-    if ("tags" in node && node.tags) {
-      for (const tag of node.tags) {
-        tagNames.push(mapTagName(tag));
-      }
+    if ("tags" in node) {
+      tagNames.push(...collectTagNames(node.tags));
     }
   }
 
@@ -413,7 +465,8 @@ export default function createTests(
   source: string,
   gherkinDocument: messages.IGherkinDocument,
   pickles: messages.IPickle[],
-  messagesEnabled: boolean
+  messagesEnabled: boolean,
+  omitFiltered: boolean
 ) {
   const noopNode = { evaluate: () => true };
 
@@ -452,6 +505,7 @@ export default function createTests(
         gherkinDocument,
         pickles,
         testFilter,
+        omitFiltered,
         messages: {
           enabled: messagesEnabled,
           stack: messages,

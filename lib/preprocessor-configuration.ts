@@ -110,6 +110,14 @@ function validateConfigurationEntry(
       }
       return { [key]: value };
     }
+    case "omitFiltered": {
+      if (!isBoolean(value)) {
+        throw new Error(
+          `Expected a boolean (omitFiltered), but got ${util.inspect(value)}`
+        );
+      }
+      return { [key]: value };
+    }
     default:
       return {};
   }
@@ -127,6 +135,7 @@ export interface IPreprocessorConfiguration {
     output?: string;
   };
   readonly filterSpecs?: boolean;
+  readonly omitFiltered?: boolean;
 }
 
 export class PreprocessorConfiguration implements IPreprocessorConfiguration {
@@ -162,6 +171,10 @@ export class PreprocessorConfiguration implements IPreprocessorConfiguration {
 
   get filterSpecs() {
     return this.explicitValues.filterSpecs ?? false;
+  }
+
+  get omitFiltered() {
+    return this.explicitValues.omitFiltered ?? false;
   }
 }
 

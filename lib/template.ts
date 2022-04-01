@@ -83,7 +83,8 @@ export async function compile(
       ${stringify(data)},
       ${stringify(gherkinDocument)},
       ${stringify(pickles)},
-      ${preprocessor.messages.enabled}
+      ${preprocessor.messages.enabled},
+      ${preprocessor.omitFiltered}
     );
   `;
 }

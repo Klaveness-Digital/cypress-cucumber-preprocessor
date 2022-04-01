@@ -20,7 +20,8 @@ Feature: smart tagging
       Given("a step", function(table) {});
       """
     When I run cypress
-    Then it should appear as if only a single test ran
+    Then it should appear to have run the scenario "a scenario"
+    And it should appear to have skipped the scenario "another scenario"
 
   Scenario: 2 / 2 scenarios tagged with @focus
     Given a file named "cypress/integration/a.feature" with:
@@ -65,7 +66,8 @@ Feature: smart tagging
       Given("a step", function(table) {});
       """
     When I run cypress
-    Then it should appear as if only a single test ran
+    Then it should appear to have run the scenario "a scenario (example #1)"
+    And it should appear to have skipped the scenario "a scenario (example #2)"
 
   Scenario: 2 / 2 example table tagged with @focus
     Given a file named "cypress/integration/a.feature" with:
@@ -92,7 +94,8 @@ Feature: smart tagging
       Given("a step", function(table) {});
       """
     When I run cypress
-    Then it should appear as if both tests ran
+    Then it should appear to have run the scenario "a scenario (example #1)"
+    And it should appear to have run the scenario "a scenario (example #2)"
 
   Scenario: one file with @focus, one without
     Given a file named "cypress/integration/a.feature" with:
@@ -114,4 +117,5 @@ Feature: smart tagging
       Given("a step", function(table) {});
       """
     When I run cypress
-    Then it should appear as if both tests ran
+    Then it should appear to have run the scenario "a scenario"
+    And it should appear to have run the scenario "another scenario"
