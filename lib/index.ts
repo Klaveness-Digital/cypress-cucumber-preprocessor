@@ -34,6 +34,16 @@ function createUnimplemented() {
   return new Error("Cucumber methods aren't available in a node environment");
 }
 
+export { NOT_FEATURE_ERROR } from "./methods";
+
+export function isFeature() {
+  throw createUnimplemented();
+}
+
+export function doesFeatureMatch(expression: string) {
+  throw createUnimplemented();
+}
+
 export function defineStep<T extends unknown[]>(
   description: string | RegExp,
   implementation: IStepDefinitionBody<T>

@@ -1,0 +1,55 @@
+[
+  {
+    "description": "",
+    "elements": [
+      {
+        "description": "",
+        "id": "a-feature;a-scenario",
+        "keyword": "Scenario",
+        "line": 2,
+        "name": "a scenario",
+        "steps": [
+          {
+            "keyword": "Given ",
+            "line": 3,
+            "name": "a step",
+            "result": {
+              "status": "failed",
+              "error_message": "some error"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "a-feature;a-scenario",
+        "keyword": "Scenario",
+        "line": 2,
+        "name": "a scenario",
+        "steps": [
+          {
+            "keyword": "Given ",
+            "line": 3,
+            "name": "a step",
+            "result": {
+              "status": "passed"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          }
+        ],
+        "type": "scenario"
+      }
+    ],
+    "id": "a-feature",
+    "keyword": "Feature",
+    "line": 1,
+    "name": "a feature",
+    "uri": "cypress/integration/a.feature"
+  }
+]

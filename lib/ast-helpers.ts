@@ -204,6 +204,12 @@ function* traverseExample(
   }
 }
 
-export function mapTagName(value: { name?: string | null }) {
-  return assertAndReturn(value.name, "Expected tag to have a name");
+export function collectTagNames(
+  tags: messages.GherkinDocument.Feature.ITag[] | null | undefined
+) {
+  return (
+    tags?.map((tag) =>
+      assertAndReturn(tag.name, "Expected tag to have a name")
+    ) ?? []
+  );
 }

@@ -54,7 +54,7 @@ Feature: JSON formatter
         Scenario: a scenario
           Given a step
       """
-    Given a file named "cypress/integration/b.feature" with:
+    And a file named "cypress/integration/b.feature" with:
       """
       Feature: another feature
         Scenario: another scenario
@@ -178,3 +178,186 @@ Feature: JSON formatter
     When I run cypress
     Then it passes
     And there should be a JSON output similar to "fixtures/attachments/screenshot.json"
+
+  Scenario: retried
+    Given additional Cypress configuration
+      """
+      {
+        "screenshotOnRunFailure": false,
+        "retries": 1
+      }
+      """
+    And a file named "cypress/integration/a.feature" with:
+      """
+      Feature: a feature
+        Scenario: a scenario
+          Given a step
+      """
+    And a file named "cypress/support/step_definitions/steps.js" with:
+      """
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      let attempt = 0;
+      Given("a step", () => {
+        if (attempt++ === 0) {
+          throw "some error";
+        }
+      });
+      """
+    When I run cypress
+    Then it passes
+    And there should be a JSON output similar to "fixtures/retried.json"
+    # And there should be a JSON output similar to "fixtures/passed-example.json"
+
+  Scenario: failing Before hook
+    Given additional Cypress configuration
+      """
+      {
+        "screenshotOnRunFailure": false
+      }
+      """
+    And a file named "cypress/integration/a.feature" with:
+      """
+      Feature: a feature
+        Scenario: a scenario
+          Given a step
+      """
+    And a file named "cypress/support/step_definitions/steps.js" with:
+      """
+      const { Before, Given } = require("@badeball/cypress-cucumber-preprocessor");
+      Before(function() {
+        throw "some error"
+      })
+      Given("a step", function() {})
+      """
+    When I run cypress
+    Then it fails
+    And there should be a JSON output similar to "fixtures/failing-before.json"
+
+  Scenario: failing After hook
+    Given additional Cypress configuration
+      """
+      {
+        "screenshotOnRunFailure": false
+      }
+      """
+    And a file named "cypress/integration/a.feature" with:
+      """
+      Feature: a feature
+        Scenario: a scenario
+          Given a step
+      """
+    And a file named "cypress/support/step_definitions/steps.js" with:
+      """
+      const { After, Given } = require("@badeball/cypress-cucumber-preprocessor");
+      After(function() {
+        throw "some error"
+      })
+      Given("a step", function() {})
+      """
+    When I run cypress
+    Then it fails
+    And there should be a JSON output similar to "fixtures/failing-after.json"
+
+  Scenario: failing before hook
+    Given a file named "cypress/integration/a.feature" with:
+      """
+      Feature: a feature
+        Scenario: a scenario
+          Given a step
+      """
+    And a file named "cypress/support/step_definitions/steps.js" with:
+      """
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      Given("a step", function() {})
+      """
+    And a file named "cypress/support/index.ts" with:
+      """
+      before(() => {
+        throw "some error"
+      });
+      """
+    When I run cypress
+    Then it fails
+    And there should be no JSON output
+    And the output should contain
+      """
+      Hook failures can't be represented in JSON reports, thus none is created for cypress/integration/a.feature.
+      """
+
+  Scenario: failing beforeEach hook
+    Given a file named "cypress/integration/a.feature" with:
+      """
+      Feature: a feature
+        Scenario: a scenario
+          Given a step
+      """
+    And a file named "cypress/support/step_definitions/steps.js" with:
+      """
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      Given("a step", function() {})
+      """
+    And a file named "cypress/support/index.ts" with:
+      """
+      beforeEach(() => {
+        throw "some error"
+      });
+      """
+    When I run cypress
+    Then it fails
+    And there should be no JSON output
+    And the output should contain
+      """
+      Hook failures can't be represented in JSON reports, thus none is created for cypress/integration/a.feature.
+      """
+
+  Scenario: failing afterEach hook
+    Given a file named "cypress/integration/a.feature" with:
+      """
+      Feature: a feature
+        Scenario: a scenario
+          Given a step
+      """
+    And a file named "cypress/support/step_definitions/steps.js" with:
+      """
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      Given("a step", function() {})
+      """
+    And a file named "cypress/support/index.ts" with:
+      """
+      afterEach(() => {
+        throw "some error"
+      });
+      """
+    When I run cypress
+    Then it fails
+    And there should be no JSON output
+    And the output should contain
+      """
+      Hook failures can't be represented in JSON reports, thus none is created for cypress/integration/a.feature.
+      """
+
+  Scenario: failing after hook
+    Given a file named "cypress/integration/a.feature" with:
+      """
+      Feature: a feature
+        Scenario: a scenario
+          Given a step
+      """
+    And a file named "cypress/support/step_definitions/steps.js" with:
+      """
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      Given("a step", function() {})
+      """
+    And a file named "cypress/support/index.ts" with:
+      """
+      after(() => {
+        throw "some error"
+      });
+      """
+    When I run cypress
+    Then it fails
+    And there should be no JSON output
+    And the output should contain
+      """
+      Hook failures can't be represented in JSON reports, thus none is created for cypress/integration/a.feature.
+      """

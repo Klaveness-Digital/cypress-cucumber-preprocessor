@@ -8,11 +8,11 @@ import {
 
 import parse from "@cucumber/tag-expressions";
 
+import { v4 as uuid } from "uuid";
+
 import { assertAndReturn } from "./assertions";
 
 import DataTable from "./data_table";
-
-import { isString } from "./type-guards";
 
 import {
   IHookBody,
@@ -25,32 +25,28 @@ interface IStepDefinition<T extends unknown[]> {
   implementation: IStepDefinitionBody<T>;
 }
 
+export type HookKeyword = "Before" | "After";
+
+export interface IHook {
+  id: string;
+  node: ReturnType<typeof parse>;
+  implementation: IHookBody;
+  keyword: HookKeyword;
+}
+
 const noopNode = { evaluate: () => true };
 
-function retrieveCurrentTagsOrWarn() {
-  const isFeatureSpec = Cypress.spec.name.endsWith(".feature");
-
-  const envTags = Cypress.env("tags");
-
-  const tags = isFeatureSpec
-    ? envTags
-    : envTags ??
-      (cy.log(
-        "⚠️ cypress-cucumber-preprocessor: Using Cucumber hooks with non-feature files is supported and you can tag them yourself using the `tags` environment variable. Use an explicit, empty array to remove this warning."
-      ),
-      []);
-
-  if (!Array.isArray(tags)) {
-    throw new Error(
-      "cypress-cucumber-preprocessor: Expected an array of tags. This might mean that you have erroneously overriden the environment variable yourself."
-    );
-  } else if (!tags.every(isString)) {
-    throw new Error(
-      "cypress-cucumber-preprocessor: Expected an array of strings. This might mean that you have erroneously overriden the environment variable yourself."
-    );
-  } else {
-    return tags;
-  }
+function parseHookArguments(
+  options: { tags?: string },
+  fn: IHookBody,
+  keyword: HookKeyword
+): IHook {
+  return {
+    id: uuid(),
+    node: options.tags ? parse(options.tags) : noopNode,
+    implementation: fn,
+    keyword,
+  };
 }
 
 export class Registry {
@@ -61,7 +57,11 @@ export class Registry {
     implementation: () => void;
   }[] = [];
 
-  private stepDefinitions: IStepDefinition<unknown[]>[];
+  private stepDefinitions: IStepDefinition<unknown[]>[] = [];
+
+  public beforeHooks: IHook[] = [];
+
+  public afterHooks: IHook[] = [];
 
   constructor() {
     this.defineStep = this.defineStep.bind(this);
@@ -71,8 +71,6 @@ export class Registry {
     this.defineAfter = this.defineAfter.bind(this);
 
     this.parameterTypeRegistry = new ParameterTypeRegistry();
-
-    this.stepDefinitions = [];
   }
 
   public finalize() {
@@ -120,23 +118,11 @@ export class Registry {
   }
 
   public defineBefore(options: { tags?: string }, fn: IHookBody) {
-    const node = options.tags ? parse(options.tags) : noopNode;
-
-    beforeEach(function () {
-      if (node.evaluate(retrieveCurrentTagsOrWarn())) {
-        fn.call(this);
-      }
-    });
+    this.beforeHooks.push(parseHookArguments(options, fn, "Before"));
   }
 
   public defineAfter(options: { tags?: string }, fn: IHookBody) {
-    const node = options.tags ? parse(options.tags) : noopNode;
-
-    afterEach(function () {
-      if (node.evaluate(retrieveCurrentTagsOrWarn())) {
-        fn.call(this);
-      }
-    });
+    this.afterHooks.push(parseHookArguments(options, fn, "After"));
   }
 
   private resolveStepDefintion(text: string) {
@@ -181,6 +167,22 @@ export class Registry {
     }
 
     return stepDefinition.implementation.apply(world, args);
+  }
+
+  public resolveBeforeHooks(tags: string[]) {
+    return this.beforeHooks.filter((beforeHook) =>
+      beforeHook.node.evaluate(tags)
+    );
+  }
+
+  public resolveAfterHooks(tags: string[]) {
+    return this.afterHooks.filter((beforeHook) =>
+      beforeHook.node.evaluate(tags)
+    );
+  }
+
+  public runHook(world: Mocha.Context, hook: IHook) {
+    hook.implementation.call(world);
   }
 }
 

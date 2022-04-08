@@ -65,7 +65,7 @@ Then("there should be no JSON output", async function () {
     {
       code: "ENOENT",
     },
-    "Expected there to be no JSON directory"
+    "Expected there to be no JSON file"
   );
 });
 

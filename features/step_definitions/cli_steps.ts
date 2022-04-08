@@ -61,6 +61,18 @@ Then("it should appear to not have ran spec {string}", function (spec) {
   );
 });
 
+Then(
+  "it should appear to have ran spec {string} and {string}",
+  function (a, b) {
+    for (const spec of [a, b]) {
+      assert.match(
+        this.lastRun.stdout,
+        new RegExp("Running:\\s+" + rescape(spec))
+      );
+    }
+  }
+);
+
 Then("I should not see {string} in the output", function (string) {
   if (this.lastRun.stdout.includes(string)) {
     assert.fail(`Expected to not find ${util.inspect(string)}, but did`);

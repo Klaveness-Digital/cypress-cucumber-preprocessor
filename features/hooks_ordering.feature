@@ -2,12 +2,13 @@ Feature: hooks ordering
 
   Hooks should be executed in the following order:
    - before
-   - beforeEach / Before
+   - beforeEach
+   - Before
    - Background steps
    - Ordinary steps
-   - afterEach / After
+   - After
+   - afterEach
    - after
-  .. where the order of exection defines order among beforeEach / Before and afterEach / After.
 
   Scenario: with all hooks incrementing a counter
     Given a file named "cypress/integration/a.feature" with:
@@ -29,32 +30,26 @@ Feature: hooks ordering
       before(function() {
         counter = 0;
       })
-      Before(function() {
-        expect(counter++, "Expected Before() to be called before beforeEach()").to.equal(0)
-      })
       beforeEach(function() {
-        expect(counter++, "Expected beforeEach() to be called after before()").to.equal(1)
+        expect(counter++, "Expected beforeEach() to be called after before()").to.equal(0)
       })
       Before(function() {
-        expect(counter++, "Expected Before() to also be called after beforeEach()").to.equal(2)
+        expect(counter++, "Expected Before() to be called after beforeEach()").to.equal(1)
       })
       Given("a background step", function() {
-        expect(counter++, "Expected a background step to be called after Before()").to.equal(3)
+        expect(counter++, "Expected a background step to be called after Before()").to.equal(2)
       })
       Given("an ordinary step", function() {
-        expect(counter++, "Expected an ordinary step to be called after a background step").to.equal(4)
+        expect(counter++, "Expected an ordinary step to be called after a background step").to.equal(3)
       })
       After(function() {
-        expect(counter++, "Expected After() to be called after ordinary steps").to.equal(5)
+        expect(counter++, "Expected After() to be called after ordinary steps").to.equal(4)
       })
       afterEach(function() {
-        expect(counter++, "Expected afterEach() to be called after After()").to.equal(6)
-      })
-      After(function() {
-        expect(counter++, "Expected After() to also be called after afterEach").to.equal(7)
+        expect(counter++, "Expected afterEach() to be called after After()").to.equal(5)
       })
       after(function() {
-        expect(counter++, "Expected after() to be called after afterEach()").to.equal(8)
+        expect(counter++, "Expected after() to be called after afterEach()").to.equal(6)
       })
       """
     When I run cypress

@@ -8,13 +8,18 @@ import { assertAndReturn } from "./assertions";
 
 import DataTable from "./data_table";
 
-import { assignRegistry, freeRegistry, Registry } from "./registry";
+import { assignRegistry, freeRegistry, IHook, Registry } from "./registry";
 
-import { traverseGherkinDocument, mapTagName } from "./ast-helpers";
+import { collectTagNames, traverseGherkinDocument } from "./ast-helpers";
 
 import { YieldType } from "./types";
 
-import { TASK_APPEND_MESSAGES, TASK_TEST_STEP_STARTED } from "./constants";
+import {
+  HOOK_FAILURE_EXPR,
+  INTERNAL_PROPERTY_NAME,
+  TASK_APPEND_MESSAGES,
+  TASK_TEST_STEP_STARTED,
+} from "./constants";
 
 import { getTags } from "./environment-helpers";
 
@@ -34,8 +39,6 @@ interface CompositionContext {
   };
 }
 
-const INTERNAL_PROPERTY_NAME = "_cypress-cucumber-preprocessor-do-not-use";
-
 /**
  * From messages.TestStepFinished.TestStepResult.Status.
  */
@@ -49,20 +52,26 @@ const Status = {
   Failed: "FAILED" as unknown as 6,
 };
 
-interface InternalProperties {
+const sourceReference: messages.ISourceReference = {
+  uri: "not available",
+  location: { line: 0 },
+};
+
+interface IStep {
+  hook?: IHook;
+  pickleStep?: messages.Pickle.IPickleStep;
+}
+
+export interface InternalProperties {
   pickle: messages.IPickle;
   testCaseStartedId: string;
-  remainingSteps: messages.Pickle.IPickleStep[];
+  currentStep?: IStep;
+  allSteps: IStep[];
+  remainingSteps: IStep[];
 }
 
-function storeInternalProperties(properties: InternalProperties) {
-  cy.wrap(properties, { log: false }).as(INTERNAL_PROPERTY_NAME);
-}
-
-function retrieveInternalProperties(): Cypress.Chainable<InternalProperties> {
-  return cy.get<InternalProperties>("@" + INTERNAL_PROPERTY_NAME, {
-    log: false,
-  });
+function retrieveInternalProperties(): InternalProperties {
+  return Cypress.env(INTERNAL_PROPERTY_NAME);
 }
 
 function findPickleById(context: CompositionContext, astId: string) {
@@ -87,16 +96,6 @@ function collectExampleIds(
       );
     })
     .reduce((acum, el) => acum.concat(el), []);
-}
-
-function collectTagNames(
-  tags: messages.GherkinDocument.Feature.ITag[] | null | undefined
-) {
-  return (
-    tags?.map((tag) =>
-      assertAndReturn(tag.name, "Expected tag to have a name")
-    ) ?? []
-  );
 }
 
 function createFeature(
@@ -235,54 +234,68 @@ function createPickle(
   pickle: messages.IPickle
 ) {
   const { registry, gherkinDocument, pickles, testFilter, messages } = context;
-
   const testCaseId = uuid();
+  const pickleSteps = pickle.steps ?? [];
+  const scenarioName = scenario.name || "<unamed scenario>";
+  const tags = collectTagNames(pickle.tags);
+  const beforeHooks = registry.resolveBeforeHooks(tags);
+  const afterHooks = registry.resolveAfterHooks(tags);
+  const definitionIds = pickleSteps.map(() => uuid());
 
-  const definitionIds: string[] = [];
+  const steps: IStep[] = [
+    ...beforeHooks.map((hook) => ({ hook })),
+    ...pickleSteps.map((pickleStep) => ({ pickleStep })),
+    ...afterHooks.map((hook) => ({ hook })),
+  ];
 
-  if (pickle.steps) {
-    for (const step of pickle.steps) {
-      const id = uuid();
-
-      definitionIds.push(id);
-
-      messages.stack.push({
-        stepDefinition: {
-          id,
-          pattern: {
-            source: "a step",
-            type: "CUCUMBER_EXPRESSION" as unknown as messages.StepDefinition.StepDefinitionPattern.StepDefinitionPatternType,
-          },
-          sourceReference: {
-            uri: "not available",
-            location: { line: 0 },
-          },
+  for (const id of definitionIds) {
+    messages.stack.push({
+      stepDefinition: {
+        id,
+        pattern: {
+          source: "a step",
+          type: "CUCUMBER_EXPRESSION" as unknown as messages.StepDefinition.StepDefinitionPattern.StepDefinitionPatternType,
         },
-      });
-    }
+        sourceReference,
+      },
+    });
   }
 
-  const testCase: messages.IEnvelope = {
+  const testSteps: messages.TestCase.ITestStep[] = [];
+
+  for (const beforeHook of beforeHooks) {
+    testSteps.push({
+      id: beforeHook.id,
+      hookId: beforeHook.id,
+    });
+  }
+
+  for (let i = 0; i < pickleSteps.length; i++) {
+    const step = pickleSteps[i];
+
+    testSteps.push({
+      id: step.id,
+      pickleStepId: step.id,
+      stepDefinitionIds: [definitionIds[i]],
+    });
+  }
+
+  for (const afterHook of afterHooks) {
+    testSteps.push({
+      id: afterHook.id,
+      hookId: afterHook.id,
+    });
+  }
+
+  messages.stack.push({
     testCase: {
       id: testCaseId,
       pickleId: pickle.id,
-      testSteps: pickle.steps?.map((step, i) => {
-        return {
-          id: step.id,
-          pickleStepId: step.id,
-          stepDefinitionIds: [definitionIds[i]],
-        };
-      }),
+      testSteps,
     },
-  };
-
-  messages.stack.push(testCase);
+  });
 
   const astIdMap = gherkinDocumentsAstIdMaps.get(gherkinDocument);
-
-  const tags = collectTagNames(pickle.tags);
-
-  const scenarioName = scenario.name || "<unamed scenario>";
 
   if (!testFilter.evaluate(tags)) {
     if (!context.omitFiltered) {
@@ -294,20 +307,27 @@ function createPickle(
 
   let attempt = 0;
 
-  it(scenarioName, { env: { tags } }, function () {
+  const internalProperties: InternalProperties = {
+    pickle,
+    testCaseStartedId: uuid(),
+    allSteps: steps,
+    remainingSteps: [...steps],
+  };
+
+  const env = { [INTERNAL_PROPERTY_NAME]: internalProperties };
+
+  it(scenarioName, { env }, function () {
+    const { remainingSteps, testCaseStartedId } = retrieveInternalProperties();
+
     assignRegistry(registry);
 
-    const testCaseStartedId = uuid();
-
-    const testCaseStarted: messages.IEnvelope = {
+    messages.stack.push({
       testCaseStarted: {
         id: testCaseStartedId,
         testCaseId,
         attempt: attempt++,
       },
-    };
-
-    messages.stack.push(testCaseStarted);
+    });
 
     window.testState = {
       gherkinDocument,
@@ -315,24 +335,47 @@ function createPickle(
       pickle,
     };
 
-    if (!pickle.steps) {
-      storeInternalProperties({
-        pickle,
-        testCaseStartedId,
-        remainingSteps: [],
-      });
-    }
+    for (const step of steps) {
+      if (step.hook) {
+        const hook = step.hook;
 
-    if (pickle.steps) {
-      const remainingSteps = [...pickle.steps];
+        cy.then(() => {
+          Cypress.log({
+            name: "step",
+            displayName: hook.keyword,
+            message: "",
+          });
 
-      storeInternalProperties({
-        pickle,
-        testCaseStartedId,
-        remainingSteps,
-      });
+          messages.stack.push({
+            testStepStarted: {
+              testStepId: hook.id,
+              testCaseStartedId,
+            },
+          });
 
-      for (const pickleStep of pickle.steps) {
+          if (messages.enabled) {
+            cy.task(TASK_TEST_STEP_STARTED, hook.id, { log: false });
+          }
+        })
+          .then(() => {
+            registry.runHook(this, hook);
+          })
+          .then(() => {
+            messages.stack.push({
+              testStepFinished: {
+                testStepId: hook.id,
+                testCaseStartedId,
+                testStepResult: {
+                  status: Status.Passed,
+                },
+              },
+            });
+
+            remainingSteps.shift();
+          });
+      } else if (step.pickleStep) {
+        const pickleStep = step.pickleStep;
+
         const text = assertAndReturn(
           pickleStep.text,
           "Expected pickle step to have a text"
@@ -348,14 +391,14 @@ function createPickle(
           `Expected to find scenario step associated with id = ${pickleStep.astNodeIds?.[0]}`
         );
 
-        cy.wrap(null, { log: false }).then(() => {
+        cy.then(() => {
           Cypress.log({
             name: "step",
             displayName: assertAndReturn(
               "keyword" in scenarioStep && scenarioStep.keyword,
               "Expected to find a keyword in the scenario step"
             ),
-            message: text as unknown as any[], // This property was wrongfully typed in 3.x.y.
+            message: text,
           });
         });
 
@@ -367,14 +410,14 @@ function createPickle(
           : undefined;
 
         cy.then(() => {
-          const testStepStarted: messages.IEnvelope = {
+          internalProperties.currentStep = { pickleStep };
+
+          messages.stack.push({
             testStepStarted: {
               testStepId: pickleStep.id,
               testCaseStartedId,
             },
-          };
-
-          messages.stack.push(testStepStarted);
+          });
 
           if (messages.enabled) {
             cy.task(TASK_TEST_STEP_STARTED, pickleStep.id, { log: false });
@@ -383,7 +426,7 @@ function createPickle(
           .then(() => registry.runStepDefininition(this, text, argument))
           .then((result) => {
             if (result === "pending") {
-              const testStepFinished: messages.IEnvelope = {
+              messages.stack.push({
                 testStepFinished: {
                   testStepId: pickleStep.id,
                   testCaseStartedId,
@@ -391,33 +434,32 @@ function createPickle(
                     status: Status.Pending,
                   },
                 },
-              };
-
-              messages.stack.push(testStepFinished);
+              });
 
               remainingSteps.shift();
 
               for (const skippedStep of remainingSteps) {
-                const skippedTestStepStarted: messages.IEnvelope = {
+                const testStepId = assertAndReturn(
+                  skippedStep.hook?.id ?? skippedStep.pickleStep?.id,
+                  "Expected a step to either be a hook or a pickleStep"
+                );
+
+                messages.stack.push({
                   testStepStarted: {
-                    testStepId: skippedStep.id,
+                    testStepId,
                     testCaseStartedId,
                   },
-                };
+                });
 
-                messages.stack.push(skippedTestStepStarted);
-
-                const skippedTestStepFinished: messages.IEnvelope = {
+                messages.stack.push({
                   testStepFinished: {
-                    testStepId: skippedStep.id,
+                    testStepId,
                     testCaseStartedId,
                     testStepResult: {
                       status: Status.Skipped,
                     },
                   },
-                };
-
-                messages.stack.push(skippedTestStepFinished);
+                });
               }
 
               for (let i = 0, count = remainingSteps.length; i < count; i++) {
@@ -426,7 +468,7 @@ function createPickle(
 
               this.skip();
             } else {
-              const testStepFinished: messages.IEnvelope = {
+              messages.stack.push({
                 testStepFinished: {
                   testStepId: pickleStep.id,
                   testCaseStartedId,
@@ -434,9 +476,7 @@ function createPickle(
                     status: Status.Passed,
                   },
                 },
-              };
-
-              messages.stack.push(testStepFinished);
+              });
 
               remainingSteps.shift();
             }
@@ -469,9 +509,7 @@ export default function createTests(
   omitFiltered: boolean
 ) {
   const noopNode = { evaluate: () => true };
-
   const environmentTags = getTags(Cypress.env());
-
   const messages: messages.IEnvelope[] = [];
 
   messages.push({
@@ -487,6 +525,15 @@ export default function createTests(
   for (const pickle of pickles) {
     messages.push({
       pickle,
+    });
+  }
+
+  for (const hook of [...registry.beforeHooks, ...registry.afterHooks]) {
+    messages.push({
+      hook: {
+        id: hook.id,
+        sourceReference,
+      },
     });
   }
 
@@ -518,80 +565,94 @@ export default function createTests(
   afterEach(function () {
     freeRegistry();
 
-    retrieveInternalProperties().then((properties) => {
-      const { testCaseStartedId, remainingSteps } = properties;
+    const properties = retrieveInternalProperties();
 
-      if (remainingSteps.length > 0) {
-        const error = assertAndReturn(
-          this.currentTest?.err?.message,
-          "Expected to find an error message"
-        );
+    const { testCaseStartedId, remainingSteps } = properties;
 
-        const failedStep = assertAndReturn(
-          remainingSteps.shift(),
-          "Expected there to be a remaining step"
-        );
+    if (remainingSteps.length > 0) {
+      const error = assertAndReturn(
+        this.currentTest?.err?.message,
+        "Expected to find an error message"
+      );
 
-        const failedTestStepFinished: messages.IEnvelope = error.includes(
-          "Step implementation missing"
-        )
-          ? {
-              testStepFinished: {
-                testStepId: failedStep.id,
-                testCaseStartedId,
-                testStepResult: {
-                  status: Status.Undefined,
-                },
-              },
-            }
-          : {
-              testStepFinished: {
-                testStepId: failedStep.id,
-                testCaseStartedId,
-                testStepResult: {
-                  status: Status.Failed,
-                  message: this.currentTest?.err?.message,
-                },
-              },
-            };
-
-        messages.push(failedTestStepFinished);
-
-        for (const skippedStep of remainingSteps) {
-          const skippedTestStepStarted: messages.IEnvelope = {
-            testStepStarted: {
-              testStepId: skippedStep.id,
-              testCaseStartedId,
-            },
-          };
-
-          messages.push(skippedTestStepStarted);
-
-          const skippedTestStepFinished: messages.IEnvelope = {
-            testStepFinished: {
-              testStepId: skippedStep.id,
-              testCaseStartedId,
-              testStepResult: {
-                status: Status.Skipped,
-              },
-            },
-          };
-
-          messages.push(skippedTestStepFinished);
-        }
+      if (HOOK_FAILURE_EXPR.test(error)) {
+        return;
       }
 
-      const testCaseFinished: messages.IEnvelope = {
-        testCaseFinished: {
-          testCaseStartedId,
-        },
-      };
+      const failedStep = assertAndReturn(
+        remainingSteps.shift(),
+        "Expected there to be a remaining step"
+      );
 
-      messages.push(testCaseFinished);
+      const testStepId = assertAndReturn(
+        failedStep.hook?.id ?? failedStep.pickleStep?.id,
+        "Expected a step to either be a hook or a pickleStep"
+      );
+
+      const failedTestStepFinished: messages.IEnvelope = error.includes(
+        "Step implementation missing"
+      )
+        ? {
+            testStepFinished: {
+              testStepId,
+              testCaseStartedId,
+              testStepResult: {
+                status: Status.Undefined,
+              },
+            },
+          }
+        : {
+            testStepFinished: {
+              testStepId,
+              testCaseStartedId,
+              testStepResult: {
+                status: Status.Failed,
+                message: this.currentTest?.err?.message,
+              },
+            },
+          };
+
+      messages.push(failedTestStepFinished);
+
+      for (const skippedStep of remainingSteps) {
+        const testStepId = assertAndReturn(
+          skippedStep.hook?.id ?? skippedStep.pickleStep?.id,
+          "Expected a step to either be a hook or a pickleStep"
+        );
+
+        messages.push({
+          testStepStarted: {
+            testStepId,
+            testCaseStartedId,
+          },
+        });
+
+        messages.push({
+          testStepFinished: {
+            testStepId,
+            testCaseStartedId,
+            testStepResult: {
+              status: Status.Skipped,
+            },
+          },
+        });
+      }
+    }
+
+    messages.push({
+      testCaseFinished: {
+        testCaseStartedId,
+      },
     });
+
+    /**
+     * Repopulate internal properties in case previous test is retried.
+     */
+    properties.testCaseStartedId = uuid();
+    properties.remainingSteps = properties.allSteps;
   });
 
-  after(() => {
+  after(function () {
     if (messagesEnabled) {
       cy.task(TASK_APPEND_MESSAGES, messages, { log: false });
     }

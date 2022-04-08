@@ -1,0 +1,44 @@
+[
+  {
+    "keyword": "Feature",
+    "name": "a feature",
+    "line": 1,
+    "id": "a-feature",
+    "uri": "cypress/integration/a.feature",
+    "description": "",
+    "elements": [
+      {
+        "description": "",
+        "id": "a-feature;a-scenario",
+        "keyword": "Scenario",
+        "line": 2,
+        "name": "a scenario",
+        "type": "scenario",
+        "steps": [
+          {
+            "keyword": "Given ",
+            "line": 3,
+            "name": "a step",
+            "result": {
+              "status": "passed"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          }
+        ],
+        "after": [
+          {
+            "result": {
+              "status": "failed",
+              "error_message": "some error"
+            },
+            "match": {
+              "location": "not available:0"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

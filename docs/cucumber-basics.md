@@ -101,7 +101,7 @@ When("I fill in the entire form", function () {
 
 # Hooks
 
-`Before()` and `After()` is similar to Cypress' `beforeEach()` and `afterEach()`, but they can be selected to conditionally run based on the tags of each scenario, as shown below.
+`Before()` and `After()` is similar to Cypress' `beforeEach()` and `afterEach()`, but they can be selected to conditionally run based on the tags of each scenario, as shown below. Furthermore, failure in these hooks does **not** result in remaining tests being skipped. This is contrary to Cypress' `beforeEach` and `afterEach`.
 
 ```ts
 import { Before } from "@badeball/cypress-cucumber-preprocessor";
