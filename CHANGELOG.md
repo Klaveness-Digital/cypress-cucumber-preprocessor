@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v9.0.0
+
+Breaking changes
+
+- Errors in `Before` and `After` hooks will no longer skip remaining tests like Cypress' own hooks does.
+
+Other changes
+
+- Error scenarios in regards to JSON reporting has been specced, tested and improved.
+
+- Added `omitFiltered` option, where filtered tests otherwise are skipped similar to using `it.skip(..)`.
+
 ## v8.0.0
 
 - Removed `cypress-tags` executable in favor of `filterSpecs` configuration.
