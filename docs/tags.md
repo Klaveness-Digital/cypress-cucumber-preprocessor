@@ -52,6 +52,10 @@ export default async (
 }
 ```
 
+## Omit filtered tests
+
+By default, all filtered tests are made *pending* using `it.skip` method. If you want to completely omit them, set `omitFiltered` to `true`.
+
 ## Smart tagging
 
 In the absence of a `tags` value and presence of a scenario with `@focus`, only said scenario will run. You can in other words use this tag as you would use `.only()` in Mocha.
