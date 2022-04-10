@@ -5,6 +5,8 @@
 
 This preprocessor aims to provide a developer experience and behavior similar to that of [Cucumber](https://cucumber.io/), to Cypress.
 
+> :information_source: The repositor has recently moved from `github.com/TheBrainFamily` to `github.com/badeball`. Read more about the transfer of ownership [here](https://github.com/badeball/cypress-cucumber-preprocessor/issues/689).
+
 ## Installation
 
 ```
