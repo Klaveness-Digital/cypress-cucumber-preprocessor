@@ -1,0 +1,8 @@
+{
+  "default": {
+    "publishQuiet": true,
+    "format": ["@cucumber/pretty-formatter"],
+    "requireModule": ["ts-node/register"],
+    "require": ["features/**/*.ts"]
+  }
+}
