@@ -1,11 +1,9 @@
 name: Examples
 
-on: [push, pull_request]
-
-# on:
-#   push:
-#     branches:
-#       - master
+on:
+  push:
+    branches:
+      - master
 
 defaults:
   run:
