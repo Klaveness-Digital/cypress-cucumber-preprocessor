@@ -2,9 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## v9.0.1
+## v9.0.2
 
 - Fixed an [issue](https://github.com/badeball/cypress-cucumber-preprocessor/issues/694) when running all specs.
+
+## v9.0.1
+
+Due to an publishing error from my side, this version is identical to v9.0.0.
 
 ## v9.0.0
 
