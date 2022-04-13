@@ -25,6 +25,12 @@ import { getTags } from "./environment-helpers";
 
 import { notNull } from "./type-guards";
 
+declare global {
+  namespace globalThis {
+    var __cypress_cucumber_preprocessor_dont_use_this: true | undefined;
+  }
+}
+
 type Node = ReturnType<typeof parse>;
 
 interface CompositionContext {
@@ -560,6 +566,14 @@ export default function createTests(
       },
       gherkinDocument.feature
     );
+  }
+
+  const isHooksAttached = globalThis[INTERNAL_PROPERTY_NAME];
+
+  if (isHooksAttached) {
+    return;
+  } else {
+    globalThis[INTERNAL_PROPERTY_NAME] = true;
   }
 
   afterEach(function () {
