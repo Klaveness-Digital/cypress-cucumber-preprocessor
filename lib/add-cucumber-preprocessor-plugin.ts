@@ -105,7 +105,8 @@ export default async function addCucumberPreprocessorPlugin(
   });
 
   on("after:spec", async (_spec, results) => {
-    if (!preprocessor.messages.enabled || !currentSpecMessages) {
+    // `results` is undefined when running via `cypress open`.
+    if (!preprocessor.messages.enabled || !currentSpecMessages || !results) {
       return;
     }
 
