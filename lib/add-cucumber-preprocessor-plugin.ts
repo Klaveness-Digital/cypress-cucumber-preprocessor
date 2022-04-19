@@ -163,7 +163,7 @@ export default async function addCucumberPreprocessorPlugin(
   on("task", {
     [TASK_APPEND_MESSAGES]: (messages: messages.IEnvelope[]) => {
       if (!currentSpecMessages) {
-        return;
+        return true;
       }
 
       currentSpecMessages.push(...messages);
@@ -173,7 +173,7 @@ export default async function addCucumberPreprocessorPlugin(
 
     [TASK_TEST_STEP_STARTED]: (testStepStartedId) => {
       if (!currentSpecMessages) {
-        return;
+        return true;
       }
 
       currentTestStepStartedId = testStepStartedId;
@@ -183,7 +183,7 @@ export default async function addCucumberPreprocessorPlugin(
 
     [TASK_CREATE_STRING_ATTACHMENT]: ({ data, mediaType, encoding }) => {
       if (!currentSpecMessages) {
-        return;
+        return true;
       }
 
       const message: messages.IEnvelope = {

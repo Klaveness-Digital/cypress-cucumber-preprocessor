@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v9.0.3
+
+- Fixed an issue where the preprocessor was throwing in interactive mode when JSON reports was enabled.
+
 ## v9.0.2
 
 - Fixed an [issue](https://github.com/badeball/cypress-cucumber-preprocessor/issues/694) when running all specs.
