@@ -36,11 +36,11 @@ function createUnimplemented() {
 
 export { NOT_FEATURE_ERROR } from "./methods";
 
-export function isFeature() {
+export function isFeature(): boolean {
   throw createUnimplemented();
 }
 
-export function doesFeatureMatch(expression: string) {
+export function doesFeatureMatch(expression: string): boolean {
   throw createUnimplemented();
 }
 

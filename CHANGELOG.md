@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v9.0.5
+
+- Correct types for `isFeature` and `doesFeatureMatch`.
+
 ## v9.0.4
 
 - Prevent an error when `experimentalInteractiveRunEvents` is enabled.
