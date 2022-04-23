@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v9.1.0
+
+- Automatically skip tests marked with `@skip`.
+
 ## v9.0.5
 
 - Correct types for `isFeature` and `doesFeatureMatch`.
