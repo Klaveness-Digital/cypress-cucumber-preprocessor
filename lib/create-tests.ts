@@ -543,13 +543,14 @@ export default function createTests(
     });
   }
 
-  const testFilter = collectTagNamesFromGherkinDocument(
-    gherkinDocument
-  ).includes("@only")
-    ? parse("@only")
-    : environmentTags
-    ? parse(environmentTags)
-    : noopNode;
+  const tagsInDocument = collectTagNamesFromGherkinDocument(gherkinDocument);
+
+  const testFilter =
+    tagsInDocument.includes("@only") || tagsInDocument.includes("@focus")
+      ? parse("@only or @focus")
+      : environmentTags
+      ? parse(environmentTags)
+      : noopNode;
 
   if (gherkinDocument.feature) {
     createFeature(

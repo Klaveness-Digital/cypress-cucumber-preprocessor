@@ -141,3 +141,22 @@ Feature: @only tag
     When I run cypress with "-e tags=@foo"
     Then it should appear to have run the scenario "a scenario"
     And it should appear to have skipped the scenario "another scenario"
+
+  Scenario: @focus (backwards compatibility)
+    Given a file named "cypress/integration/a.feature" with:
+      """
+      Feature: a feature
+        @focus
+        Scenario: a scenario
+          Given a step
+
+        Scenario: another scenario
+      """
+    And a file named "cypress/support/step_definitions/steps.js" with:
+      """
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      Given("a step", function(table) {});
+      """
+    When I run cypress
+    Then it should appear to have run the scenario "a scenario"
+    And it should appear to have skipped the scenario "another scenario"
