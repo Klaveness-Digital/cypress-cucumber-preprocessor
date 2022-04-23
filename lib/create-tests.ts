@@ -303,7 +303,7 @@ function createPickle(
 
   const astIdMap = gherkinDocumentsAstIdMaps.get(gherkinDocument);
 
-  if (!testFilter.evaluate(tags)) {
+  if (!testFilter.evaluate(tags) || tags.includes("@skip")) {
     if (!context.omitFiltered) {
       it.skip(scenarioName);
     }

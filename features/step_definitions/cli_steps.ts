@@ -54,6 +54,13 @@ Then("it should appear as if both tests ran", function () {
   assert.match(this.lastRun.stdout, /All specs passed!\s+\d+ms\s+2\s+2\D/);
 });
 
+Then("it should appear as if both tests were skipped", function () {
+  assert.match(
+    this.lastRun.stdout,
+    /All specs passed!\s+\d+ms\s+2\s+-\s+-\s+2\D/
+  );
+});
+
 Then("it should appear to not have ran spec {string}", function (spec) {
   assert.doesNotMatch(
     this.lastRun.stdout,
