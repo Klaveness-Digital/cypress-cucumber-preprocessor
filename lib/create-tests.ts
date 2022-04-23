@@ -545,8 +545,8 @@ export default function createTests(
 
   const testFilter = collectTagNamesFromGherkinDocument(
     gherkinDocument
-  ).includes("@focus")
-    ? parse("@focus")
+  ).includes("@only")
+    ? parse("@only")
     : environmentTags
     ? parse(environmentTags)
     : noopNode;

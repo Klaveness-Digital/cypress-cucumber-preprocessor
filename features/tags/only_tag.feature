@@ -1,15 +1,15 @@
-Feature: smart tagging
+Feature: @only tag
 
   Rules:
-   - In presence of any @focus tag, only tests tagged with this should be run
+   - In presence of any @only tag, only tests tagged with this should be run
    - This behavior is scoped per file
    - Presence of this tag override any other tag filter
 
-  Scenario: 1 / 2 scenarios tagged with @focus
+  Scenario: 1 / 2 scenarios tagged with @only
     Given a file named "cypress/integration/a.feature" with:
       """
       Feature: a feature
-        @focus
+        @only
         Scenario: a scenario
           Given a step
 
@@ -24,15 +24,15 @@ Feature: smart tagging
     Then it should appear to have run the scenario "a scenario"
     And it should appear to have skipped the scenario "another scenario"
 
-  Scenario: 2 / 2 scenarios tagged with @focus
+  Scenario: 2 / 2 scenarios tagged with @only
     Given a file named "cypress/integration/a.feature" with:
       """
       Feature: a feature
-        @focus
+        @only
         Scenario: a scenario
           Given a step
 
-        @focus
+        @only
         Scenario: another scenario
       """
     And a file named "cypress/support/step_definitions/steps.js" with:
@@ -43,14 +43,14 @@ Feature: smart tagging
     When I run cypress
     Then it should appear as if both tests ran
 
-  Scenario: 1 / 2 example table tagged with @focus
+  Scenario: 1 / 2 example table tagged with @only
     Given a file named "cypress/integration/a.feature" with:
       """
       Feature: a feature
         Scenario Outline: a scenario
           Given a step
 
-        @focus
+        @only
         Examples:
           | value |
           | foo   |
@@ -70,19 +70,19 @@ Feature: smart tagging
     Then it should appear to have run the scenario "a scenario (example #1)"
     And it should appear to have skipped the scenario "a scenario (example #2)"
 
-  Scenario: 2 / 2 example table tagged with @focus
+  Scenario: 2 / 2 example table tagged with @only
     Given a file named "cypress/integration/a.feature" with:
       """
       Feature: a feature
         Scenario Outline: a scenario
           Given a step
 
-        @focus
+        @only
         Examples:
           | value |
           | foo   |
 
-        @focus
+        @only
         Examples:
           | value |
           | bar   |
@@ -98,11 +98,11 @@ Feature: smart tagging
     Then it should appear to have run the scenario "a scenario (example #1)"
     And it should appear to have run the scenario "a scenario (example #2)"
 
-  Scenario: one file with @focus, one without
+  Scenario: one file with @only, one without
     Given a file named "cypress/integration/a.feature" with:
       """
       Feature: a feature
-        @focus
+        @only
         Scenario: a scenario
           Given a step
       """
@@ -125,7 +125,7 @@ Feature: smart tagging
     Given a file named "cypress/integration/a.feature" with:
       """
       Feature: a feature
-        @focus
+        @only
         Scenario: a scenario
           Given a step
 
