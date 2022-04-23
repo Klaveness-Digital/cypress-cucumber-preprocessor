@@ -3,6 +3,7 @@ Feature: smart tagging
   Rules:
    - In presence of any @focus tag, only tests tagged with this should be run
    - This behavior is scoped per file
+   - Presence of this tag override any other tag filter
 
   Scenario: 1 / 2 scenarios tagged with @focus
     Given a file named "cypress/integration/a.feature" with:
@@ -119,3 +120,24 @@ Feature: smart tagging
     When I run cypress
     Then it should appear to have run the scenario "a scenario"
     And it should appear to have run the scenario "another scenario"
+
+  Scenario: specifying tags
+    Given a file named "cypress/integration/a.feature" with:
+      """
+      Feature: a feature
+        @focus
+        Scenario: a scenario
+          Given a step
+
+        @foo
+        Scenario: another scenario
+          Given a step
+      """
+    And a file named "cypress/support/step_definitions/steps.js" with:
+      """
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      Given("a step", function(table) {});
+      """
+    When I run cypress with "-e tags=@foo"
+    Then it should appear to have run the scenario "a scenario"
+    And it should appear to have skipped the scenario "another scenario"
