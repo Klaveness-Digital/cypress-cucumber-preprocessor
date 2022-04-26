@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v9.1.1
+
+- Add timestamps and durations to messages.
+
 ## v9.1.0
 
 - Automatically skip tests marked with `@skip`.
