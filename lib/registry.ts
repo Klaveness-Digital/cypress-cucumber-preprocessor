@@ -155,7 +155,7 @@ export class Registry {
     world: Mocha.Context,
     text: string,
     argument?: DataTable | string
-  ) {
+  ): any {
     const stepDefinition = this.resolveStepDefintion(text);
 
     const args = stepDefinition.expression

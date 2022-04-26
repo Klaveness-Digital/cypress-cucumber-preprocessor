@@ -34,7 +34,7 @@ function* traverseTree(object: any): Generator<object, void, any> {
 function prepareJsonReport(tree: any) {
   for (const node of traverseTree(tree)) {
     if (hasOwnProperty(node, "duration")) {
-      delete node.duration;
+      node.duration = 0;
     } else if (hasOwnProperty(node, "uri") && typeof node.uri === "string") {
       node.uri = node.uri.replace(/\\/g, "/");
     }

@@ -104,6 +104,34 @@ function collectExampleIds(
     .reduce((acum, el) => acum.concat(el), []);
 }
 
+type StrictTimestamp = {
+  seconds: number;
+  nanos: number;
+};
+
+function createTimestamp(): StrictTimestamp {
+  const now = new Date().getTime();
+
+  const seconds = Math.floor(now / 1000);
+
+  const nanos = (now - seconds * 1000) * 1000000;
+
+  return {
+    seconds,
+    nanos,
+  };
+}
+
+function duration(
+  start: StrictTimestamp,
+  end: StrictTimestamp
+): StrictTimestamp {
+  return {
+    seconds: end.seconds - start.seconds,
+    nanos: end.nanos - start.nanos,
+  };
+}
+
 function createFeature(
   context: CompositionContext,
   feature: messages.GherkinDocument.IFeature
@@ -332,6 +360,7 @@ function createPickle(
         id: testCaseStartedId,
         testCaseId,
         attempt: attempt++,
+        timestamp: createTimestamp(),
       },
     });
 
@@ -352,28 +381,37 @@ function createPickle(
             message: "",
           });
 
+          const start = createTimestamp();
+
           messages.stack.push({
             testStepStarted: {
               testStepId: hook.id,
               testCaseStartedId,
+              timestamp: start,
             },
           });
 
           if (messages.enabled) {
             cy.task(TASK_TEST_STEP_STARTED, hook.id, { log: false });
           }
+
+          return cy.wrap(start, { log: false });
         })
           .then(() => {
             registry.runHook(this, hook);
           })
-          .then(() => {
+          .then((start) => {
+            const end = createTimestamp();
+
             messages.stack.push({
               testStepFinished: {
                 testStepId: hook.id,
                 testCaseStartedId,
                 testStepResult: {
                   status: Status.Passed,
+                  duration: duration(start, end),
                 },
+                timestamp: end,
               },
             });
 
@@ -418,19 +456,37 @@ function createPickle(
         cy.then(() => {
           internalProperties.currentStep = { pickleStep };
 
+          const start = createTimestamp();
+
           messages.stack.push({
             testStepStarted: {
               testStepId: pickleStep.id,
               testCaseStartedId,
+              timestamp: start,
             },
           });
 
           if (messages.enabled) {
             cy.task(TASK_TEST_STEP_STARTED, pickleStep.id, { log: false });
           }
+
+          return cy.wrap(start, { log: false });
         })
-          .then(() => registry.runStepDefininition(this, text, argument))
-          .then((result) => {
+          .then((start) => {
+            return cy
+              .wrap(registry.runStepDefininition(this, text, argument), {
+                log: false,
+              })
+              .then((result: any) => {
+                return {
+                  start,
+                  result,
+                };
+              });
+          })
+          .then(({ start, result }) => {
+            const end = createTimestamp();
+
             if (result === "pending") {
               messages.stack.push({
                 testStepFinished: {
@@ -438,7 +494,9 @@ function createPickle(
                   testCaseStartedId,
                   testStepResult: {
                     status: Status.Pending,
+                    duration: duration(start, end),
                   },
+                  timestamp: end,
                 },
               });
 
@@ -480,7 +538,9 @@ function createPickle(
                   testCaseStartedId,
                   testStepResult: {
                     status: Status.Passed,
+                    duration: duration(start, end),
                   },
+                  timestamp: end,
                 },
               });
 
@@ -624,6 +684,7 @@ export default function createTests(
                 status: Status.Failed,
                 message: this.currentTest?.err?.message,
               },
+              timestamp: createTimestamp(),
             },
           };
 
@@ -657,6 +718,7 @@ export default function createTests(
     messages.push({
       testCaseFinished: {
         testCaseStartedId,
+        timestamp: createTimestamp(),
       },
     });
 
