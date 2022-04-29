@@ -397,8 +397,9 @@ function createPickle(
 
           return cy.wrap(start, { log: false });
         })
-          .then(() => {
+          .then((start) => {
             registry.runHook(this, hook);
+            return cy.wrap(start, { log: false });
           })
           .then((start) => {
             const end = createTimestamp();
