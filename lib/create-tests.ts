@@ -645,7 +645,10 @@ export default function createTests(
 
     const { testCaseStartedId, remainingSteps } = properties;
 
-    if (remainingSteps.length > 0) {
+    if (
+      remainingSteps.length > 0 &&
+      (this.currentTest?.state as any) !== "pending"
+    ) {
       const error = assertAndReturn(
         this.currentTest?.err?.message,
         "Expected to find an error message"
