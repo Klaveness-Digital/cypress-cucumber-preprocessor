@@ -32,6 +32,10 @@ The location of the executable is configurable through the `json.formatter` prop
 
 The report is outputted to `cucumber-report.json` in the project directory, but can be configured through the `json.output` property.
 
+## Screenshots
+
+Screenshots are automatically added to JSON reports, including that of failed tests (unless you have disabled `screenshotOnRunFailure`).
+
 ## Attachments
 
 Text, images and other data can be added to the output of the messages and JSON reports with attachments.
