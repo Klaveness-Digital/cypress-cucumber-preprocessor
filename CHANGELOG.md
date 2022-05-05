@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v9.1.3
+
+- Fixed an [issue](https://github.com/badeball/cypress-cucumber-preprocessor/issues/704) where programmatically skipping a test would error.
+
 ## v9.1.2
 
 - Fixed an [issue](https://github.com/badeball/cypress-cucumber-preprocessor/issues/701) where Before hooks would error.
