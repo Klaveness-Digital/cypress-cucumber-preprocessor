@@ -148,7 +148,7 @@ Feature: JSON formatter
     Then it passes
     And there should be a JSON output similar to "fixtures/pending-steps.json"
 
-  Scenario: screenshot
+  Scenario: explicit screenshot
     Given a file named "cypress/integration/a.feature" with:
       """
       Feature: a feature
@@ -178,6 +178,24 @@ Feature: JSON formatter
     When I run cypress
     Then it passes
     And there should be a JSON output similar to "fixtures/attachments/screenshot.json"
+
+  Scenario: screenshot of failed test
+    Given a file named "cypress/integration/a.feature" with:
+      """
+      Feature: a feature
+        Scenario: a scenario
+          Given a failing step
+      """
+    And a file named "cypress/support/step_definitions/steps.js" with:
+      """
+      const { Given } = require("@badeball/cypress-cucumber-preprocessor");
+      Given("a failing step", function() {
+        throw "some error"
+      })
+      """
+    When I run cypress
+    Then it fails
+    And the JSON report should contain an image attachment for what appears to be a screenshot
 
   Scenario: retried
     Given additional Cypress configuration
