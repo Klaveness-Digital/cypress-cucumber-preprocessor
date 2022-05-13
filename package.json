@@ -89,5 +89,8 @@
     "esbuild": {
       "optional": true
     }
+  },
+  "engines": {
+    "node": ">=14.14.0"
   }
 }
