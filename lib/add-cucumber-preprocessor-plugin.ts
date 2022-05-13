@@ -32,11 +32,32 @@ import { notNull } from "./type-guards";
 
 import { getTags } from "./environment-helpers";
 
-export default async function addCucumberPreprocessorPlugin(
-  on: Cypress.PluginEvents,
-  config: Cypress.PluginConfigOptions
-) {
-  const preprocessor = await resolve();
+const preprocessorP = resolve();
+
+let currentTestStepStartedId: string;
+let currentSpecMessages: messages.IEnvelope[];
+
+export async function beforeRunHandler(config: Cypress.PluginConfigOptions) {
+  const preprocessor = await preprocessorP;
+
+  if (!preprocessor.messages.enabled) {
+    return;
+  }
+
+  const messagesPath = path.join(
+    config.projectRoot,
+    preprocessor.messages.output
+  );
+
+  await fs.rm(messagesPath, { force: true });
+}
+
+export async function afterRunHandler(config: Cypress.PluginConfigOptions) {
+  const preprocessor = await preprocessorP;
+
+  if (!preprocessor.messages.enabled) {
+    return;
+  }
 
   const messagesPath = path.join(
     config.projectRoot,
@@ -45,121 +66,159 @@ export default async function addCucumberPreprocessorPlugin(
 
   const jsonPath = path.join(config.projectRoot, preprocessor.json.output);
 
-  on("before:run", async () => {
-    if (!preprocessor.messages.enabled) {
-      return;
-    }
+  try {
+    await fs.access(messagesPath, fsConstants.F_OK);
+  } catch {
+    return;
+  }
 
-    await fs.rm(messagesPath, { force: true });
-  });
+  const messages = await fs.open(messagesPath, "r");
 
-  on("after:run", async () => {
-    if (!preprocessor.messages.enabled) {
-      return;
-    }
+  try {
+    const json = await fs.open(jsonPath, "w");
 
     try {
-      await fs.access(messagesPath, fsConstants.F_OK);
-    } catch {
-      return;
-    }
+      const child = child_process.spawn(preprocessor.json.formatter, {
+        stdio: [messages.fd, json.fd, "inherit"],
+      });
 
-    const messages = await fs.open(messagesPath, "r");
-
-    try {
-      const json = await fs.open(jsonPath, "w");
-
-      try {
-        const child = child_process.spawn(preprocessor.json.formatter, {
-          stdio: [messages.fd, json.fd, "inherit"],
+      await new Promise<void>((resolve, reject) => {
+        child.on("exit", (code) => {
+          if (code === 0) {
+            resolve();
+          } else {
+            reject(
+              new Error(
+                `${preprocessor.json.formatter} exited non-successfully`
+              )
+            );
+          }
         });
 
-        await new Promise<void>((resolve, reject) => {
-          child.on("exit", (code) => {
-            if (code === 0) {
-              resolve();
-            } else {
-              reject(
-                new Error(
-                  `${preprocessor.json.formatter} exited non-successfully`
-                )
-              );
-            }
-          });
-
-          child.on("error", reject);
-        });
-      } finally {
-        await json.close();
-      }
+        child.on("error", reject);
+      });
     } finally {
-      await messages.close();
+      await json.close();
     }
-  });
+  } finally {
+    await messages.close();
+  }
+}
 
-  let currentTestStepStartedId: string;
-  let currentSpecMessages: messages.IEnvelope[];
+export async function beforeSpecHandler(config: Cypress.PluginConfigOptions) {
+  currentSpecMessages = [];
+}
 
-  on("before:spec", () => {
-    currentSpecMessages = [];
-  });
+export async function afterSpecHandler(
+  config: Cypress.PluginConfigOptions,
+  spec: Cypress.Spec,
+  results: CypressCommandLine.RunResult
+) {
+  const preprocessor = await preprocessorP;
 
-  on("after:spec", async (_spec, results) => {
-    // `results` is undefined when running via `cypress open`.
-    if (!preprocessor.messages.enabled || !currentSpecMessages || !results) {
-      return;
-    }
+  const messagesPath = path.join(
+    config.projectRoot,
+    preprocessor.messages.output
+  );
 
-    const wasRemainingSkipped = results.tests.some((test) =>
-      test.displayError?.match(HOOK_FAILURE_EXPR)
+  // `results` is undefined when running via `cypress open`.
+  if (!preprocessor.messages.enabled || !currentSpecMessages || !results) {
+    return;
+  }
+
+  const wasRemainingSkipped = results.tests.some((test) =>
+    test.displayError?.match(HOOK_FAILURE_EXPR)
+  );
+
+  if (wasRemainingSkipped) {
+    console.log(
+      chalk.yellow(
+        `  Hook failures can't be represented in JSON reports, thus none is created for ${spec.relative}.`
+      )
     );
+  } else {
+    await fs.writeFile(
+      messagesPath,
+      currentSpecMessages.map((message) => JSON.stringify(message)).join("\n") +
+        "\n",
+      {
+        flag: "a",
+      }
+    );
+  }
+}
 
-    if (wasRemainingSkipped) {
-      console.log(
-        chalk.yellow(
-          `  Hook failures can't be represented in JSON reports, thus none is created for ${_spec.relative}.`
-        )
-      );
-    } else {
-      await fs.writeFile(
-        messagesPath,
-        currentSpecMessages
-          .map((message) => JSON.stringify(message))
-          .join("\n") + "\n",
-        {
-          flag: "a",
-        }
-      );
-    }
-  });
+export async function afterScreenshotHandler(
+  config: Cypress.PluginConfigOptions,
+  details: Cypress.ScreenshotDetails
+) {
+  const preprocessor = await preprocessorP;
 
-  on("after:screenshot", async (details) => {
-    if (!preprocessor.messages.enabled || !currentSpecMessages) {
-      return details;
-    }
-
-    let buffer;
-
-    try {
-      buffer = await fs.readFile(details.path);
-    } catch {
-      return details;
-    }
-
-    const message: messages.IEnvelope = {
-      attachment: {
-        testStepId: currentTestStepStartedId,
-        body: buffer.toString("base64"),
-        mediaType: "image/png",
-        contentEncoding:
-          "BASE64" as unknown as messages.Attachment.ContentEncoding,
-      },
-    };
-
-    currentSpecMessages.push(message);
-
+  if (!preprocessor.messages.enabled || !currentSpecMessages) {
     return details;
-  });
+  }
+
+  let buffer;
+
+  try {
+    buffer = await fs.readFile(details.path);
+  } catch {
+    return details;
+  }
+
+  const message: messages.IEnvelope = {
+    attachment: {
+      testStepId: currentTestStepStartedId,
+      body: buffer.toString("base64"),
+      mediaType: "image/png",
+      contentEncoding:
+        "BASE64" as unknown as messages.Attachment.ContentEncoding,
+    },
+  };
+
+  currentSpecMessages.push(message);
+
+  return details;
+}
+
+type AddOptions = {
+  omitBeforeRunHandler?: boolean;
+  omitAfterRunHandler?: boolean;
+  omitBeforeSpecHandler?: boolean;
+  omitAfterSpecHandler?: boolean;
+  omitAfterScreenshotHandler?: boolean;
+};
+
+export default async function addCucumberPreprocessorPlugin(
+  on: Cypress.PluginEvents,
+  config: Cypress.PluginConfigOptions,
+  options: AddOptions = {}
+) {
+  const preprocessor = await preprocessorP;
+
+  if (!options.omitBeforeRunHandler) {
+    on("before:run", () => beforeRunHandler(config));
+  }
+
+  if (!options.omitAfterRunHandler) {
+    on("after:run", () => afterRunHandler(config));
+  }
+
+  if (!options.omitBeforeSpecHandler) {
+    on("before:spec", () => beforeSpecHandler(config));
+  }
+
+  if (!options.omitAfterSpecHandler) {
+    on("after:spec", (spec, results) =>
+      afterSpecHandler(config, spec, results)
+    );
+  }
+
+  if (!options.omitAfterScreenshotHandler) {
+    on("after:screenshot", (details) =>
+      afterScreenshotHandler(config, details)
+    );
+  }
 
   on("task", {
     [TASK_APPEND_MESSAGES]: (messages: messages.IEnvelope[]) => {

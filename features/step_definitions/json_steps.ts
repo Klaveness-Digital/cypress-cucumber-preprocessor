@@ -111,7 +111,7 @@ Then(
     const embeddings: { data: string; mime_type: string }[] = actualJsonOutput
       .flatMap((feature: any) => feature.elements)
       .flatMap((element: any) => element.steps)
-      .flatMap((step: any) => step.embeddings);
+      .flatMap((step: any) => step.embeddings ?? []);
 
     if (embeddings.length === 0) {
       throw new Error("Expected to find an embedding in JSON, but found none");

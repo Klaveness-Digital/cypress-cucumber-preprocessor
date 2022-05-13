@@ -24,7 +24,14 @@ export { resolve as resolvePreprocessorConfiguration } from "./preprocessor-conf
 
 export { getStepDefinitionPaths } from "./step-definitions";
 
-export { default as addCucumberPreprocessorPlugin } from "./add-cucumber-preprocessor-plugin";
+export {
+  default as addCucumberPreprocessorPlugin,
+  beforeRunHandler,
+  afterRunHandler,
+  beforeSpecHandler,
+  afterSpecHandler,
+  afterScreenshotHandler,
+} from "./add-cucumber-preprocessor-plugin";
 
 /**
  * Everything below exist merely for the purpose of being nice with TypeScript. All of these methods
