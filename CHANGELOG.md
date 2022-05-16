@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v9.2.1
+
+- Fixed an [issue](https://github.com/badeball/cypress-cucumber-preprocessor/issues/713) with returning chainables from step definitions.
+
 ## v9.2.0
 
 - Allow handlers to be omitted and attached explicitly, fixes [#705](https://github.com/badeball/cypress-cucumber-preprocessor/issues/705) (undocumented, experimental and API is subject to change anytime).
