@@ -474,16 +474,17 @@ function createPickle(
           return cy.wrap(start, { log: false });
         })
           .then((start) => {
-            return cy
-              .wrap(registry.runStepDefininition(this, text, argument), {
-                log: false,
-              })
-              .then((result: any) => {
-                return {
-                  start,
-                  result,
-                };
-              });
+            const ensureChain = (value: any): Cypress.Chainable<any> =>
+              Cypress.isCy(value) ? value : cy.wrap(value);
+
+            return ensureChain(
+              registry.runStepDefininition(this, text, argument)
+            ).then((result: any) => {
+              return {
+                start,
+                result,
+              };
+            });
           })
           .then(({ start, result }) => {
             const end = createTimestamp();
