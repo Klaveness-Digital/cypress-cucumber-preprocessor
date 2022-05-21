@@ -28,7 +28,10 @@ function example(
     const actual = getStepDefinitionPatterns(
       {
         cypress: cypressConfiguration,
-        preprocessor: new PreprocessorConfiguration(preprocessorConfiguration),
+        preprocessor: new PreprocessorConfiguration(
+          preprocessorConfiguration,
+          {}
+        ),
       },
       filepath
     );

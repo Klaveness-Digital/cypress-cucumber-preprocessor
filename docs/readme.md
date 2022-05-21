@@ -7,4 +7,5 @@
 * [Tags](tags.md)
 * [JSON report](json-report.md)
 * [Localisation](localisation.md)
+* [Configuration](configuration.md)
 * [Frequently asked questions](faq.md)

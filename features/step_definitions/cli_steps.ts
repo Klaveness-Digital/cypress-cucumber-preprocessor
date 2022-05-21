@@ -37,6 +37,14 @@ When(
   }
 );
 
+When(
+  "I run cypress with environment variables",
+  { timeout: 60 * 1000 },
+  async function (table) {
+    await this.run([], Object.fromEntries(table.rows()));
+  }
+);
+
 Then("it passes", function () {
   assert.equal(this.lastRun.exitCode, 0, "Expected a zero exit code");
 });

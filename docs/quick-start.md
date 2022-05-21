@@ -20,6 +20,8 @@ Configure your preferred bundler to process features files, with examples for
 * [Webpack](../examples/webpack)
 * [Esbuild](../examples/esbuild)
 
+Read more about configuration options at [docs/configuration.md](configuration.md).
+
 # Write a test
 
 Write Gherkin documents anywhere in your configured integration folder (defaults to `cypress/integration`) and add a file for type definitions with a corresponding name (read more about how step definitions are resolved in [docs/step-definitions.md](step-definitions.md)). Reading [docs/cucumber-basics.md](cucumber-basics.md) is highly recommended.

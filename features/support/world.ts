@@ -20,7 +20,7 @@ function combine(...streams: Readable[]) {
 }
 
 class World {
-  async run(this: IWorld, extraArgs = []) {
+  async run(this: IWorld, extraArgs = [], extraEnv = {}) {
     const child = childProcess.spawn(
       path.join(
         projectPath,
@@ -35,6 +35,7 @@ class World {
         env: {
           ...process.env,
           NO_COLOR: "1",
+          ...extraEnv,
         },
       }
     );
