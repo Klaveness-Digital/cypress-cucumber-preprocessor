@@ -49,7 +49,7 @@ export async function compile(
 
   const pickles = envelopes.map((envelope) => envelope.pickle).filter(notNull);
 
-  const preprocessor = await resolve();
+  const preprocessor = await resolve(configuration.projectRoot);
 
   const stepDefinitions = await getStepDefinitionPaths(
     {
