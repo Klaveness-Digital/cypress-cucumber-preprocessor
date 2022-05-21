@@ -26,19 +26,33 @@ import {
   TASK_TEST_STEP_STARTED,
 } from "./constants";
 
-import { resolve } from "./preprocessor-configuration";
+import { resolve as origResolve } from "./preprocessor-configuration";
 
 import { notNull } from "./type-guards";
 
 import { getTags } from "./environment-helpers";
 
-const preprocessorP = resolve();
+function memoize<T extends (...args: any[]) => any>(
+  fn: T
+): (...args: Parameters<T>) => ReturnType<T> {
+  let result: ReturnType<T>;
+
+  return (...args: Parameters<T>) => {
+    if (result) {
+      return result;
+    }
+
+    return (result = fn(...args));
+  };
+}
+
+const resolve = memoize(origResolve);
 
 let currentTestStepStartedId: string;
 let currentSpecMessages: messages.IEnvelope[];
 
 export async function beforeRunHandler(config: Cypress.PluginConfigOptions) {
-  const preprocessor = await preprocessorP;
+  const preprocessor = await resolve();
 
   if (!preprocessor.messages.enabled) {
     return;
@@ -53,7 +67,7 @@ export async function beforeRunHandler(config: Cypress.PluginConfigOptions) {
 }
 
 export async function afterRunHandler(config: Cypress.PluginConfigOptions) {
-  const preprocessor = await preprocessorP;
+  const preprocessor = await resolve();
 
   if (!preprocessor.messages.enabled) {
     return;
@@ -114,7 +128,7 @@ export async function afterSpecHandler(
   spec: Cypress.Spec,
   results: CypressCommandLine.RunResult
 ) {
-  const preprocessor = await preprocessorP;
+  const preprocessor = await resolve();
 
   const messagesPath = path.join(
     config.projectRoot,
@@ -152,7 +166,7 @@ export async function afterScreenshotHandler(
   config: Cypress.PluginConfigOptions,
   details: Cypress.ScreenshotDetails
 ) {
-  const preprocessor = await preprocessorP;
+  const preprocessor = await resolve();
 
   if (!preprocessor.messages.enabled || !currentSpecMessages) {
     return details;
@@ -194,7 +208,7 @@ export default async function addCucumberPreprocessorPlugin(
   config: Cypress.PluginConfigOptions,
   options: AddOptions = {}
 ) {
-  const preprocessor = await preprocessorP;
+  const preprocessor = await resolve();
 
   if (!options.omitBeforeRunHandler) {
     on("before:run", () => beforeRunHandler(config));
