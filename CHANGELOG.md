@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## v10.0.0
+
+Breaking changes:
+
+- Exported member `resolvePreprocessorConfiguration` now *requires* a `projectRoot` variable and a `environment` variable.
+
+Other changes:
+
+- Configuration values can now be overriden using (Cypress-) [environment variable](https://docs.cypress.io/guides/guides/environment-variables).
+
 ## v9.2.1
 
 - Fixed an [issue](https://github.com/badeball/cypress-cucumber-preprocessor/issues/713) with returning chainables from step definitions.
