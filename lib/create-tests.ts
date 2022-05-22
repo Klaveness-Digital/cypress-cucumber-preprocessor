@@ -475,7 +475,7 @@ function createPickle(
         })
           .then((start) => {
             const ensureChain = (value: any): Cypress.Chainable<any> =>
-              Cypress.isCy(value) ? value : cy.wrap(value);
+              Cypress.isCy(value) ? value : cy.wrap(value, { log: false });
 
             return ensureChain(
               registry.runStepDefininition(this, text, argument)
