@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v10.0.1
+
+- Fixed an [issue](https://github.com/badeball/cypress-cucumber-preprocessor/issues/720) where internal calls to `cy.wrap` was being logged.
+
 ## v10.0.0
 
 Breaking changes:
