@@ -79,12 +79,6 @@ export function getStepDefinitionPatterns(
     throw new Error(`${filepath} is not inside ${fullIntegrationFolder}`);
   }
 
-  if (!isPathInside(filepath, configuration.cypress.projectRoot)) {
-    throw new Error(
-      `${filepath} is not inside ${configuration.cypress.projectRoot}`
-    );
-  }
-
   debug(
     `looking for step definitions using ${util.inspect(
       configuration.preprocessor.stepDefinitions
