@@ -138,6 +138,10 @@ Then("the output should contain", function (content) {
   assert.match(this.lastRun.stdout, new RegExp(rescape(content)));
 });
 
+Then("the output should match", function (content) {
+  assert.match(this.lastRun.stdout, new RegExp(content));
+});
+
 Then(
   "it should appear to have skipped the scenario {string}",
   function (scenarioName) {

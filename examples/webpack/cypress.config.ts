@@ -1,10 +1,11 @@
+import { defineConfig } from "cypress";
 import * as webpack from "@cypress/webpack-preprocessor";
 import { addCucumberPreprocessorPlugin } from "@badeball/cypress-cucumber-preprocessor";
 
-export default async (
+export async function setupNodeEvents(
   on: Cypress.PluginEvents,
   config: Cypress.PluginConfigOptions
-): Promise<Cypress.PluginConfigOptions> => {
+): Promise<Cypress.PluginConfigOptions> {
   await addCucumberPreprocessorPlugin(on, config);
 
   on(
@@ -42,4 +43,12 @@ export default async (
 
   // Make sure to return the config object as it might have been modified by the plugin.
   return config;
-};
+}
+
+export default defineConfig({
+  e2e: {
+    specPattern: "**/*.feature",
+    supportFile: false,
+    setupNodeEvents,
+  },
+});

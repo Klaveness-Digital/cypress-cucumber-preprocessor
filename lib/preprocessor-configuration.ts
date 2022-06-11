@@ -260,7 +260,7 @@ export function stringToMaybeBoolean(value: string): boolean | undefined {
 }
 
 export interface IPreprocessorConfiguration {
-  readonly stepDefinitions: string | string[];
+  readonly stepDefinitions?: string | string[];
   readonly messages?: {
     enabled: boolean;
     output?: string;
@@ -285,6 +285,18 @@ export interface IEnvironmentOverrides {
   omitFiltered?: boolean;
 }
 
+export const DEFAULT_PRE_10_STEP_DEFINITIONS = [
+  "[integration-directory]/[filepath]/**/*.{js,ts}",
+  "[integration-directory]/[filepath].{js,ts}",
+  "cypress/support/step_definitions/**/*.{js,ts}",
+];
+
+export const DEFAULT_POST_10_STEP_DEFINITIONS = [
+  "[filepath]/**/*.{js,ts}",
+  "[filepath].{js,ts}",
+  "cypress/support/step_definitions/**/*.{js,ts}",
+];
+
 export class PreprocessorConfiguration implements IPreprocessorConfiguration {
   constructor(
     private explicitValues: Partial<IPreprocessorConfiguration>,
@@ -294,11 +306,7 @@ export class PreprocessorConfiguration implements IPreprocessorConfiguration {
   get stepDefinitions() {
     return (
       this.environmentOverrides.stepDefinitions ??
-      this.explicitValues.stepDefinitions ?? [
-        "cypress/integration/[filepath]/**/*.{js,ts}",
-        "cypress/integration/[filepath].{js,ts}",
-        "cypress/support/step_definitions/**/*.{js,ts}",
-      ]
+      this.explicitValues.stepDefinitions
     );
   }
 

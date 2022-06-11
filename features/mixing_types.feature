@@ -1,14 +1,22 @@
 Feature: mixing feature and non-feature specs
   Background:
-    Given additional Cypress configuration
+    Given if pre-v10, additional Cypress configuration
       """
       {
         "testFiles": "**/*.{spec.js,feature}"
       }
       """
+    And if post-v10, additional Cypress configuration
+      """
+      {
+        "e2e": {
+          "specPattern": "**/*.{spec.js,feature}"
+        }
+      }
+      """
 
   Scenario: one feature and non-feature specs
-    Given a file named "cypress/integration/a.feature" with:
+    Given a file named "cypress/e2e/a.feature" with:
       """
       @foo
       Feature: a feature name
@@ -23,7 +31,7 @@ Feature: mixing feature and non-feature specs
         expect(doesFeatureMatch("@foo")).to.be.true;
       });
       """
-    And a file named "cypress/integration/b.spec.js" with:
+    And a file named "cypress/e2e/b.spec.js" with:
       """
       const { isFeature } = require("@badeball/cypress-cucumber-preprocessor");
       it("should work", () => {

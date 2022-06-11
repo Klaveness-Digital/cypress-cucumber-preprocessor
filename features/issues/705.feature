@@ -13,7 +13,7 @@ Feature: overriding event handlers
       """
 
   Scenario: overriding after:screenshot
-    Given a file named "cypress/integration/a.feature" with:
+    Given a file named "cypress/e2e/a.feature" with:
       """
       Feature: a feature
         Scenario: a scenario
@@ -26,7 +26,7 @@ Feature: overriding event handlers
         throw "some error"
       })
       """
-    And a file named "cypress/plugins/index.js" with:
+    And a file named "cypress/plugins/index.js" or "setupNodeEvents.js" (depending on Cypress era) with:
       """
       const { addCucumberPreprocessorPlugin, afterScreenshotHandler } = require("@badeball/cypress-cucumber-preprocessor");
       const { createEsbuildPlugin } = require("@badeball/cypress-cucumber-preprocessor/esbuild");
@@ -47,6 +47,7 @@ Feature: overriding event handlers
         return config;
       }
       """
+
     When I run cypress
     Then it fails
     And the JSON report should contain an image attachment for what appears to be a screenshot

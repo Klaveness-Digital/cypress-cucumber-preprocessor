@@ -32,6 +32,8 @@ import { notNull } from "./type-guards";
 
 import { getTags } from "./environment-helpers";
 
+import { ensureIsAbsolute } from "./helpers";
+
 function memoize<T extends (...args: any[]) => any>(
   fn: T
 ): (...args: Parameters<T>) => ReturnType<T> {
@@ -280,7 +282,9 @@ export default async function addCucumberPreprocessorPlugin(
   if (tags !== null && preprocessor.filterSpecs) {
     const node = parse(tags);
 
-    (config as any).testFiles = getTestFiles(
+    const propertyName = "specPattern" in config ? "specPattern" : "testFiles";
+
+    (config as any)[propertyName] = getTestFiles(
       config as unknown as ICypressConfiguration
     ).filter((testFile) => {
       const content = syncFs.readFileSync(testFile).toString("utf-8");
