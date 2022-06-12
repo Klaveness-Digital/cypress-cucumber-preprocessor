@@ -60,9 +60,16 @@ Given("I've ensured cucumber-json-formatter is installed", async () => {
   });
 });
 
+Then("there should be a messages report", async function () {
+  await assert.doesNotReject(
+    () => fs.access(path.join(this.tmpDir, "cucumber-messages.ndjson")),
+    "Expected there to be a messages file"
+  );
+});
+
 Then("there should be no JSON output", async function () {
   await assert.rejects(
-    () => fs.readFile(path.join(this.tmpDir, "cucumber-messages.ndjson")),
+    () => fs.readFile(path.join(this.tmpDir, "cucumber-report.json")),
     {
       code: "ENOENT",
     },

@@ -71,7 +71,7 @@ export async function beforeRunHandler(config: Cypress.PluginConfigOptions) {
 export async function afterRunHandler(config: Cypress.PluginConfigOptions) {
   const preprocessor = await resolve(config.projectRoot, config.env);
 
-  if (!preprocessor.messages.enabled) {
+  if (!preprocessor.json.enabled) {
     return;
   }
 
