@@ -241,10 +241,7 @@ function createScenario(
 
       const pickle = findPickleById(context, exampleId);
 
-      const baseName = assertAndReturn(
-        pickle.name,
-        "Expected pickle to have a name"
-      );
+      const baseName = pickle.name || "<unamed scenario>";
 
       const exampleName = `${baseName} (example #${i + 1})`;
 
