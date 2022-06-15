@@ -91,6 +91,8 @@ export async function afterRunHandler(config: Cypress.PluginConfigOptions) {
     return;
   }
 
+  await fs.mkdir(path.dirname(jsonPath), { recursive: true });
+
   const messages = await fs.open(messagesPath, "r");
 
   try {
@@ -156,6 +158,8 @@ export async function afterSpecHandler(
       )
     );
   } else {
+    await fs.mkdir(path.dirname(messagesPath), { recursive: true });
+
     await fs.writeFile(
       messagesPath,
       currentSpecMessages.map((message) => JSON.stringify(message)).join("\n") +
