@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## v11.0.0
+
+Breaking changes:
+
+- Dropped support for Cypress v6.
+
+Other changes:
+
+- Added support for Cypress v11. :tada:
+
+- Untitled scenario outline no longer errors, fixes [#731](https://github.com/badeball/cypress-cucumber-preprocessor/issues/731).
+
+- Outputting *only* messages is now possible, fixes [#724](https://github.com/badeball/cypress-cucumber-preprocessor/issues/724).
+
+- Allow absolute output paths, partially fixes [#736](https://github.com/badeball/cypress-cucumber-preprocessor/issues/736).
+
+- Output directories are automatically created recursively, partially fixes [#736](https://github.com/badeball/cypress-cucumber-preprocessor/issues/736).
+
 ## v10.0.2
 
 - Allow integration folders outside of project root, fixes [#719](https://github.com/badeball/cypress-cucumber-preprocessor/issues/719).
