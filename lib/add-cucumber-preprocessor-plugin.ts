@@ -60,7 +60,7 @@ export async function beforeRunHandler(config: Cypress.PluginConfigOptions) {
     return;
   }
 
-  const messagesPath = path.join(
+  const messagesPath = ensureIsAbsolute(
     config.projectRoot,
     preprocessor.messages.output
   );
@@ -75,12 +75,15 @@ export async function afterRunHandler(config: Cypress.PluginConfigOptions) {
     return;
   }
 
-  const messagesPath = path.join(
+  const messagesPath = ensureIsAbsolute(
     config.projectRoot,
     preprocessor.messages.output
   );
 
-  const jsonPath = path.join(config.projectRoot, preprocessor.json.output);
+  const jsonPath = ensureIsAbsolute(
+    config.projectRoot,
+    preprocessor.json.output
+  );
 
   try {
     await fs.access(messagesPath, fsConstants.F_OK);
@@ -132,7 +135,7 @@ export async function afterSpecHandler(
 ) {
   const preprocessor = await resolve(config.projectRoot, config.env);
 
-  const messagesPath = path.join(
+  const messagesPath = ensureIsAbsolute(
     config.projectRoot,
     preprocessor.messages.output
   );
