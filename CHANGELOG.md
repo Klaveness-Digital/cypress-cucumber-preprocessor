@@ -20,6 +20,30 @@ Other changes:
 
 - Output directories are automatically created recursively, partially fixes [#736](https://github.com/badeball/cypress-cucumber-preprocessor/issues/736).
 
+### Upgrading to Cypress v10
+
+There's no changes to configuration options, but if your configuration looked like this pre-10
+
+```json
+{
+  "stepDefinitions": [
+    "cypress/integration/[filepath].{js,ts}",
+    "cypress/support/step_definitions/**/*.{js,ts}"
+  ]
+}
+```
+
+.. then it should look like this post-10 (notice the removal of `cypress/integration`)
+
+```json
+{
+  "stepDefinitions": [
+    "[filepath].{js,ts}",
+    "cypress/support/step_definitions/**/*.{js,ts}"
+  ]
+}
+```
+
 ## v10.0.2
 
 - Allow integration folders outside of project root, fixes [#719](https://github.com/badeball/cypress-cucumber-preprocessor/issues/719).
