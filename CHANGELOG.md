@@ -10,7 +10,7 @@ Breaking changes:
 
 Other changes:
 
-- Added support for Cypress v11. :tada:
+- Added support for Cypress v10. :tada:
 
 - Untitled scenario outline no longer errors, fixes [#731](https://github.com/badeball/cypress-cucumber-preprocessor/issues/731).
 
