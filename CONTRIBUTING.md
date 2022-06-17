@@ -2,7 +2,7 @@
 
 ## 1. Read the FAQ
 
-Please [read the FAQ](user-guide/faq.md) before logging new issues, even if you think you have found a bug.
+Please [read the FAQ](docs/faq.md) before logging new issues, even if you think you have found a bug.
 
 Issues that ask questions answered in the FAQ will be closed without elaboration.
 
