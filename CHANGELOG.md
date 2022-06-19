@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v11.1.0
+
+- Enable test configuration overrides, such as retrability of a single scenario, fixes [#697](https://github.com/badeball/cypress-cucumber-preprocessor/issues/697).
+
 ## v11.0.0
 
 Breaking changes:
