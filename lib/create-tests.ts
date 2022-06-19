@@ -25,6 +25,8 @@ import { getTags } from "./environment-helpers";
 
 import { notNull } from "./type-guards";
 
+import { looksLikeOptions, tagToCypressOptions } from "./tag-parser";
+
 declare global {
   namespace globalThis {
     var __cypress_cucumber_preprocessor_dont_use_this: true | undefined;
@@ -347,7 +349,12 @@ function createPickle(
 
   const env = { [INTERNAL_PROPERTY_NAME]: internalProperties };
 
-  it(scenarioName, { env }, function () {
+  const suiteOptions = tags
+    .filter(looksLikeOptions)
+    .map(tagToCypressOptions)
+    .reduce(Object.assign, {});
+
+  it(scenarioName, { env, ...suiteOptions }, function () {
     const { remainingSteps, testCaseStartedId } = retrieveInternalProperties();
 
     assignRegistry(registry);

@@ -51,3 +51,7 @@ Every configuration option has a similar key which can be use to override it, sh
 | `json.output`      | `jsonOutput`      | `cucumber-report.json`                   |
 | `filterSpecs`      | `filterSpecs`     | `true`, `false`                          |
 | `omitFiltered`     | `omitFiltered`    | `true`, `false`                          |
+
+## Test configuration
+
+Some of Cypress' [configuration options](https://docs.cypress.io/guides/references/configuration) can be overridden per-test, [Test configuration](test-configuration.md).
