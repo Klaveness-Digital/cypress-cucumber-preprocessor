@@ -10,7 +10,7 @@ defaults:
     shell: bash
 
 jobs:
-  browserify:
+  browserify-ts:
     runs-on: ubuntu-20.04
     container:
       image: cypress/base:17.3.0
@@ -31,16 +31,16 @@ jobs:
       - name: Make checkout sparse
         run: |
           shopt -s extglob
-          rm -rf examples/!(browserify)
+          rm -rf examples/!(browserify-ts)
           rm -rf !(examples)
       - name: Install NPM modules
-        working-directory: examples/browserify
+        working-directory: examples/browserify-ts
         run: npm install
       - name: Run Cypress
-        working-directory: examples/browserify
+        working-directory: examples/browserify-ts
         run: npx cypress run
 
-  webpack:
+  webpack-ts:
     runs-on: ubuntu-20.04
     container:
       image: cypress/base:17.3.0
@@ -61,16 +61,16 @@ jobs:
       - name: Make checkout sparse
         run: |
           shopt -s extglob
-          rm -rf examples/!(webpack)
+          rm -rf examples/!(webpack-ts)
           rm -rf !(examples)
       - name: Install NPM modules
-        working-directory: examples/webpack
+        working-directory: examples/webpack-ts
         run: npm install
       - name: Run Cypress
-        working-directory: examples/webpack
+        working-directory: examples/webpack-ts
         run: npx cypress run
 
-  esbuild:
+  esbuild-ts:
     runs-on: ubuntu-20.04
     container:
       image: cypress/base:17.3.0
@@ -91,11 +91,11 @@ jobs:
       - name: Make checkout sparse
         run: |
           shopt -s extglob
-          rm -rf examples/!(esbuild)
+          rm -rf examples/!(esbuild-ts)
           rm -rf !(examples)
       - name: Install NPM modules
-        working-directory: examples/esbuild
+        working-directory: examples/esbuild-ts
         run: npm install
       - name: Run Cypress
-        working-directory: examples/esbuild
+        working-directory: examples/esbuild-ts
         run: npx cypress run
