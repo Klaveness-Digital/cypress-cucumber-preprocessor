@@ -25,6 +25,14 @@ import { getTags } from "./environment-helpers";
 
 import { notNull } from "./type-guards";
 
+import { looksLikeOptions, tagToCypressOptions } from "./tag-parser";
+
+declare global {
+  namespace globalThis {
+    var __cypress_cucumber_preprocessor_dont_use_this: true | undefined;
+  }
+}
+
 type Node = ReturnType<typeof parse>;
 
 interface CompositionContext {
@@ -96,6 +104,34 @@ function collectExampleIds(
       );
     })
     .reduce((acum, el) => acum.concat(el), []);
+}
+
+type StrictTimestamp = {
+  seconds: number;
+  nanos: number;
+};
+
+function createTimestamp(): StrictTimestamp {
+  const now = new Date().getTime();
+
+  const seconds = Math.floor(now / 1000);
+
+  const nanos = (now - seconds * 1000) * 1000000;
+
+  return {
+    seconds,
+    nanos,
+  };
+}
+
+function duration(
+  start: StrictTimestamp,
+  end: StrictTimestamp
+): StrictTimestamp {
+  return {
+    seconds: end.seconds - start.seconds,
+    nanos: end.nanos - start.nanos,
+  };
 }
 
 function createFeature(
@@ -207,10 +243,7 @@ function createScenario(
 
       const pickle = findPickleById(context, exampleId);
 
-      const baseName = assertAndReturn(
-        pickle.name,
-        "Expected pickle to have a name"
-      );
+      const baseName = pickle.name || "<unamed scenario>";
 
       const exampleName = `${baseName} (example #${i + 1})`;
 
@@ -297,7 +330,7 @@ function createPickle(
 
   const astIdMap = gherkinDocumentsAstIdMaps.get(gherkinDocument);
 
-  if (!testFilter.evaluate(tags)) {
+  if (!testFilter.evaluate(tags) || tags.includes("@skip")) {
     if (!context.omitFiltered) {
       it.skip(scenarioName);
     }
@@ -316,7 +349,12 @@ function createPickle(
 
   const env = { [INTERNAL_PROPERTY_NAME]: internalProperties };
 
-  it(scenarioName, { env }, function () {
+  const suiteOptions = tags
+    .filter(looksLikeOptions)
+    .map(tagToCypressOptions)
+    .reduce(Object.assign, {});
+
+  it(scenarioName, { env, ...suiteOptions }, function () {
     const { remainingSteps, testCaseStartedId } = retrieveInternalProperties();
 
     assignRegistry(registry);
@@ -326,6 +364,7 @@ function createPickle(
         id: testCaseStartedId,
         testCaseId,
         attempt: attempt++,
+        timestamp: createTimestamp(),
       },
     });
 
@@ -346,28 +385,38 @@ function createPickle(
             message: "",
           });
 
+          const start = createTimestamp();
+
           messages.stack.push({
             testStepStarted: {
               testStepId: hook.id,
               testCaseStartedId,
+              timestamp: start,
             },
           });
 
           if (messages.enabled) {
             cy.task(TASK_TEST_STEP_STARTED, hook.id, { log: false });
           }
+
+          return cy.wrap(start, { log: false });
         })
-          .then(() => {
+          .then((start) => {
             registry.runHook(this, hook);
+            return cy.wrap(start, { log: false });
           })
-          .then(() => {
+          .then((start) => {
+            const end = createTimestamp();
+
             messages.stack.push({
               testStepFinished: {
                 testStepId: hook.id,
                 testCaseStartedId,
                 testStepResult: {
                   status: Status.Passed,
+                  duration: duration(start, end),
                 },
+                timestamp: end,
               },
             });
 
@@ -412,19 +461,38 @@ function createPickle(
         cy.then(() => {
           internalProperties.currentStep = { pickleStep };
 
+          const start = createTimestamp();
+
           messages.stack.push({
             testStepStarted: {
               testStepId: pickleStep.id,
               testCaseStartedId,
+              timestamp: start,
             },
           });
 
           if (messages.enabled) {
             cy.task(TASK_TEST_STEP_STARTED, pickleStep.id, { log: false });
           }
+
+          return cy.wrap(start, { log: false });
         })
-          .then(() => registry.runStepDefininition(this, text, argument))
-          .then((result) => {
+          .then((start) => {
+            const ensureChain = (value: any): Cypress.Chainable<any> =>
+              Cypress.isCy(value) ? value : cy.wrap(value, { log: false });
+
+            return ensureChain(
+              registry.runStepDefininition(this, text, argument)
+            ).then((result: any) => {
+              return {
+                start,
+                result,
+              };
+            });
+          })
+          .then(({ start, result }) => {
+            const end = createTimestamp();
+
             if (result === "pending") {
               messages.stack.push({
                 testStepFinished: {
@@ -432,7 +500,9 @@ function createPickle(
                   testCaseStartedId,
                   testStepResult: {
                     status: Status.Pending,
+                    duration: duration(start, end),
                   },
+                  timestamp: end,
                 },
               });
 
@@ -474,7 +544,9 @@ function createPickle(
                   testCaseStartedId,
                   testStepResult: {
                     status: Status.Passed,
+                    duration: duration(start, end),
                   },
+                  timestamp: end,
                 },
               });
 
@@ -537,13 +609,14 @@ export default function createTests(
     });
   }
 
-  const testFilter = collectTagNamesFromGherkinDocument(
-    gherkinDocument
-  ).includes("@focus")
-    ? parse("@focus")
-    : environmentTags
-    ? parse(environmentTags)
-    : noopNode;
+  const tagsInDocument = collectTagNamesFromGherkinDocument(gherkinDocument);
+
+  const testFilter =
+    tagsInDocument.includes("@only") || tagsInDocument.includes("@focus")
+      ? parse("@only or @focus")
+      : environmentTags
+      ? parse(environmentTags)
+      : noopNode;
 
   if (gherkinDocument.feature) {
     createFeature(
@@ -562,6 +635,14 @@ export default function createTests(
     );
   }
 
+  const isHooksAttached = globalThis[INTERNAL_PROPERTY_NAME];
+
+  if (isHooksAttached) {
+    return;
+  } else {
+    globalThis[INTERNAL_PROPERTY_NAME] = true;
+  }
+
   afterEach(function () {
     freeRegistry();
 
@@ -569,7 +650,10 @@ export default function createTests(
 
     const { testCaseStartedId, remainingSteps } = properties;
 
-    if (remainingSteps.length > 0) {
+    if (
+      remainingSteps.length > 0 &&
+      (this.currentTest?.state as any) !== "pending"
+    ) {
       const error = assertAndReturn(
         this.currentTest?.err?.message,
         "Expected to find an error message"
@@ -609,6 +693,7 @@ export default function createTests(
                 status: Status.Failed,
                 message: this.currentTest?.err?.message,
               },
+              timestamp: createTimestamp(),
             },
           };
 
@@ -642,6 +727,7 @@ export default function createTests(
     messages.push({
       testCaseFinished: {
         testCaseStartedId,
+        timestamp: createTimestamp(),
       },
     });
 

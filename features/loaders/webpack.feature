@@ -1,20 +1,17 @@
 @no-default-plugin
 Feature: webpack + typescript
   Scenario:
-    Given a file named "cypress/integration/a.feature" with:
+    Given a file named "cypress/e2e/a.feature" with:
       """
       Feature: a feature name
         Scenario: a scenario name
           Given a step
       """
-    And a file named "cypress/plugins/index.ts" with:
+    And a file named "cypress/plugins/index.js" or "setupNodeEvents.js" (depending on Cypress era) with:
       """
-      import webpack from "@cypress/webpack-preprocessor";
+      const webpack = require("@cypress/webpack-preprocessor");
 
-      export default (
-        on: Cypress.PluginEvents,
-        config: Cypress.PluginConfigOptions
-      ): void => {
+      module.exports = async (on, config) => {
         on(
           "file:preprocessor",
           webpack({

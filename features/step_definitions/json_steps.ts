@@ -1,10 +1,11 @@
 import { Given, Then } from "@cucumber/cucumber";
-import { WritableStreamBuffer } from "stream-buffers";
-import { Readable } from "stream";
 import path from "path";
 import { promises as fs } from "fs";
 import assert from "assert";
 import child_process from "child_process";
+import { toByteArray } from "base64-js";
+import { PNG } from "pngjs";
+import { version as cypressVersion } from "cypress/package.json";
 
 function isObject(object: any): object is object {
   return typeof object === "object" && object != null;
@@ -34,7 +35,7 @@ function* traverseTree(object: any): Generator<object, void, any> {
 function prepareJsonReport(tree: any) {
   for (const node of traverseTree(tree)) {
     if (hasOwnProperty(node, "duration")) {
-      delete node.duration;
+      node.duration = 0;
     } else if (hasOwnProperty(node, "uri") && typeof node.uri === "string") {
       node.uri = node.uri.replace(/\\/g, "/");
     }
@@ -59,9 +60,16 @@ Given("I've ensured cucumber-json-formatter is installed", async () => {
   });
 });
 
+Then("there should be a messages report", async function () {
+  await assert.doesNotReject(
+    () => fs.access(path.join(this.tmpDir, "cucumber-messages.ndjson")),
+    "Expected there to be a messages file"
+  );
+});
+
 Then("there should be no JSON output", async function () {
   await assert.rejects(
-    () => fs.readFile(path.join(this.tmpDir, "cucumber-messages.ndjson")),
+    () => fs.readFile(path.join(this.tmpDir, "cucumber-report.json")),
     {
       code: "ENOENT",
     },
@@ -95,5 +103,69 @@ Then(
       );
       assert.deepStrictEqual(actualJsonOutput, expectedJsonOutput);
     }
+  }
+);
+
+Then(
+  "the JSON report should contain an image attachment for what appears to be a screenshot",
+  async function () {
+    const absolutejsonPath = path.join(this.tmpDir, "cucumber-report.json");
+
+    const jsonFile = await fs.readFile(absolutejsonPath);
+
+    const actualJsonOutput = JSON.parse(jsonFile.toString());
+
+    const embeddings: { data: string; mime_type: string }[] = actualJsonOutput
+      .flatMap((feature: any) => feature.elements)
+      .flatMap((element: any) => element.steps)
+      .flatMap((step: any) => step.embeddings ?? []);
+
+    if (embeddings.length === 0) {
+      throw new Error("Expected to find an embedding in JSON, but found none");
+    } else if (embeddings.length > 1) {
+      throw new Error(
+        "Expected to find a single embedding in JSON, but found " +
+          embeddings.length
+      );
+    }
+
+    const [embedding] = embeddings;
+
+    assert.strictEqual(embedding.mime_type, "image/png");
+
+    const png = await new Promise<any>((resolve, reject) => {
+      new PNG().parse(
+        toByteArray(embedding.data).buffer,
+        function (error: any, data: any) {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(data);
+          }
+        }
+      );
+    });
+
+    let expectedDimensions;
+
+    /**
+     * See https://github.com/cypress-io/cypress/pull/15686 and https://github.com/cypress-io/cypress/pull/17309.
+     */
+    if (cypressVersion.startsWith("7.")) {
+      expectedDimensions = {
+        width: 1920,
+        height: 1080,
+      };
+    } else {
+      expectedDimensions = {
+        width: 1280,
+        height: 720,
+      };
+    }
+
+    const { width: actualWidth, height: actualHeight } = png;
+
+    assert.strictEqual(actualWidth, expectedDimensions.width);
+    assert.strictEqual(actualHeight, expectedDimensions.height);
   }
 );

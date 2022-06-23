@@ -4,12 +4,16 @@ See [badeball/cypress-cucumber-preprocessor](https://github.com/badeball/cypress
 
 # Configuration
 
-[Configure](https://docs.cypress.io/guides/references/configuration) `testFiles` with `"**/*.feature"`, using EG. `cypress.json`.
+[Configure](https://docs.cypress.io/guides/references/configuration) `specPattern` with `"**/*.feature"`, using EG. `cypress.config.ts`.
 
-```json
-{
-  "testFiles": "**/*.feature"
-}
+```js
+import { defineConfig } from "cypress";
+
+export default defineConfig({
+  e2e: {
+    specPattern: "**/*.feature"
+  }
+});
 ```
 
 Configure your preferred bundler to process features files, with examples for
@@ -18,12 +22,14 @@ Configure your preferred bundler to process features files, with examples for
 * [Webpack](../examples/webpack)
 * [Esbuild](../examples/esbuild)
 
+Read more about configuration options at [docs/configuration.md](configuration.md).
+
 # Write a test
 
-Write Gherkin documents anywhere in your configured integration folder (defaults to `cypress/integration`) and add a file for type definitions with a corresponding name (read more about how step definitions are resolved in [docs/step-definitions.md](step-definitions.md)). Reading [docs/cucumber-basics.md](cucumber-basics.md) is highly recommended.
+Write Gherkin documents and add a file for type definitions with a corresponding name (read more about how step definitions are resolved in [docs/step-definitions.md](step-definitions.md)). Reading [docs/cucumber-basics.md](cucumber-basics.md) is highly recommended.
 
 ```cucumber
-# cypress/integration/duckduckgo.feature
+# cypress/e2e/duckduckgo.feature
 Feature: duckduckgo.com
   Scenario: visting the frontpage
     When I visit duckduckgo.com
@@ -31,7 +37,7 @@ Feature: duckduckgo.com
 ```
 
 ```ts
-// cypress/integration/duckduckgo.ts
+// cypress/e2e/duckduckgo.ts
 import { When, Then } from "@klaveness/cypress-cucumber-preprocessor";
 
 When("I visit duckduckgo.com", () => {

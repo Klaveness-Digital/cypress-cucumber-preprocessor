@@ -26,11 +26,15 @@ export default async (
 }
 ```
 
-This also **requires** you to have downloaded and installed the [cucumber-json-formatter](https://github.com/cucumber/common/tree/main/json-formatter) **yourself**. Arch Linux users can install it from [AUR](https://aur.archlinux.org/packages/cucumber-json-formatter).
+This also **requires** you to have downloaded and installed the [cucumber-json-formatter](https://github.com/cucumber/json-formatter) **yourself**. Arch Linux users can install it from [AUR](https://aur.archlinux.org/packages/cucumber-json-formatter).
 
 The location of the executable is configurable through the `json.formatter` property, but it will by default search for `cucumber-json-formatter` in your `PATH`.
 
 The report is outputted to `cucumber-report.json` in the project directory, but can be configured through the `json.output` property.
+
+## Screenshots
+
+Screenshots are automatically added to JSON reports, including that of failed tests (unless you have disabled `screenshotOnRunFailure`).
 
 ## Attachments
 

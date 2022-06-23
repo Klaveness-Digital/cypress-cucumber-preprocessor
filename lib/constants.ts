@@ -8,7 +8,7 @@ export const TASK_CREATE_STRING_ATTACHMENT =
   "cypress-cucumber-preprocessor:create-string-attachment";
 
 export const INTERNAL_PROPERTY_NAME =
-  "_cypress-cucumber-preprocessor-do-not-use";
+  "__cypress_cucumber_preprocessor_dont_use_this";
 
 export const HOOK_FAILURE_EXPR =
   /Because this error occurred during a `[^`]+` hook we are skipping all of the remaining tests\./;

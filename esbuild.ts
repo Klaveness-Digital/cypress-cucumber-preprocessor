@@ -1,6 +1,6 @@
 import esbuild from "esbuild";
 
-import { ICypressConfiguration } from "@badeball/cypress-configuration";
+import { ICypressConfiguration } from "@klaveness/cypress-configuration";
 
 import { compile } from "./lib/template";
 
@@ -25,3 +25,5 @@ export function createEsbuildPlugin(
     },
   };
 }
+
+export default createEsbuildPlugin;

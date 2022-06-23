@@ -4,7 +4,7 @@ import { EventEmitter } from "events";
 
 import browserify from "@cypress/browserify-preprocessor";
 
-import { ICypressConfiguration } from "@badeball/cypress-configuration";
+import { ICypressConfiguration } from "@klaveness/cypress-configuration";
 
 import debug from "./lib/debug";
 

@@ -1,10 +1,5 @@
 [
   {
-    "keyword": "Feature",
-    "name": "a feature",
-    "line": 1,
-    "id": "a-feature",
-    "uri": "cypress/integration/a.feature",
     "description": "",
     "elements": [
       {
@@ -13,20 +8,21 @@
         "keyword": "Scenario Outline",
         "line": 6,
         "name": "a scenario",
-        "type": "scenario",
         "steps": [
           {
             "keyword": "Given ",
             "line": 3,
             "name": "a step",
             "result": {
+              "duration": 0,
               "status": "passed"
             },
             "match": {
               "location": "not available:0"
             }
           }
-        ]
+        ],
+        "type": "scenario"
       },
       {
         "description": "",
@@ -34,21 +30,27 @@
         "keyword": "Scenario Outline",
         "line": 7,
         "name": "a scenario",
-        "type": "scenario",
         "steps": [
           {
             "keyword": "Given ",
             "line": 3,
             "name": "a step",
             "result": {
+              "duration": 0,
               "status": "passed"
             },
             "match": {
               "location": "not available:0"
             }
           }
-        ]
+        ],
+        "type": "scenario"
       }
-    ]
+    ],
+    "id": "a-feature",
+    "keyword": "Feature",
+    "line": 1,
+    "name": "a feature",
+    "uri": "cypress/e2e/a.feature"
   }
 ]

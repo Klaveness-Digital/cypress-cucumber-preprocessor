@@ -36,6 +36,7 @@
             "line": 3,
             "name": "a step",
             "result": {
+              "duration": 0,
               "status": "passed"
             },
             "match": {
@@ -50,6 +51,6 @@
     "keyword": "Feature",
     "line": 1,
     "name": "a feature",
-    "uri": "cypress/integration/a.feature"
+    "uri": "cypress/e2e/a.feature"
   }
 ]

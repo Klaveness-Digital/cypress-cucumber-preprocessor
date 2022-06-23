@@ -4,7 +4,7 @@ import { generateMessages } from "@cucumber/gherkin";
 
 import { IdGenerator } from "@cucumber/messages";
 
-import { ICypressConfiguration } from "@badeball/cypress-configuration";
+import { ICypressConfiguration } from "@klaveness/cypress-configuration";
 
 import { assertAndReturn } from "./assertions";
 
@@ -49,7 +49,10 @@ export async function compile(
 
   const pickles = envelopes.map((envelope) => envelope.pickle).filter(notNull);
 
-  const preprocessor = await resolve();
+  const preprocessor = await resolve(
+    configuration.projectRoot,
+    configuration.env
+  );
 
   const stepDefinitions = await getStepDefinitionPaths(
     {

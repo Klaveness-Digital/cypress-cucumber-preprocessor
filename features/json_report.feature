@@ -12,7 +12,7 @@ Feature: JSON formatter
     And I've ensured cucumber-json-formatter is installed
 
   Scenario: passed example
-    Given a file named "cypress/integration/a.feature" with:
+    Given a file named "cypress/e2e/a.feature" with:
       """
       Feature: a feature
         Scenario: a scenario
@@ -28,7 +28,7 @@ Feature: JSON formatter
     And there should be a JSON output similar to "fixtures/passed-example.json"
 
   Scenario: passed outline
-    Given a file named "cypress/integration/a.feature" with:
+    Given a file named "cypress/e2e/a.feature" with:
       """
       Feature: a feature
         Scenario Outline: a scenario
@@ -48,13 +48,13 @@ Feature: JSON formatter
     And there should be a JSON output similar to "fixtures/passed-outline.json"
 
   Scenario: multiple features
-    Given a file named "cypress/integration/a.feature" with:
+    Given a file named "cypress/e2e/a.feature" with:
       """
       Feature: a feature
         Scenario: a scenario
           Given a step
       """
-    And a file named "cypress/integration/b.feature" with:
+    And a file named "cypress/e2e/b.feature" with:
       """
       Feature: another feature
         Scenario: another scenario
@@ -76,7 +76,7 @@ Feature: JSON formatter
         "screenshotOnRunFailure": false
       }
       """
-    And a file named "cypress/integration/a.feature" with:
+    And a file named "cypress/e2e/a.feature" with:
       """
       Feature: a feature
         Scenario: a scenario
@@ -102,7 +102,7 @@ Feature: JSON formatter
         "screenshotOnRunFailure": false
       }
       """
-    And a file named "cypress/integration/a.feature" with:
+    And a file named "cypress/e2e/a.feature" with:
       """
       Feature: a feature
         Scenario: a scenario
@@ -125,7 +125,7 @@ Feature: JSON formatter
         "screenshotOnRunFailure": false
       }
       """
-    And a file named "cypress/integration/a.feature" with:
+    And a file named "cypress/e2e/a.feature" with:
       """
       Feature: a feature
         Scenario: a scenario
@@ -148,8 +148,8 @@ Feature: JSON formatter
     Then it passes
     And there should be a JSON output similar to "fixtures/pending-steps.json"
 
-  Scenario: screenshot
-    Given a file named "cypress/integration/a.feature" with:
+  Scenario: explicit screenshot
+    Given a file named "cypress/e2e/a.feature" with:
       """
       Feature: a feature
         Scenario: a scenario
@@ -179,6 +179,24 @@ Feature: JSON formatter
     Then it passes
     And there should be a JSON output similar to "fixtures/attachments/screenshot.json"
 
+  Scenario: screenshot of failed test
+    Given a file named "cypress/e2e/a.feature" with:
+      """
+      Feature: a feature
+        Scenario: a scenario
+          Given a failing step
+      """
+    And a file named "cypress/support/step_definitions/steps.js" with:
+      """
+      const { Given } = require("@klaveness/cypress-cucumber-preprocessor");
+      Given("a failing step", function() {
+        throw "some error"
+      })
+      """
+    When I run cypress
+    Then it fails
+    And the JSON report should contain an image attachment for what appears to be a screenshot
+
   Scenario: retried
     Given additional Cypress configuration
       """
@@ -187,7 +205,7 @@ Feature: JSON formatter
         "retries": 1
       }
       """
-    And a file named "cypress/integration/a.feature" with:
+    And a file named "cypress/e2e/a.feature" with:
       """
       Feature: a feature
         Scenario: a scenario
@@ -215,7 +233,7 @@ Feature: JSON formatter
         "screenshotOnRunFailure": false
       }
       """
-    And a file named "cypress/integration/a.feature" with:
+    And a file named "cypress/e2e/a.feature" with:
       """
       Feature: a feature
         Scenario: a scenario
@@ -240,7 +258,7 @@ Feature: JSON formatter
         "screenshotOnRunFailure": false
       }
       """
-    And a file named "cypress/integration/a.feature" with:
+    And a file named "cypress/e2e/a.feature" with:
       """
       Feature: a feature
         Scenario: a scenario
@@ -259,7 +277,7 @@ Feature: JSON formatter
     And there should be a JSON output similar to "fixtures/failing-after.json"
 
   Scenario: failing before hook
-    Given a file named "cypress/integration/a.feature" with:
+    Given a file named "cypress/e2e/a.feature" with:
       """
       Feature: a feature
         Scenario: a scenario
@@ -270,7 +288,7 @@ Feature: JSON formatter
       const { Given } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a step", function() {})
       """
-    And a file named "cypress/support/index.ts" with:
+    And a file named "cypress/support/e2e.js" with:
       """
       before(() => {
         throw "some error"
@@ -279,13 +297,13 @@ Feature: JSON formatter
     When I run cypress
     Then it fails
     And there should be no JSON output
-    And the output should contain
+    And the output should match
       """
-      Hook failures can't be represented in JSON reports, thus none is created for cypress/integration/a.feature.
+      Hook failures can't be represented in JSON reports, thus none is created for cypress[\\\/]e2e[\\\/]a\.feature\.
       """
 
   Scenario: failing beforeEach hook
-    Given a file named "cypress/integration/a.feature" with:
+    Given a file named "cypress/e2e/a.feature" with:
       """
       Feature: a feature
         Scenario: a scenario
@@ -296,7 +314,7 @@ Feature: JSON formatter
       const { Given } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a step", function() {})
       """
-    And a file named "cypress/support/index.ts" with:
+    And a file named "cypress/support/e2e.js" with:
       """
       beforeEach(() => {
         throw "some error"
@@ -305,13 +323,13 @@ Feature: JSON formatter
     When I run cypress
     Then it fails
     And there should be no JSON output
-    And the output should contain
+    And the output should match
       """
-      Hook failures can't be represented in JSON reports, thus none is created for cypress/integration/a.feature.
+      Hook failures can't be represented in JSON reports, thus none is created for cypress[\\\/]e2e[\\\/]a\.feature\.
       """
 
   Scenario: failing afterEach hook
-    Given a file named "cypress/integration/a.feature" with:
+    Given a file named "cypress/e2e/a.feature" with:
       """
       Feature: a feature
         Scenario: a scenario
@@ -322,7 +340,7 @@ Feature: JSON formatter
       const { Given } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a step", function() {})
       """
-    And a file named "cypress/support/index.ts" with:
+    And a file named "cypress/support/e2e.js" with:
       """
       afterEach(() => {
         throw "some error"
@@ -331,13 +349,13 @@ Feature: JSON formatter
     When I run cypress
     Then it fails
     And there should be no JSON output
-    And the output should contain
+    And the output should match
       """
-      Hook failures can't be represented in JSON reports, thus none is created for cypress/integration/a.feature.
+      Hook failures can't be represented in JSON reports, thus none is created for cypress[\\\/]e2e[\\\/]a\.feature\.
       """
 
   Scenario: failing after hook
-    Given a file named "cypress/integration/a.feature" with:
+    Given a file named "cypress/e2e/a.feature" with:
       """
       Feature: a feature
         Scenario: a scenario
@@ -348,7 +366,7 @@ Feature: JSON formatter
       const { Given } = require("@klaveness/cypress-cucumber-preprocessor");
       Given("a step", function() {})
       """
-    And a file named "cypress/support/index.ts" with:
+    And a file named "cypress/support/e2e.js" with:
       """
       after(() => {
         throw "some error"
@@ -357,7 +375,7 @@ Feature: JSON formatter
     When I run cypress
     Then it fails
     And there should be no JSON output
-    And the output should contain
+    And the output should match
       """
-      Hook failures can't be represented in JSON reports, thus none is created for cypress/integration/a.feature.
+      Hook failures can't be represented in JSON reports, thus none is created for cypress[\\\/]e2e[\\\/]a\.feature\.
       """

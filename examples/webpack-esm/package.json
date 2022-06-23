@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@klaveness/cypress-cucumber-preprocessor": "latest",
+    "@cypress/webpack-preprocessor": "latest",
+    "cypress": "latest"
+  }
+}

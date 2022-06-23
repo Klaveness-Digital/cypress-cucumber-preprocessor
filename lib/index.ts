@@ -24,7 +24,14 @@ export { resolve as resolvePreprocessorConfiguration } from "./preprocessor-conf
 
 export { getStepDefinitionPaths } from "./step-definitions";
 
-export { default as addCucumberPreprocessorPlugin } from "./add-cucumber-preprocessor-plugin";
+export {
+  default as addCucumberPreprocessorPlugin,
+  beforeRunHandler,
+  afterRunHandler,
+  beforeSpecHandler,
+  afterSpecHandler,
+  afterScreenshotHandler,
+} from "./add-cucumber-preprocessor-plugin";
 
 /**
  * Everything below exist merely for the purpose of being nice with TypeScript. All of these methods
@@ -36,11 +43,11 @@ function createUnimplemented() {
 
 export { NOT_FEATURE_ERROR } from "./methods";
 
-export function isFeature() {
+export function isFeature(): boolean {
   throw createUnimplemented();
 }
 
-export function doesFeatureMatch(expression: string) {
+export function doesFeatureMatch(expression: string): boolean {
   throw createUnimplemented();
 }
 

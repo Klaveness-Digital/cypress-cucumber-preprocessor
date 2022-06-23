@@ -155,7 +155,7 @@ export class Registry {
     world: Mocha.Context,
     text: string,
     argument?: DataTable | string
-  ) {
+  ): any {
     const stepDefinition = this.resolveStepDefintion(text);
 
     const args = stepDefinition.expression
@@ -216,6 +216,6 @@ export function freeRegistry() {
 export function getRegistry() {
   return assertAndReturn(
     globalThis[globalPropertyName],
-    "Expected to find a global registry (this usually means you are trying to define steps or hooks in support/index.js, which is not supported)"
+    "Expected to find a global registry (this usually means you are trying to define steps or hooks in support/e2e.js, which is not supported)"
   );
 }

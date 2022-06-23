@@ -37,6 +37,14 @@ When(
   }
 );
 
+When(
+  "I run cypress with environment variables",
+  { timeout: 60 * 1000 },
+  async function (table) {
+    await this.run([], Object.fromEntries(table.rows()));
+  }
+);
+
 Then("it passes", function () {
   assert.equal(this.lastRun.exitCode, 0, "Expected a zero exit code");
 });
@@ -52,6 +60,13 @@ Then("it should appear as if only a single test ran", function () {
 
 Then("it should appear as if both tests ran", function () {
   assert.match(this.lastRun.stdout, /All specs passed!\s+\d+ms\s+2\s+2\D/);
+});
+
+Then("it should appear as if both tests were skipped", function () {
+  assert.match(
+    this.lastRun.stdout,
+    /All specs passed!\s+\d+ms\s+2\s+-\s+-\s+2\D/
+  );
 });
 
 Then("it should appear to not have ran spec {string}", function (spec) {
@@ -121,6 +136,10 @@ Then(
 
 Then("the output should contain", function (content) {
   assert.match(this.lastRun.stdout, new RegExp(rescape(content)));
+});
+
+Then("the output should match", function (content) {
+  assert.match(this.lastRun.stdout, new RegExp(content));
 });
 
 Then(
