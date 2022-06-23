@@ -10,6 +10,36 @@ defaults:
     shell: bash
 
 jobs:
+  browserify-esm:
+    runs-on: ubuntu-20.04
+    container:
+      image: cypress/base:17.3.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cache NPM modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm
+      - name: Cache Cypress binaries
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/Cypress
+          key: cypress
+      # In lack of native support, https://github.com/actions/checkout/issues/172.
+      - name: Make checkout sparse
+        run: |
+          shopt -s extglob
+          rm -rf examples/!(browserify-esm)
+          rm -rf !(examples)
+      - name: Install NPM modules
+        working-directory: examples/browserify-esm
+        run: npm install
+      - name: Run Cypress
+        working-directory: examples/browserify-esm
+        run: npx cypress run
+
   browserify-ts:
     runs-on: ubuntu-20.04
     container:
@@ -40,6 +70,36 @@ jobs:
         working-directory: examples/browserify-ts
         run: npx cypress run
 
+  webpack-esm:
+    runs-on: ubuntu-20.04
+    container:
+      image: cypress/base:17.3.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cache NPM modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm
+      - name: Cache Cypress binaries
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/Cypress
+          key: cypress
+      # In lack of native support, https://github.com/actions/checkout/issues/172.
+      - name: Make checkout sparse
+        run: |
+          shopt -s extglob
+          rm -rf examples/!(webpack-esm)
+          rm -rf !(examples)
+      - name: Install NPM modules
+        working-directory: examples/webpack-esm
+        run: npm install
+      - name: Run Cypress
+        working-directory: examples/webpack-esm
+        run: npx cypress run
+
   webpack-ts:
     runs-on: ubuntu-20.04
     container:
@@ -68,6 +128,36 @@ jobs:
         run: npm install
       - name: Run Cypress
         working-directory: examples/webpack-ts
+        run: npx cypress run
+
+  esbuild-esm:
+    runs-on: ubuntu-20.04
+    container:
+      image: cypress/base:17.3.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cache NPM modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm
+      - name: Cache Cypress binaries
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/Cypress
+          key: cypress
+      # In lack of native support, https://github.com/actions/checkout/issues/172.
+      - name: Make checkout sparse
+        run: |
+          shopt -s extglob
+          rm -rf examples/!(esbuild-esm)
+          rm -rf !(examples)
+      - name: Install NPM modules
+        working-directory: examples/esbuild-esm
+        run: npm install
+      - name: Run Cypress
+        working-directory: examples/esbuild-esm
         run: npx cypress run
 
   esbuild-ts:
