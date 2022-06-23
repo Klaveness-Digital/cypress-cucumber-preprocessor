@@ -25,3 +25,5 @@ export function createEsbuildPlugin(
     },
   };
 }
+
+export default createEsbuildPlugin;
