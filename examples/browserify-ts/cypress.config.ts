@@ -1,9 +1,8 @@
 import { defineConfig } from "cypress";
-import * as browserify from "@cypress/browserify-preprocessor";
 import { addCucumberPreprocessorPlugin } from "@badeball/cypress-cucumber-preprocessor";
-import { preprocessor } from "@badeball/cypress-cucumber-preprocessor/browserify";
+import browserify from "@badeball/cypress-cucumber-preprocessor/browserify";
 
-export async function setupNodeEvents(
+async function setupNodeEvents(
   on: Cypress.PluginEvents,
   config: Cypress.PluginConfigOptions
 ): Promise<Cypress.PluginConfigOptions> {
@@ -11,8 +10,7 @@ export async function setupNodeEvents(
 
   on(
     "file:preprocessor",
-    preprocessor(config, {
-      ...browserify.defaultOptions,
+    browserify(config, {
       typescript: require.resolve("typescript"),
     })
   );
