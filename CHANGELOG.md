@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## v11.2.0
+
+- Enable `*.mjs` file extension by default, when looking for step definitions.
+
+- Add a default export to `@badeball/cypress-cucumber-preprocessor/esbuild`.
+
+- Add examples for CJS and ESM.
+
 ## v11.1.0
 
 - Enable test configuration overrides, such as retrability of a single scenario, fixes [#697](https://github.com/badeball/cypress-cucumber-preprocessor/issues/697).
